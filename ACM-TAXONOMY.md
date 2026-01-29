@@ -307,6 +307,6 @@ Decisions made during ACM development that should not be revisited without expli
 - ACM-DESIGN-SPEC.md
 - ACM-DEVELOP-SPEC.md
 - ACM-STAGES-SPEC.md
-- ACM-ENV-SPEC.md
+- ACM-ENV-PLUGIN-SPEC.md
 - kb/DOCUMENT-BREAKOUT-THRESHOLD.md
 - kb/REVIEW-CYCLE-GUIDANCE.md

@@ -45,7 +45,7 @@ The ambient capability set that wraps around all stages. Stages pull what they n
 
 ### Meta Layer Manager: acm-env
 
-The **acm-env** plugin (`~/.claude/plugins/acm-env/`) is the management layer for the meta layer itself. It ensures skills, tools, rules, and context artifacts are properly configured, available, current, and not stale. See `ACM-ENV-SPEC.md`.
+The **acm-env** plugin (`~/.claude/plugins/acm-env/`) is the management layer for the meta layer itself. It ensures skills, tools, rules, and context artifacts are properly configured, available, current, and not stale. See `ACM-ENV-PLUGIN-SPEC.md`.
 
 ### Cross-Stage Artifacts
 

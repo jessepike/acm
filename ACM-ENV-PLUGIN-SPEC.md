@@ -5,7 +5,7 @@ version: "1.0.0"
 updated: "2026-01-29"
 scope: "acm"
 lifecycle: "reference"
-location: "acm/ACM-ENV-SPEC.md"
+location: "acm/ACM-ENV-PLUGIN-SPEC.md"
 ---
 
 # ACM Environment Specification (acm-env)

@@ -258,7 +258,7 @@ acm-env absorbs the previously deferred `acm-validate` and `acm-prune` concepts 
 | **Drift detection** | SessionStart hook | Lightweight file-existence checks on every session start |
 | **Baseline enforcement** | `/acm-env:status` | Compare current state against machine-parseable baseline |
 
-See: `ACM-ENV-SPEC.md` for full specification.
+See: `ACM-ENV-PLUGIN-SPEC.md` for full specification.
 
 ---
 

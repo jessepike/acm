@@ -310,7 +310,7 @@ This loop is the mechanism by which the system gets better over time. It is not 
 
 | Spec | Relationship |
 |------|-------------|
-| ACM-ENV-SPEC.md | Narrower — defines the acm-env plugin specifically. This spec supersedes it architecturally. |
+| ACM-ENV-PLUGIN-SPEC.md | Narrower — defines the acm-env plugin specifically. This spec supersedes it architecturally. |
 | ACM-STAGES-SPEC.md | Defines the project layer. This spec defines the environment layer that wraps it. |
 | ACM-TAXONOMY.md | Terminology. Environment terms section should be updated to reflect six primitives. |
 | REGISTRY-SPEC.md | To be created — self-documenting spec for the capability registry. |
@@ -332,5 +332,5 @@ This loop is the mechanism by which the system gets better over time. It is not 
 ## References
 
 - ACM-STAGES-SPEC.md (project layer)
-- ACM-ENV-SPEC.md (acm-env plugin — narrower scope)
+- ACM-ENV-PLUGIN-SPEC.md (acm-env plugin — narrower scope)
 - ACM-TAXONOMY.md (terminology)

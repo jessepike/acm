@@ -1,13 +1,14 @@
 ---
 type: "prompt"
 description: "Ralph Loop prompt for Phase 1 internal review in Discover stage"
-version: "3.0.0"
-updated: "2026-01-29"
+version: "4.0.0"
+updated: "2026-01-30"
 scope: "discover"
+mechanism_ref: "~/code/_shared/acm/ACM-REVIEW-SPEC.md"
 usage: "Use with Ralph Loop plugin for automated Brief iteration"
 ---
 
-# Ralph Review Prompt (Phase 1: Internal Review)
+# Discover Internal Review (Phase 1: Ralph Loop)
 
 ## Usage
 
@@ -24,13 +25,24 @@ Run from the project root directory. The prompt references files relative to `$P
 ```
 You are conducting Phase 1 (Internal) review of a project Brief as part of ACM's Discover stage.
 
+## Mechanism
+
+This review follows ACM-REVIEW-SPEC.md. Key rules:
+- Minimum 2 review cycles, maximum 10
+- Stop when a cycle produces zero Critical and zero High issues
+- If past 4 cycles with Critical issues still appearing, stop and flag for human input
+- If stuck on same issue for 3+ iterations, stop and flag for human input
+- Severity: Critical (blocks next stage), High (significant gap), Low (minor — don't spend cycles)
+- YAGNI: only flag issues that block Design or Develop. No feature suggestions, no scope expansion, no cosmetic fixes.
+- The test: "If this issue isn't fixed, will the project fail or be significantly worse?" If no, it's not Critical or High.
+
 ## Context
 
-This is the first of two review phases:
+This is Phase 1 of the two-phase review process:
 - Phase 1 (you): Thorough internal review — get the Brief as strong as possible
-- Phase 2 (external models): Diverse perspectives — catch what you missed
+- Phase 2 (external): User-driven — fresh perspectives to catch what you missed
 
-Your job is to be a rigorous, critical reviewer. Find real issues, not cosmetic ones. Challenge assumptions. Question clarity. Push for specificity.
+Your job is to be a rigorous, critical reviewer. Find real issues, not cosmetic ones.
 
 ## Files
 
@@ -43,13 +55,11 @@ Your job is to be a rigorous, critical reviewer. Find real issues, not cosmetic 
 1. Read the Brief and Intent thoroughly
 2. Review critically — challenge everything
 3. Log issues in the Brief's Issue Log
-4. Address all P1 issues by updating the Brief
+4. Address all Critical and High issues by updating the Brief
 5. Re-review after changes
-6. Repeat until no P1 issues remain
+6. Repeat until stop conditions are met
 
-## Review Scope
-
-This is a **comprehensive review**. Challenge the Brief on all dimensions:
+## Review Dimensions
 
 **Completeness**
 - All required sections populated?
@@ -103,28 +113,11 @@ This is a **comprehensive review**. Challenge the Brief on all dimensions:
 
 ## Issue Logging
 
-For each issue, add to the Brief's Issue Log:
+Log issues in the Brief's Issue Log:
 
 | # | Issue | Source | Severity | Status | Resolution |
 |---|-------|--------|----------|--------|------------|
 | N | [description] | Ralph-Internal | Critical/High/Low | Open | - |
-
-## Severity Definitions
-
-- **Critical:** Must resolve. Blocks the next stage or fundamentally flawed.
-- **High:** Should resolve. Significant gap or weakness.
-- **Low:** Minor. Polish, cosmetic, or implementation detail.
-
-## Cycle Stop Rules
-
-After each review cycle, assess the issues found:
-
-- **Minimum:** Always complete at least 2 review cycles
-- **Stop when:** A cycle produces zero Critical and zero High severity issues
-- **Hard maximum:** 10 cycles (if reached, flag for human input)
-- **Structural problem signal:** If past 4 cycles and still finding Critical issues, something is fundamentally wrong — stop and flag for human input
-
-**Per cycle, ask:** "Did this cycle surface any Critical or High issues?" If no, you're done.
 
 ## Exit Criteria
 
@@ -135,33 +128,11 @@ After each review cycle, assess the issues found:
 
 ## Completion
 
-When stop rules are met:
+When stop conditions are met:
 
-1. Update the Brief's status to "internal-review-complete"
-2. Add entry to Issue Log noting Phase 1 completion and cycle count
+1. Update the Brief's frontmatter status to "internal-review-complete"
+2. Add phase completion entry to Issue Log with cycle count
 3. Output: <promise>INTERNAL_REVIEW_COMPLETE</promise>
-
-## YAGNI Principle
-
-Apply "You Ain't Gonna Need It" rigorously:
-
-- Only flag issues that **block** Design or Develop
-- Do NOT suggest features, additions, or "nice to haves"
-- Do NOT ask "what about X?" unless X is critical to stated goals
-- If something is out of scope, it's out of scope — don't backdoor it as a "consideration"
-- Low-impact issues (cosmetic, minor wording, edge cases) are P3 at most — don't waste cycles on them
-
-**The test:** "If this issue isn't fixed, will the project fail or be significantly worse?" If no, it's not P1.
-
-## Constraints
-
-- Be genuinely critical — but critical means finding **real problems**, not nitpicking
-- Find issues that matter, not issues that exist
-- Each iteration should make meaningful progress
-- If stuck on same issue for 3+ iterations, flag for human input
-- Do NOT expand scope. Flag scope creep, don't add features
-- Do NOT invent requirements. Identify gaps, don't fill them
-- Do NOT log low-value issues just to have something to log
 
 ## Important
 
@@ -170,15 +141,4 @@ Your job is to make the Brief **ready for Design**, not perfect. A Brief is read
 - Success criteria are testable
 - Constraints are clear
 - No major gaps or contradictions
-
-External reviewers will see this next. They'll find things you missed — that's expected and fine. Don't try to anticipate everything they might say. Focus on what actually matters.
 ```
-
----
-
-## Notes
-
-- Completion promise is `INTERNAL_REVIEW_COMPLETE`
-- Brief status becomes `internal-review-complete`
-- Max iterations: 10 (safety net)
-- Typical: 2-4 iterations

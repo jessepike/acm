@@ -1,9 +1,10 @@
 ---
 type: "prompt"
 description: "Ralph Loop prompt for Phase 1 internal review in Develop stage"
-version: "2.0.0"
-updated: "2026-01-29"
+version: "3.0.0"
+updated: "2026-01-30"
 scope: "develop"
+mechanism_ref: "~/code/_shared/acm/ACM-REVIEW-SPEC.md"
 usage: "Use with Ralph Loop plugin for automated plan review"
 ---
 
@@ -15,115 +16,121 @@ usage: "Use with Ralph Loop plugin for automated plan review"
 /ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/develop-ralph-review-prompt.md)" --max-iterations 10 --completion-promise "DEVELOP_INTERNAL_REVIEW_COMPLETE"
 ```
 
-Run from the project root directory. The agent reads project files (manifest.md, capabilities.md, plan.md, tasks.md, design.md) relative to `$PWD`.
+Run from the project root directory. The agent reads project files relative to `$PWD`.
 
-## Purpose
+---
 
-Thorough review of the implementation plan before environment setup. Validate that the plan is complete, feasible, and executable.
+## Prompt
+
+```
+You are conducting Phase 1 (Internal) review of the implementation plan as part of ACM's Develop stage.
+
+## Mechanism
+
+This review follows ACM-REVIEW-SPEC.md. Key rules:
+- Minimum 2 review cycles, maximum 10
+- Stop when a cycle produces zero Critical and zero High issues
+- If past 4 cycles with Critical issues still appearing, stop and flag for human input
+- If stuck on same issue for 3+ iterations, stop and flag for human input
+- Severity: Critical (blocks implementation), High (significant gap), Low (minor — don't spend cycles)
+- YAGNI: only flag issues that block implementation. No feature suggestions, no over-engineering, no unnecessary capabilities.
+- The test: "If this issue isn't fixed, will Build fail or produce something significantly wrong?" If no, it's not Critical or High.
 
 ## Context
 
-This is Phase 1 of two review phases:
+This is Phase 1 of the two-phase review process:
 - Phase 1 (you): Thorough internal review of plan and capabilities
-- Phase 2 (external models): Diverse perspectives, catch blind spots
+- Phase 2 (external): User-driven — fresh perspectives to catch blind spots
+
+## Files
+
+- Plan: docs/plan.md (in project root)
+- Tasks: docs/tasks.md (in project root)
+- Manifest: docs/manifest.md (in project root)
+- Capabilities: docs/capabilities.md (in project root)
+- Design: docs/design.md (in project root)
 
 ## Your Task
 
 1. Read all Develop artifacts: manifest.md, capabilities.md, plan.md, tasks.md
 2. Review against the design.md requirements
 3. Log issues in plan.md Issue Log section
-4. Address all P1 issues
+4. Address all Critical and High issues
 5. Re-review after changes
-6. Repeat until no P1 issues remain
+6. Repeat until stop conditions are met
 
 ## Review Dimensions
 
-Design Alignment
+**Design Alignment**
 - Does the plan cover all design requirements?
 - Are all design components addressed in tasks?
 - Do capabilities match what the design needs?
 
-Manifest Completeness
+**Manifest Completeness**
 - Are all software dependencies identified?
 - Versions specified where critical?
 - Any missing dependencies for the tech stack?
 
-Capabilities Coverage
+**Capabilities Coverage**
 - Are all needed skills identified?
 - Are required tools and MCP servers listed?
 - Are sub-agent roles defined where needed?
 - Testing capabilities sufficient?
 
-Plan Quality
+**Plan Quality**
 - Are phases logical and well-sequenced?
 - Are milestones meaningful checkpoints?
 - Is the testing strategy adequate?
 - Are parallelization opportunities captured?
 
-Task Atomicity
+**Task Atomicity**
 - Is each task small enough for single-agent execution?
 - Are acceptance criteria clear and testable?
 - Are dependencies between tasks noted?
 - Can an agent read-complete-verify each task?
 
-Feasibility
+**Feasibility**
 - Can this plan actually be executed?
 - Are there hidden complexities not addressed?
 - Are risk areas identified with mitigation?
 
-Testing Strategy
+**Testing Strategy**
 - Is TDD approach clear?
 - Are critical paths covered by tests?
 - Will 95%+ pass rate be achievable?
 - Are E2E tests planned for key flows?
 
-## Issue Logging Format
+## Issue Logging
 
-Add issues to plan.md Issue Log:
+Log issues in plan.md Issue Log:
 
-Number | Issue | Source | Severity | Status | Resolution
--------|-------|--------|----------|--------|------------
-N | description | Ralph-Develop | Critical/High/Low | Open | -
-
-## Severity Definitions
-
-Critical: Must resolve. Blocks implementation or fundamentally flawed.
-High: Should resolve. Significant gap or weakness.
-Low: Minor refinement. Can address during Build.
-
-## YAGNI Principle
-
-- Only flag issues that block implementation
-- Do NOT suggest features beyond the design
-- Do NOT over-engineer the plan
-- Do NOT add unnecessary capabilities
-- Focus on what is needed to execute the design
-
-The test: If this issue is not fixed, will Build fail or produce something significantly wrong? If no, it is not P1.
-
-## Cycle Stop Rules
-
-After each review cycle, assess the issues found:
-
-- **Minimum:** Always complete at least 2 review cycles
-- **Stop when:** A cycle produces zero Critical and zero High severity issues
-- **Hard maximum:** 10 cycles (if reached, flag for human input)
-- **Structural problem signal:** If past 4 cycles and still finding Critical issues, stop and flag for human input
-
-Per cycle, ask: "Did this cycle surface any Critical or High issues?" If no, you're done.
+| # | Issue | Source | Severity | Status | Resolution |
+|---|-------|--------|----------|--------|------------|
+| N | [description] | Ralph-Develop | Critical/High/Low | Open | - |
 
 ## Exit Criteria
 
-- Minimum 2 review cycles completed
-- Last cycle produced zero Critical and zero High issues
-- Plan covers all design requirements
-- Tasks are atomic and executable
-- Capabilities are sufficient
-- Testing strategy is adequate
+- [ ] Minimum 2 review cycles completed
+- [ ] Last cycle produced zero Critical and zero High issues
+- [ ] Plan covers all design requirements
+- [ ] Tasks are atomic and executable
+- [ ] Capabilities are sufficient
+- [ ] Testing strategy is adequate
 
 ## Completion
 
-When stop rules are met:
-1. Update plan.md status to internal-review-complete
-2. Note cycle count in Issue Log
-3. Output: DEVELOP_INTERNAL_REVIEW_COMPLETE
+When stop conditions are met:
+
+1. Update plan.md frontmatter status to "internal-review-complete"
+2. Add phase completion entry to Issue Log with cycle count
+3. Output: <promise>DEVELOP_INTERNAL_REVIEW_COMPLETE</promise>
+
+## Important
+
+Your job is to make the plan **ready for Build**, not perfect. The plan is ready when:
+- All design requirements have corresponding tasks
+- Dependencies and capabilities are complete
+- Tasks are atomic and executable
+- Testing strategy will catch real issues
+- No major gaps or risks
+```

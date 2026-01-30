@@ -1,13 +1,14 @@
 ---
 type: "prompt"
 description: "External model prompt for Phase 2 review in Design stage"
-version: "2.0.0"
-updated: "2026-01-29"
+version: "3.0.0"
+updated: "2026-01-30"
 scope: "design"
+mechanism_ref: "~/code/_shared/acm/ACM-REVIEW-SPEC.md"
 usage: "Submit to GPT, Gemini, or other external models along with design.md, Brief, and Intent"
 ---
 
-# Design External Review Prompt (Phase 2: External Review)
+# Design External Review (Phase 2)
 
 ## Usage
 
@@ -22,8 +23,6 @@ sed \
   -e '/\[PASTE DESIGN.MD CONTENT HERE\]/{r docs/design.md' -e 'd;}' \
   ~/code/_shared/acm/prompts/design-external-review-prompt.md | pbcopy
 ```
-
-This copies the complete prompt (with documents inlined) to your clipboard.
 
 ---
 
@@ -50,38 +49,28 @@ You are Phase 2: a fresh technical perspective to catch blind spots.
 
 Your job is to validate that the Design soundly delivers what the Brief requires.
 
-## YAGNI Principle — CRITICAL
+## Rules
 
-Apply "You Ain't Gonna Need It" rigorously. This is the most important instruction:
-
-- Only flag issues that would **block or significantly harm** implementation
+- YAGNI: Only flag issues that would **block or significantly harm** implementation
 - Do NOT suggest features, components, or additions
 - Do NOT ask "what about X?" unless X is critical to Brief requirements
 - If something is explicitly out of scope, respect that decision
 - Do NOT backdoor scope expansion as "architectural considerations"
 - Low-impact issues should not be reported at all
-
-**The test for every issue:** "If this isn't fixed, will the implementation fail or be significantly flawed?" If no, don't report it.
+- The test: "If this isn't fixed, will the implementation fail or be significantly flawed?" If no, don't report it.
 
 ## Your Task
 
 Review the Design against the Brief and Intent. Look for:
 
-1. **Brief/Design Misalignment** — Does the design actually deliver what the Brief requires? Are there Brief requirements the design doesn't address?
-
-2. **Architectural Weaknesses** — Are there technical decisions that seem unsound, risky, or inappropriate for the requirements?
-
-3. **Tech Stack Fit** — Are the chosen technologies appropriate for the constraints and requirements? Any red flags?
-
-4. **Interface Gaps** — Would a developer know what to build? Are there UI/UX or format decisions that are too vague?
-
-5. **Data Model Issues** — Do the data structures support the requirements? Any integrity or scalability concerns?
-
-6. **Capability Gaps** — Are the identified tools/skills/agents sufficient? Any obvious missing dependencies?
-
-7. **Integration Risks** — Are there integration points that seem fragile or underspecified?
-
-8. **Security Concerns** — Any obvious security issues given the requirements? (Don't audit exhaustively — just flag obvious gaps)
+1. **Brief/Design Misalignment** — Does the design actually deliver what the Brief requires?
+2. **Architectural Weaknesses** — Technical decisions that seem unsound or risky?
+3. **Tech Stack Fit** — Technologies appropriate for constraints and requirements?
+4. **Interface Gaps** — Would a developer know what to build?
+5. **Data Model Issues** — Data structures support the requirements?
+6. **Capability Gaps** — Tools/skills/agents sufficient?
+7. **Integration Risks** — Integration points fragile or underspecified?
+8. **Security Concerns** — Obvious security issues? (Don't audit exhaustively)
 
 ## Output Format
 
@@ -89,11 +78,11 @@ Review the Design against the Brief and Intent. Look for:
 
 For each **significant** issue only:
 - **Issue:** [Brief description]
-- **Impact:** High / Medium (no Low — if it's low impact, don't report it)
+- **Impact:** High / Medium (no Low)
 - **Rationale:** [Why this blocks or harms implementation]
 - **Suggestion:** [Minimal fix — not scope expansion]
 
-**If you find no significant issues, say so.** An empty Issues section is a valid outcome.
+**If you find no significant issues, say so.**
 
 ### Strengths
 
@@ -101,36 +90,20 @@ What's working well technically? (2-3 points max)
 
 ### Questions for Develop
 
-Questions that Develop needs to answer during implementation — NOT suggestions for scope expansion.
+Questions that Develop needs to answer — NOT suggestions for scope expansion.
 
-Rules for this section:
+Rules:
 - Only include questions where the answer affects implementation decisions
 - Each question must relate to something already in the design
-- Do NOT use this section to suggest features or components
-- Do NOT ask "have you considered adding X?"
-- If you can't think of questions that meet these criteria, leave this section empty
+- If you can't think of qualifying questions, leave this section empty
 
 ## What NOT To Do
 
 - Do NOT suggest adding features, components, or capabilities beyond Brief scope
-- Do NOT flag cosmetic issues (naming, formatting, minor clarity)
+- Do NOT flag cosmetic issues
 - Do NOT report issues just to have something to report
-- Do NOT treat "Questions" as a backdoor for suggestions
-- Do NOT second-guess explicit scope decisions from the Brief
 - Do NOT recommend "enterprise" patterns for personal/MVP projects
-- Do NOT suggest over-engineering for simplicity's sake
-
-## What You're Solving For
-
-The Design is ready for Develop when:
-- Architecture is sound for the requirements
-- A developer would know what to build
-- Technology choices are appropriate
-- Interface/format is clear
-- Capabilities are identified
-- No major gaps or contradictions
-
-Your job is to confirm it's ready, or identify the specific things preventing that. Nothing more.
+- Do NOT suggest over-engineering
 
 ---
 
@@ -155,23 +128,17 @@ Your job is to confirm it's ready, or identify the specific things preventing th
 
 ## Type-Specific Modules
 
-For certain project types, append additional focus areas. Use sparingly.
-
 ### App Module
-
-Add for App projects:
 
 ```
 Additional checks for Apps:
 
-- **Scalability Mismatch** — Is the architecture appropriately sized for the scale modifier (personal/shared/commercial)?
+- **Scalability Mismatch** — Is the architecture appropriately sized for the scale modifier?
 - **State Management** — Is it clear how state flows through the application?
 - **Error Handling** — Are failure modes and error states addressed?
 ```
 
 ### Workflow Module
-
-Add for Workflow projects:
 
 ```
 Additional checks for Workflows:
@@ -183,8 +150,6 @@ Additional checks for Workflows:
 
 ### Artifact Module
 
-Add for Artifact projects:
-
 ```
 Additional checks for Artifacts:
 
@@ -192,30 +157,3 @@ Additional checks for Artifacts:
 - **Content Dependencies** — Are all inputs and source materials identified?
 - **Capability Fit** — Are the chosen tools/skills appropriate for the format?
 ```
-
----
-
-## Capturing Feedback
-
-After receiving external feedback:
-
-1. **Filter aggressively** — Ignore suggestions that expand scope or over-engineer
-2. Extract only issues that genuinely affect implementation soundness
-3. Log in design.md's Issue Log with source attribution
-4. Cross-reference multiple reviewers — if only one model flags it and it's not clearly blocking, probably not P1
-5. P1 = blocks Develop or creates significant technical debt. Everything else is P2 or ignore.
-
----
-
-## When to Stop Reviewing
-
-**Cycle stop rules (same as internal review):**
-
-- **Minimum:** 2 external review cycles
-- **Stop when:** A cycle produces zero Critical and zero High severity issues
-- **Hard maximum:** 10 cycles
-- **Typical:** 1-2 rounds for most projects. Complex commercial projects may need 2-3.
-
-**Per cycle, ask:** "Did this cycle surface any Critical or High issues?" If no, you're done.
-
-**Cross-reviewer signal:** If multiple reviewers flag the same issue, it's likely Critical or High regardless of how each reviewer rated it.

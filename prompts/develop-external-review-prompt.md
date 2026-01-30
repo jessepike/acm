@@ -1,13 +1,14 @@
 ---
 type: "prompt"
 description: "External model prompt for Phase 2 review in Develop stage"
-version: "2.0.0"
-updated: "2026-01-29"
+version: "3.0.0"
+updated: "2026-01-30"
 scope: "develop"
+mechanism_ref: "~/code/_shared/acm/ACM-REVIEW-SPEC.md"
 usage: "Submit to GPT, Gemini, or other external models along with plan artifacts"
 ---
 
-# Develop External Review Prompt (Phase 2: External Review)
+# Develop External Review (Phase 2)
 
 ## Usage
 
@@ -24,8 +25,6 @@ sed \
   -e '/\[PASTE TASKS.MD CONTENT HERE\]/{r docs/tasks.md' -e 'd;}' \
   ~/code/_shared/acm/prompts/develop-external-review-prompt.md | pbcopy
 ```
-
-This copies the complete prompt (with documents inlined) to your clipboard.
 
 ---
 
@@ -54,49 +53,39 @@ You are Phase 2: a fresh perspective to catch blind spots.
 
 Your job is to validate that this plan will successfully implement the design.
 
-## YAGNI Principle — CRITICAL
+## Rules
 
-Apply "You Ain't Gonna Need It" rigorously:
-
-- Only flag issues that would block or significantly harm implementation
+- YAGNI: Only flag issues that would block or significantly harm implementation
 - Do NOT suggest features or capabilities beyond the design
 - Do NOT recommend over-engineering
 - Do NOT add "nice to have" tooling or testing
 - If something is out of scope, respect that decision
-
-The test: "If this isn't fixed, will the build fail or produce something significantly wrong?" If no, don't report it.
+- The test: "If this isn't fixed, will the build fail or produce something significantly wrong?" If no, don't report it.
 
 ## Your Task
 
 Review all artifacts together. Look for:
 
-1. **Design/Plan Misalignment** — Does the plan actually implement everything in the design? Any gaps?
-
-2. **Dependency Gaps** — Are there missing dependencies that will block implementation? Version conflicts?
-
-3. **Capability Gaps** — Are the identified skills/tools/sub-agents sufficient? Anything missing?
-
-4. **Task Coverage** — Do the tasks cover all the work needed? Any design elements with no corresponding tasks?
-
-5. **Task Feasibility** — Are any tasks too large or too vague for single-agent execution?
-
-6. **Sequencing Issues** — Are there dependency problems in the task ordering? Things that will block?
-
-7. **Testing Gaps** — Will the testing strategy catch real issues? Any critical paths not tested?
-
-8. **Integration Risks** — Are there integration points that seem fragile or under-planned?
+1. **Design/Plan Misalignment** — Does the plan actually implement everything in the design?
+2. **Dependency Gaps** — Missing dependencies that will block implementation?
+3. **Capability Gaps** — Skills/tools/sub-agents sufficient?
+4. **Task Coverage** — All design elements have corresponding tasks?
+5. **Task Feasibility** — Any tasks too large or vague for single-agent execution?
+6. **Sequencing Issues** — Dependency problems in task ordering?
+7. **Testing Gaps** — Testing strategy catch real issues?
+8. **Integration Risks** — Integration points fragile or under-planned?
 
 ## Output Format
 
 ### Issues Found
 
 For each significant issue only:
-- Issue: [Brief description]
-- Impact: High / Medium (no Low)
-- Rationale: [Why this blocks or harms implementation]
-- Suggestion: [Minimal fix]
+- **Issue:** [Brief description]
+- **Impact:** High / Medium (no Low)
+- **Rationale:** [Why this blocks or harms implementation]
+- **Suggestion:** [Minimal fix]
 
-If you find no significant issues, say so. An empty Issues section is valid.
+**If you find no significant issues, say so.**
 
 ### Strengths
 
@@ -104,12 +93,11 @@ What's working well? (2-3 points max)
 
 ### Questions for Build
 
-Questions that will need to be answered during implementation — NOT suggestions for scope expansion.
+Questions for implementation — NOT suggestions for scope expansion.
 
 Rules:
 - Only include questions where the answer affects implementation
 - Each question must relate to something already in the plan
-- Do NOT use this to suggest features
 - If no questions meet criteria, leave empty
 
 ## What NOT To Do
@@ -119,17 +107,6 @@ Rules:
 - Do NOT report issues just to have something to report
 - Do NOT over-engineer — this is MVP-focused
 - Do NOT second-guess explicit design decisions
-
-## What You're Solving For
-
-The plan is ready for Environment Setup when:
-- All design requirements have corresponding tasks
-- Dependencies and capabilities are complete
-- Tasks are atomic and executable
-- Testing strategy will catch real issues
-- No major gaps or risks
-
-Your job is to confirm it's ready, or identify specific things preventing that. Nothing more.
 
 ---
 
@@ -168,8 +145,6 @@ Your job is to confirm it's ready, or identify specific things preventing that. 
 
 ### App Module
 
-Add for App projects:
-
 ```
 Additional checks for Apps:
 
@@ -179,8 +154,6 @@ Additional checks for Apps:
 ```
 
 ### Workflow Module
-
-Add for Workflow projects:
 
 ```
 Additional checks for Workflows:
@@ -192,8 +165,6 @@ Additional checks for Workflows:
 
 ### Artifact Module
 
-Add for Artifact projects:
-
 ```
 Additional checks for Artifacts:
 
@@ -201,30 +172,3 @@ Additional checks for Artifacts:
 - **Validation** — How will output quality be verified?
 - **Format Compliance** — Are format requirements covered in tasks?
 ```
-
----
-
-## Capturing Feedback
-
-After receiving external feedback:
-
-1. Filter aggressively — Ignore suggestions that expand scope
-2. Extract only issues that block implementation
-3. Log in plan.md Issue Log with source attribution
-4. Cross-reference reviewers — single-model issues may not be P1
-5. P1 = blocks Build or creates significant problems
-
----
-
-## When to Stop Reviewing
-
-**Cycle stop rules (same as internal review):**
-
-- **Minimum:** 2 external review cycles
-- **Stop when:** A cycle produces zero Critical and zero High severity issues
-- **Hard maximum:** 10 cycles
-- **Typical:** 1-2 rounds for most projects.
-
-**Per cycle, ask:** "Did this cycle surface any Critical or High issues?" If no, you're done.
-
-**Cross-reviewer signal:** If multiple reviewers flag the same issue, it's likely Critical or High regardless of how each reviewer rated it.

@@ -98,7 +98,7 @@ Start with a single file. Split only when a file exceeds ~50 lines or covers cle
 
 ## Content Categories
 
-Rules fall into four categories. Not every project needs all four.
+Rules fall into five categories. Not every project needs all five.
 
 ### Security
 
@@ -128,6 +128,17 @@ Examples:
 - Ask when uncertain rather than assume
 - Never drop database tables without explicit approval
 
+### Session Discipline
+
+Enforce consistent work habits that prevent drift and lost work.
+
+Examples:
+- Commit atomically at each completed unit of work — do not ask, just commit
+- Update `status.md` before ending a session — do not ask, just update
+- Use conventional commit format: `type(scope): description`
+
+**Enforcement:** The acm-env plugin's `Stop` hook checks for uncommitted changes and stale `status.md` before allowing session end.
+
 ### Architectural Boundaries
 
 Enforce structural decisions and design constraints.
@@ -151,6 +162,7 @@ Examples:
 | "Do not modify specs without approval" | Rules | Governance — protected artifacts |
 | "Specs define good before building" | CLAUDE.md | Working norm — flexible guidance |
 | "No new dependencies without approval" | Rules | Architectural boundary — enforcement |
+| "Commit at each work unit, don't ask" | Rules | Session discipline — enforcement |
 | "We prefer composition over inheritance" | CLAUDE.md | Style preference — guidance |
 
 **Heuristic:** If violating it would cause harm, damage, or require rollback — it's a rule. If it's a preference, norm, or explanation — it's context.

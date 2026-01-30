@@ -9,7 +9,7 @@ updated: "2026-01-30"
 ## Current State
 
 - **Stage:** Develop (ACM framework itself)
-- **Focus:** Environment governance — capabilities registry expansion, plugin baseline, declined workflow
+- **Focus:** Rules enforcement layer — `.claude/rules/` governance model integrated into ACM
 
 ## What's Complete
 
@@ -38,6 +38,7 @@ updated: "2026-01-30"
 - [x] ACM-STAGES-SPEC.md (v1.1.0)
 - [x] ACM-ENV-PLUGIN-SPEC.md (v1.0.0)
 - [x] ACM-ENVIRONMENT-SPEC.md (v1.0.0) — environment layer architecture (six primitives, two layers)
+- [x] ACM-RULES-SPEC.md (v1.0.0) — `.claude/rules/` enforcement layer, governance model
 
 ### acm-env Plugin (v1.1.0)
 - [x] Plugin scaffold (`~/.claude/plugins/acm-env/`)
@@ -89,9 +90,11 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 - [x] B33: Environment cleanup — removed cruft plugins, legacy commands, fixed upstream URLs
 
 ### Next Up
+- [ ] B35: Deep dive — agents capability type (P1, L)
+- [ ] B36: Deep dive — skills catalog leverage (P1, L)
+- [ ] B34: Evaluate MCP tools for environment (P1, M)
 - [ ] B15: Deliver stage spec
 - [ ] B18-B19: Memory layer spec and scaffold
-- [ ] B13: Add community sources to registry sync
 
 ## Pending Decisions
 
@@ -114,6 +117,8 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 | 2026-01-30 | Fixed and installed acm-env plugin via local marketplace. Plugin had 3 issues: plugin.json had invalid fields (author as string, commands array), hooks.json used array instead of record, plugin was never registered through marketplace system. Created `acm-plugins` local marketplace at `~/.claude/plugins/acm-plugins/`, moved plugin source inside, registered and installed. Fixed check-deps.sh to query installed_plugins.json instead of filesystem paths. Fixed hardcoded paths in all 4 commands. Rewrote audit.md with explicit delegation to claude-md-management (CLAUDE.md quality scoring) and claude-code-setup (automation recommendations) — "You MUST delegate" pattern replacing vague "if available, delegate". Added capabilities registry validation to audit (cross-references INVENTORY.md against installed plugins). Assessed spec vs intent alignment — spec is sound, implementation had gaps in delegation and registry integration. Created KB articles: CUSTOM-PLUGIN-INSTALLATION.md, PLUGIN-DEVELOPMENT-PATTERNS.md. |
 | 2026-01-30 | Ran `/acm-env:audit` end-to-end with delegation. Both dependency plugins (claude-md-management, claude-code-setup) successfully invoked — no fallbacks needed. Audit found 7 recommendations: fixed acm-env path in .claude/CLAUDE.md, trimmed global CLAUDE.md from 73→60 lines (B26), fixed 4 stale `ack-src/acm/` location paths in spec frontmatter, added frontmatter to DESIGN-HANDOFF.md, deleted stale inbox item (B27). Registry validation confirmed 7 untracked plugins (B23) and built-in skills model issue (B24). No automation recommendations for this spec/docs project. |
 | 2026-01-30 | Massive capabilities registry and environment governance session. Registered 19 plugins total across 3 batches (registry grew 21→39). Added `install_id`/`install_level` to REGISTRY-SPEC.md schema. Defined plugin baseline v2.0.0 (6 required user-level, 15 available project-level, 3 to remove). Cleaned environment: removed superpowers/example-skills/serena, deleted 3 legacy commands (claude-mem, remember, save), disabled frontend-design/context7/playwright at user level. Created 2 new acm-env commands: `/acm-env:refresh` (upstream sync orchestrator) and `/acm-env:capabilities` (registry lookup). Fixed 4 registry scripts: check-freshness.sh (URL parsing + macOS timeout), sync.sh (skip active + declined), promote.sh (pipefail), and 6 upstream URLs. Implemented `declined.yaml` blocklist (15 entries: 3 MCP tools, 3 cruft plugins, 9 unused LSP plugins) integrated into sync pipeline. Researched all Anthropic marketplace plugins and 3 MCP tools. Plugin bumped to v1.1.0. |
+| 2026-01-30 | Environment audit and registry cleanup session. Ran full `/acm-env:audit` with both delegations (claude-md-management, claude-code-setup). Found global CLAUDE.md at 60 lines (5 over limit), serena still installed (CLI uninstall failing), no MCP servers configured. Committed all uncommitted capabilities-registry work from prior session (27 files, 18 plugins, declined.yaml, spec fixes). Bumped REGISTRY-SPEC.md to v1.1.0 — fixed directory name typo, added declined section, updated Anthropic source to include plugins, removed stale brief reference. Updated README with declined.yaml and sources. Added B34 (MCP tools eval, P1), B35 (agents deep dive, P1/L), B36 (skills deep dive, P1/L) to backlog. Both repos pushed to GitHub. |
+| 2026-01-30 | Rules enforcement layer session. Reviewed Claude Code `.claude/rules/` capability and integrated into ACM. Created `.claude/rules/constraints.md` (security, governance, safety, session discipline, architectural boundaries). Created ACM-RULES-SPEC.md (v1.0.0) — two-layer governance model (rules=policy, CLAUDE.md=guidance), five content categories, file organization, lifecycle. Added rules stub for init script. Updated environment spec (governance model section), taxonomy (rules term + design decision), folder structure spec, global/project CLAUDE.md specs, init script. Added session discipline enforcement: rule requiring auto-commit and status.md updates (no asking), plus acm-env Stop hook (`stop-check.sh`) that blocks session end when uncommitted changes or stale status.md detected. |
 
 ---
 
@@ -122,9 +127,10 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 acm-env v1.1.0 with 6 commands fully operational. Capabilities registry at 39 capabilities with full governance: baseline.yaml v2.0.0, declined.yaml blocklist, upstream sync with staging/promote/decline workflow.
 
 **Next priorities:**
+- B35: Deep dive — agents capability type (research, populate capabilities/agents/)
+- B36: Deep dive — skills catalog leverage for ACM workflows
+- B34: Evaluate MCP tools for environment
 - B15: Deliver stage spec
-- B18-B19: Memory layer spec and scaffold
-- B13: Add community sources to registry sync
 
 **Repos:**
 - ACM: https://github.com/jessepike/acm.git → `~/code/_shared/acm/`

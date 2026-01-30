@@ -15,6 +15,8 @@ spec: "ACM-BACKLOG-SPEC.md"
 
 | ID | Item | Type | Component | Pri | Size | Status |
 |----|------|------|-----------|-----|------|--------|
+| B35 | Deep dive: agents capability type — review use cases, value proposition, populate `capabilities/agents/` | Research | capabilities-registry | P1 | L | Pending |
+| B36 | Deep dive: skills catalog — review 16 registered skills, identify leverage opportunities for ACM workflows | Research | capabilities-registry | P1 | L | Pending |
 | B34 | Evaluate MCP tools for environment — memory-mcp, filesystem-mcp, sequentialthinking-mcp, everything-mcp | Enhancement | acm-env | P1 | M | Pending |
 | B15 | Deliver stage spec | New spec | ACM | P2 | M | Pending |
 | B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | Pending |

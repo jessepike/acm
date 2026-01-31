@@ -1,7 +1,7 @@
 ---
 project: "ACM (Agentic Context Management)"
 stage: "Develop"
-updated: "2026-01-30"
+updated: "2026-01-31"
 ---
 
 # Status
@@ -9,7 +9,7 @@ updated: "2026-01-30"
 ## Current State
 
 - **Stage:** Develop (ACM framework itself)
-- **Focus:** Rules enforcement layer and hooks governance — `.claude/rules/`, session discipline, baseline hooks inventory
+- **Focus:** B34 MCP Server Registry — registry schema, plugin-bundled MCPs, baseline governance, community scanning
 
 ## What's Complete
 
@@ -90,10 +90,18 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 - [x] B32: baseline.yaml v2.0.0 — plugin governance with required/available/remove
 - [x] B33: Environment cleanup — removed cruft plugins, legacy commands, fixed upstream URLs
 
+### B34: MCP Server Registry (2026-01-31)
+- [x] WP1: Registry schema + sources (REGISTRY-SPEC.md v1.2.0 — install_vector, parent_plugin, transport, 3 community sources)
+- [x] WP2: Registry entries (4 legacy MCPs deleted + declined, 4 plugin-bundled MCPs created)
+- [x] WP3: Baseline extension (v2.1.0 — mcp_servers sections at user + project level)
+- [x] WP4: Extend refresh command (MCP community scan + triage production)
+- [x] WP5: Extend setup command (MCP server checks section)
+- [x] WP7: Regenerate inventory (39 capabilities, 4 new MCP tools)
+- [x] WP6: First triage report (scanned 3 sources, 500+ servers reviewed, 0 high-relevance)
+
 ### Next Up
 - [ ] B35: Deep dive — agents capability type (P1, L)
 - [ ] B36: Deep dive — skills catalog leverage (P1, L)
-- [ ] B34: MCP Server Registry — Design review pending (brief signed off, design drafted)
 - [ ] B15: Deliver stage spec
 - [ ] B18-B19: Memory layer spec and scaffold
 
@@ -125,15 +133,16 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 
 ---
 
+| 2026-01-31 | B34 MCP Server Registry — Develop complete. All 7 WPs implemented. REGISTRY-SPEC.md v1.2.0 (3 MCP fields, 3 community sources, inbox). 4 legacy MCPs deleted+declined, 4 plugin-bundled MCPs created. baseline.yaml v2.1.0 (mcp_servers governance). refresh.md extended (community scan + triage). setup.md extended (MCP server checks). Inventory regenerated (39 caps). First triage: 500+ servers scanned, 0 high-relevance. Note: 4 plugin-bundled MCP upstream URLs unreachable (anthropics/claude-code-plugins likely private). |
+
 ## Notes for Next Session
 
-acm-env v1.1.0 with 6 commands fully operational. Capabilities registry at 39 capabilities with full governance: baseline.yaml v2.0.0, declined.yaml blocklist, upstream sync with staging/promote/decline workflow.
+B34 complete. acm-env plugin extended with MCP community scanning in refresh and MCP server checks in setup. Capabilities registry at 39 capabilities (19 plugins, 16 skills, 4 MCP tools). baseline.yaml v2.1.0 with mcp_servers governance. 19 declined entries.
 
 **Next priorities:**
-- Link Triage Pipeline: Design stage (new session, run from `~/code/_shared/link-triage-pipeline/`)
-- B34: MCP Server Registry — run Design internal review (Ralph Loop), then Develop
 - B35: Deep dive — agents capability type
 - B36: Deep dive — skills catalog leverage
+- Link Triage Pipeline: Design stage (new session, run from `~/code/_shared/link-triage-pipeline/`)
 - B15: Deliver stage spec
 
 **Repos:**

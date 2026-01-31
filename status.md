@@ -9,7 +9,7 @@ updated: "2026-01-31"
 ## Current State
 
 - **Stage:** Develop (ACM framework itself)
-- **Focus:** ACM MCP server — Develop stage (capability-assessment phase)
+- **Focus:** ACM MCP server — Develop stage (planning phase complete, awaiting execution approval)
 - **Sub-project:** ACM MCP Server entering Develop after Design complete (design v0.3, Phase 1+2 reviews done)
 
 ## What's Complete
@@ -151,6 +151,34 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 ## Notes for Next Session
 
 Scope-aware status command complete. Environment cleanup done — 6 unwanted plugins added to baseline remove + declined.yaml. Global CLAUDE.md trimmed to 52 lines (frontmatter removed). Capabilities registry at 39 capabilities, 27 declined entries.
+
+### ACM MCP Server — Design → Develop Transition (2026-01-31)
+
+**Where we are:** Develop stage, Phases 1-3 complete (intake, capability assessment, planning). Planning artifacts produced and committed. Awaiting human approval to begin execution phases (4-6).
+
+**Read order for next session:**
+1. `docs/design.md` — Technical spec (v0.3, both reviews done)
+2. `docs/plan.md` — 5-phase build plan
+3. `docs/tasks.md` — 25 atomic tasks
+4. `docs/manifest.md` — Dependencies
+5. `docs/capabilities.md` — No gaps, all plugins installed
+
+**What's done:**
+- Design v0.3: Phase 1 internal review (5 High fixed), Phase 2 external review (3 High + 1 Medium fixed)
+- Intake validation complete, all open items resolved
+- manifest.md + capabilities.md approved
+- plan.md + tasks.md drafted
+
+**What's next:**
+- Human approves planning artifacts → proceed to Phase 4 (Review Loop on plan) → Phase 5 (Environment Setup) → Phase 6 (Build)
+- Per ACM-DEVELOP-SPEC: run `/clear`, re-read status → plan → tasks, then begin execution
+
+**Key decisions made this session:**
+- Spec version coupling: code comments only (no runtime check)
+- Server location: inside `acm/acm-server/` (node_modules gitignored)
+- Companion skill: built in same pass
+
+---
 
 **Key files changed this session:**
 - `acm-env/commands/status.md` — scope flag, capabilities sections, MCP reporting

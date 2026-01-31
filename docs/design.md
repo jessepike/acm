@@ -1,8 +1,10 @@
 ---
 type: "design"
 description: "Design for the external-review skill + MCP server — automated Phase 2 review via external LLM APIs"
-version: "1.1.0"
+version: "1.2.0"
 updated: "2026-01-31"
+status: "internal-review-complete"
+review_cycle: 2
 scope: "acm"
 lifecycle: "draft"
 location: "acm/docs/design.md"
@@ -60,8 +62,8 @@ This friction discourages external review usage. Automation removes the friction
 │      └── providers/       │    │                                 │ │
 │          ├── base.py      │    │  Tools:                         │ │
 │          ├── openai_compat.py  │  • list_models()                │ │
-│          ├── google.py    │    │  • review(models[], artifact,   │ │
-│          └── moonshot.py ◀┘    │          prompt) → parallel     │ │
+│          └── google.py   ◀┘    │  • review(models[], artifact,   │ │
+│                                │          prompt) → parallel     │ │
 │                                │          calls → aggregated     │ │
 │                                └─────────────────────────────────┘ │
 │                                              │                      │
@@ -345,7 +347,7 @@ Stage:     Design
 Artifact:  docs/design-brief.md
 Prompt:    acm/prompts/design-external-review-prompt.md
 Models:    kimi-k2, gemini (parallel)
-Cycles:    min 2, max 10
+Cycles:    min 1 per reviewer, max 10
 
 Proceed? (y/n): y
 
@@ -392,7 +394,7 @@ Synthesizing feedback from 2 models...
 Issues found:
   • [Low/N/A] Consider adding sequence diagram — logged only
 
-No Critical or High issues found. Minimum cycles (2) reached.
+No Critical or High issues found. Minimum cycles met.
 
 External review complete.
   Cycles: 2
@@ -717,6 +719,8 @@ updated: "2026-01-31"
 | 6 | Separate moonshot.py provider unnecessary — Kimi K2 is OpenAI-compatible | Ralph-Design | High | Low | Resolved | Collapsed into openai_compat.py, removed moonshot.py |
 | 7 | assembled-prompt.md referenced but not defined in Skill Structure | Ralph-Design | Low | N/A | Open | — |
 | 8 | Capability registry entry has install_level: user but skill lives in ACM repo | Ralph-Design | Low | N/A | Open | — |
+| 9 | UX example still showed "min 2" after cycle rules fix | Ralph-Design | Low | N/A | Resolved | Fixed confirmation flow and cycle progression examples |
+| 10 | Phase 1 review complete | Ralph-Design | - | - | Complete | 2 cycles: 3 Critical, 3 High resolved |
 
 ---
 
@@ -742,6 +746,15 @@ updated: "2026-01-31"
 
 **Outcome:** Cycle 1 complete — 3 Critical + 3 High resolved. Proceeding to cycle 2.
 
+**Cycle 2:**
+**Issues Found:** 0 Critical, 0 High, 1 Low
+**Actions Taken:**
+- **Auto-fixed (1 issue):**
+  - UX example showed stale "min 2" cycle count (Low/N/A) — Fixed both examples
+- **Logged only:** None
+
+**Outcome:** Phase 1 complete — 2 cycles, zero Critical/High in final cycle. Design ready for Phase 2 external review.
+
 ---
 
 ## Revision History
@@ -750,3 +763,4 @@ updated: "2026-01-31"
 |---------|------|---------|
 | 1.0.0 | 2026-01-31 | Initial spec — architecture, MCP tools, UX flow, configuration |
 | 1.1.0 | 2026-01-31 | Design review cycle 1: Fixed frontmatter, artifact paths, Phase 2 min cycles. Added ACM MCP server integration, Issue Log, Review Log. Collapsed moonshot provider into openai_compat. |
+| 1.2.0 | 2026-01-31 | Design review cycle 2: Fixed stale UX examples. Phase 1 internal review complete — 2 cycles, 3 Critical + 3 High resolved. |

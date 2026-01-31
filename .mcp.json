@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "acm": {
+      "command": "node",
+      "args": ["/Users/jessepike/code/_shared/acm/acm-server/build/index.js"],
+      "env": {}
+    }
+  }
+}

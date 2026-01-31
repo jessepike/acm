@@ -25,6 +25,7 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | Pending |
 | B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | Blocked by B15 |
 | B40 | Update ACM-STAGES-SPEC.md environment layer references to include ACM MCP server alongside acm-env | Docs | ACM | P2 | S | Done |
+| B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | Pending |
 | B14 | Automated multi-model review orchestration | Architecture | ACM | P3 | L | Pending |
 | B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | Pending |
 | B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | Pending |

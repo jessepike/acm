@@ -1,1 +1,3 @@
 .DS_Store
+acm-server/node_modules/
+acm-server/build/

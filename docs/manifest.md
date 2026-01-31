@@ -30,6 +30,7 @@ design_ref: "docs/design.md"
 |---------|---------|---------|
 | `typescript` | ^5.x | TypeScript compiler |
 | `@types/node` | >= 18 | Node.js type definitions |
+| `vitest` | ^3.x | Test runner — fast, native ESM + TypeScript support |
 
 ## External Services
 

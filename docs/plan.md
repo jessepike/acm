@@ -1,7 +1,7 @@
 ---
 type: "plan"
 project: "ACM MCP Server"
-version: "1.1"
+version: "1.2"
 status: "internal-review-complete"
 created: "2026-01-31"
 design_ref: "docs/design.md"
@@ -43,13 +43,21 @@ Implement all 13 tools in category order. Each tool file follows the same patter
 
 **Exit:** All 13 tools registered, compile clean, handle happy path and error cases. Sandbox enforced on all file reads.
 
-### Phase C: Edge Cases & Error Handling
+### Phase C: Automated Testing
 
-Verify all edge cases produce actionable errors.
+Comprehensive E2E test suite using vitest. Tests call tools programmatically through the McpServer instance and assert on responses. One test file per tool category plus lib tests.
 
-1. **Edge case testing** — missing files, empty KB, no frontmatter, invalid capability_id, `..` in project_path, missing status.md/brief for validate mode
+1. **Test setup** — Install vitest, configure `vitest.config.ts`, add `npm test` script, create test helper that instantiates server and calls tools
+2. **Lib tests** — `src/lib/__tests__/paths.test.ts` (normalizePath, validatePathWithinBase, sandbox rejection), `files.test.ts` (readFile, readFrontmatter, fileExists), `errors.test.ts` (errorResponse format)
+3. **Orchestration tests** — `src/tools/__tests__/orchestration.test.ts` (get_stage for each stage, get_review_prompt for each stage+phase combo, get_transition_prompt with and without validate, brief fallback logic)
+4. **Artifacts tests** — `src/tools/__tests__/artifacts.test.ts` (get_artifact_spec for each artifact enum, get_artifact_stub for each stub, claude_md with project_type variants)
+5. **Project tests** — `src/tools/__tests__/project.test.ts` (get_project_type_guidance, check_project_structure against ACM repo, check_project_health with regex header validation)
+6. **Governance tests** — `src/tools/__tests__/governance.test.ts` (get_rules_spec, get_context_spec for global and project levels)
+7. **Capabilities tests** — `src/tools/__tests__/capabilities.test.ts` (query_capabilities with type/tags/keyword filters, get_capability_detail with valid and invalid IDs)
+8. **Knowledge tests** — `src/tools/__tests__/knowledge.test.ts` (query_knowledge with matching and non-matching queries, empty results)
+9. **Edge case tests** — across all test files: missing files → `isError`, invalid inputs → `isError`, sandbox violations → `isError`, no crashes
 
-**Exit:** All edge cases return `isError` with actionable messages. No crashes.
+**Exit:** `npm test` passes. All 13 tools tested for happy path and error cases. Edge cases covered.
 
 ### Phase D: Companion Skill
 
@@ -65,37 +73,31 @@ Build the ACM Workflow skill that teaches agents when/how to use tools.
 End-to-end verification against success criteria.
 
 1. **Build verification** — `npm run build` produces working `build/index.js`
-2. **Manual smoke test** — Wire into a consumer project via `.mcp.json`, verify tools respond correctly
-3. **Consumer wiring template** — Document `.mcp.json` snippet for consumer projects
-4. **README.md** — Usage, installation, tool reference
+2. **Test verification** — `npm test` passes with all tests green
+3. **Consumer wiring** — Wire into a consumer project via `.mcp.json`, verify server starts and tools respond
+4. **README.md** — Usage, installation, tool reference, test instructions
 
-**Exit:** All success criteria from Brief verified. Server ready for use.
+**Exit:** All success criteria from Brief verified. `npm test` passes. Server ready for use.
 
 ## Testing Strategy
 
-This is a read-only MCP server with no external dependencies. Testing focuses on manual verification during build and smoke testing at integration.
+Automated E2E testing using vitest. All 13 tools tested programmatically.
 
-**During Build (Phase B):**
-- Compile after each tool file — `npm run build` must pass
-- Verify each tool category returns expected content by calling tools manually via MCP inspector or consumer project
-- Test both happy path (valid inputs) and error path (invalid stage, missing file) per tool
+**Framework:** vitest — native ESM + TypeScript support, no build step needed for tests.
 
-**Edge Cases (Phase C):**
-- Missing spec files → graceful `isError`, not crash
-- Empty capabilities registry → empty results, not error
-- No frontmatter in artifacts → handle gracefully
-- Invalid `capability_id` → rejected before path construction
-- `..` in `project_path` → sandbox rejection
-- `validate: true` with incomplete project → clear error about what's missing
-- Tilde expansion in env var paths → resolves correctly
-- KB directory with no matching results → empty results
+**Test architecture:** Tests instantiate the McpServer directly and call tool handlers programmatically. No stdio transport needed — tests call the server's internal tool dispatch. This tests the actual tool logic without process spawning overhead.
 
-**Integration (Phase E):**
-- Wire into consumer project (e.g., link-triage-pipeline)
-- Call at least one tool from each of the 6 categories
-- Verify success criteria from Brief
+**Coverage per tool category:**
+- **Happy path** — call each tool with valid inputs, assert response contains expected content (file content, correct structure, expected fields)
+- **Error path** — invalid enum values, missing files, sandbox violations → assert `isError: true` with actionable message
+- **Edge cases** — empty results, no frontmatter, missing status.md/brief, `..` traversal attempts
 
-**No automated test framework** — this is an MVP personal tool with 13 read-only tools. The cost of setting up Jest/Vitest exceeds the value for this scope. If tool count grows or logic becomes complex, add automated tests then.
+**Lib coverage:**
+- `paths.ts` — normalizePath tilde expansion, validatePathWithinBase accepts valid / rejects invalid, path separator edge cases
+- `files.ts` — readFile returns content, readFrontmatter parses YAML, fileExists returns boolean
+- `errors.ts` — errorResponse returns correct MCP format
+
+**Run:** `npm test` executes full suite. Target: all tests pass before Phase E integration.
 
 ## Build Principles
 

@@ -20,6 +20,7 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B35 | Agents not consulting capabilities-registry before installing capabilities — review process and diagnose why | Bug | acm-env | P1 | M | — | Pending |
 | B34 | Evaluate MCP tools for environment — memory-mcp, filesystem-mcp, sequentialthinking-mcp, everything-mcp | Enhancement | acm-env | P1 | M | — | Pending |
 | B44 | Standardize brief frontmatter `status` field to use stage-based values (`discover-complete`, `design-in-progress`, etc.) — let ACM MCP server surface pipeline position via `check_project_health` | Enhancement | ACM | P2 | M | — | Pending |
+| B45 | Stage transition cleanup process — when a sub-project completes a stage or the docs/ workspace shifts to a new sub-project, archive previous stage artifacts to `_archive/{project-name}/`. Define convention in ACM-STAGES-SPEC or ACM-FOLDER-STRUCTURE-SPEC. | Enhancement | ACM | P2 | S | — | Pending |
 | B15 | Deliver stage spec | New spec | ACM | P2 | M | — | Pending |
 | B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | — | Pending |
 | B19 | Scaffold memory repo at `~/code/_shared/memory/` | Setup | memory | P2 | S | — | Pending |
@@ -29,7 +30,7 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
 | B40 | Update ACM-STAGES-SPEC.md environment layer references to include ACM MCP server alongside acm-env | Docs | ACM | P2 | S | — | Done |
 | B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | — | Pending |
-| B14 | Automated multi-model review orchestration (external-review skill) | Architecture | ACM | P3 | L | Design | Pending |
+| B14 | Automated multi-model review orchestration (external-review skill + MCP server) | Architecture | ACM | P1 | L | Design | In Progress |
 | B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | — | Pending |
 | B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | — | Pending |
 | B22 | Community knowledge ingestion pipeline | Architecture | kb | P3 | L | — | Pending |

@@ -1,832 +1,694 @@
 ---
-type: "design"
-project: "ACM MCP Server"
-version: "0.3"
-status: "internal-review-complete"
-created: "2026-01-31"
+type: "specification"
+description: "Defines the external-review skill — automated Phase 2 review via external LLM APIs"
+version: "1.0.0"
 updated: "2026-01-31"
-brief_ref: "docs/inbox/acm-mcp-server-brief.md"
-intent_ref: "intent.md"
+scope: "acm"
+lifecycle: "draft"
+location: "acm/ACM-EXTERNAL-REVIEW-SKILL-SPEC.md"
+implements: "ACM-REVIEW-SPEC v1.2.0"
 ---
 
-# Design: ACM MCP Server
+# ACM External Review Skill Specification
 
-## Summary
+## Purpose
 
-A read-only TypeScript MCP server that exposes ACM's process knowledge — specs, prompts, stubs, project validation, and capabilities registry — as 13 tools over stdio transport. Paired with a companion ACM Workflow skill that teaches agents when and how to use each tool. Together, they allow any agent in a consumer project to query ACM framework knowledge without the ACM repo being open.
+Define the `external-review` skill — an MCP-based automation that executes Phase 2 external reviews by calling external LLM APIs (Kimi K2, Gemini, DeepSeek, etc.) within Ralph Loop cycles, with Claude Code as the orchestrating synthesizer.
 
-**Classification:** App · personal · mvp · standalone
-**Primary deliverables:** `acm/acm-server/` (MCP server) + `acm/skills/acm-workflow/` (companion skill)
+## Problem Statement
+
+Phase 2 external review currently requires manual effort:
+1. Copy artifact + prompt to external model interface
+2. Copy response back to Claude Code
+3. Repeat for each model
+4. Manually trigger synthesis
+
+This friction discourages external review usage. Automation removes the friction while preserving the review quality.
+
+---
+
+## Design Goals
+
+| Goal | Description |
+|------|-------------|
+| **One-command execution** | User runs `/external-review`, everything else is inferred or configured |
+| **Confirm before execute** | Show resolved configuration, wait for user confirmation |
+| **Same rules apply** | Cycle rules, severity, complexity, action matrix from ACM-REVIEW-SPEC |
+| **Provider-abstracted** | Swap models by editing config, not code |
+| **Parallel execution** | Multiple models called simultaneously |
+| **Claude Code synthesizes** | External models provide feedback; Claude Code decides actions |
 
 ---
 
 ## Architecture
 
-### System Context
-
 ```
-┌─────────────────────────────────┐
-│  Consumer Project               │
-│  (e.g., link-triage-pipeline)   │
-│                                 │
-│  Claude Code ──stdio──► ACM     │
-│  Agent                  MCP     │
-│                         Server  │
-│                                 │
-│  .mcp.json wires up server      │
-│  CLAUDE.md references ACM skill │
-└─────────────────────────────────┘
-         │
-         │ reads files at request time
-         ▼
-┌─────────────────────────────────┐
-│  ~/code/_shared/acm/            │
-│  ├── ACM-*-SPEC.md              │
-│  ├── prompts/                   │
-│  ├── stubs/                     │
-│  └── kb/                        │
-│                                 │
-│  ~/code/_shared/                │
-│  └── capabilities-registry/     │
-│      └── inventory.json         │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                     EXTERNAL REVIEW SYSTEM                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ~/.claude/                                                         │
+│  └── models.yaml ─────────┐    (API keys, user-specific, gitignored)│
+│                           │                                         │
+│  acm/skills/external-review/                                        │
+│  ├── SKILL.md             │                                         │
+│  ├── config.yaml ─────────┼──▶ ┌─────────────────────────────────┐ │
+│  └── server/              │    │       MCP SERVER                │ │
+│      ├── external_review_server.py     (external-review)         │ │
+│      └── providers/       │    │                                 │ │
+│          ├── base.py      │    │  Tools:                         │ │
+│          ├── openai_compat.py  │  • list_models()                │ │
+│          ├── google.py    │    │  • review(models[], artifact,   │ │
+│          └── moonshot.py ◀┘    │          prompt) → parallel     │ │
+│                                │          calls → aggregated     │ │
+│                                └─────────────────────────────────┘ │
+│                                              │                      │
+│  acm/prompts/                                │                      │
+│  ├── external-review-prompt.md              │                      │
+│  ├── design-external-review-prompt.md       │                      │
+│  └── develop-external-review-prompt.md      │                      │
+│                                              ▼                      │
+│  ┌───────────────────────────────────────────────────────────────┐ │
+│  │                      CLAUDE CODE                              │ │
+│  │  ┌─────────────────────────────────────────────────────────┐ │ │
+│  │  │  Ralph Loop (external review cycle)                     │ │ │
+│  │  │                                                         │ │ │
+│  │  │  1. Resolve stage, artifact, prompt, models             │ │ │
+│  │  │  2. Display configuration, wait for confirmation        │ │ │
+│  │  │  3. Call MCP: review(["kimi-k2","gemini"], ...)        │ │ │
+│  │  │  4. Receive aggregated feedback from all models         │ │ │
+│  │  │  5. Synthesize (cross-reference, consensus weight)      │ │ │
+│  │  │  6. Classify severity/complexity per ACM-REVIEW-SPEC    │ │ │
+│  │  │  7. Auto-fix Low/Medium complexity, flag High to user   │ │ │
+│  │  │  8. Update artifact + Issue Log + Review Log            │ │ │
+│  │  │  9. Check stop conditions → loop or exit                │ │ │
+│  │  └─────────────────────────────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
-
-### Directory Structure
-
-```
-acm/acm-server/
-├── src/
-│   ├── index.ts              # Server entry point, transport setup
-│   ├── server.ts             # McpServer instance, tool registration
-│   ├── tools/
-│   │   ├── orchestration.ts  # get_stage, get_review_prompt, get_transition_prompt
-│   │   ├── artifacts.ts      # get_artifact_spec, get_artifact_stub
-│   │   ├── project.ts        # get_project_type_guidance, check_project_structure, check_project_health
-│   │   ├── governance.ts     # get_rules_spec, get_context_spec
-│   │   ├── capabilities.ts   # query_capabilities, get_capability_detail
-│   │   └── knowledge.ts      # query_knowledge
-│   ├── lib/
-│   │   ├── paths.ts          # Path resolution (ACM_ROOT, REGISTRY_ROOT)
-│   │   ├── files.ts          # File reading utilities (readFile, readFrontmatter, fileExists)
-│   │   └── errors.ts         # Error response helpers
-│   └── types.ts              # Shared TypeScript types
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-### Data Flow
-
-All tools follow the same pattern:
-
-1. Agent calls tool via MCP protocol (JSON-RPC over stdio)
-2. Server resolves file path(s) using `lib/paths.ts`
-3. Server reads file(s) from disk at request time (no caching)
-4. Server processes content (parse frontmatter, extract sections, validate structure)
-5. Server returns text content via MCP response
-
-**No caching.** Files are read fresh on every request. ACM specs are actively evolving; stale cache would violate the spec-stability constraint. Given local file I/O, latency is negligible (<50ms per read).
 
 ---
 
-## Tech Stack
+## Skill Structure
 
-| Component | Choice | Rationale |
-|-----------|--------|-----------|
-| **Language** | TypeScript | MCP SDK is TypeScript-first; type safety for schemas |
-| **Runtime** | Node.js (≥18) | Required by MCP SDK |
-| **MCP SDK** | `@modelcontextprotocol/sdk` | Official SDK; provides McpServer, StdioServerTransport |
-| **Schema validation** | `zod` (v3) | SDK's registerTool uses zod for input schemas |
-| **Transport** | stdio | Local, co-located with Claude Code; lowest latency |
-| **Build** | `tsc` | Simple TypeScript compilation; no bundler needed for local server |
-| **Package manager** | npm | Standard; no need for alternatives at this scale |
+```
+acm/skills/external-review/
+├── SKILL.md                          # Instructions, usage, when to invoke
+├── config.yaml                       # Stage→prompt mapping, artifact conventions, defaults
+└── server/
+    ├── external_review_server.py     # MCP server implementation
+    ├── providers/
+    │   ├── __init__.py
+    │   ├── base.py                   # Abstract provider interface
+    │   ├── openai_compat.py          # OpenAI-compatible (DeepSeek, Together, etc.)
+    │   ├── google.py                 # Gemini
+    │   └── moonshot.py               # Kimi K2 (OpenAI-compatible but may need specifics)
+    └── requirements.txt
 
-### Dependencies (production)
-
-- `@modelcontextprotocol/sdk` — MCP protocol implementation
-- `zod` — Schema validation (required by SDK)
-- `gray-matter` — YAML frontmatter parsing (for spec/stub metadata)
-
-### Dependencies (dev)
-
-- `typescript` — Compiler
-- `@types/node` — Node.js type definitions
+~/.claude/
+└── models.yaml                       # API keys — user-specific, NEVER in git
+```
 
 ---
 
-## Tool Schemas
+## Configuration Files
 
-**Note on schema syntax:** All tool schemas use `z.object({...})` as required by the MCP SDK's `registerTool`. The pattern below applies to all 13 tools.
+### models.yaml (User-specific, ~/.claude/models.yaml)
 
-### Orchestration (3 tools)
+```yaml
+# API credentials for external review models
+# This file contains secrets — NEVER commit to git
 
-#### `get_stage`
+models:
+  kimi-k2:
+    provider: moonshot
+    endpoint: https://api.moonshot.cn/v1
+    model: kimi-k2-0905
+    api_key_env: MOONSHOT_API_KEY      # Or inline: api_key: "sk-..."
+    
+  gemini:
+    provider: google
+    endpoint: https://generativelanguage.googleapis.com/v1beta
+    model: gemini-2.0-flash
+    api_key_env: GOOGLE_API_KEY
+    
+  deepseek:
+    provider: openai_compat
+    endpoint: https://api.deepseek.com/v1
+    model: deepseek-chat
+    api_key_env: DEEPSEEK_API_KEY
 
-Returns stage requirements, phases, entry/exit criteria, and review dimensions.
-
-```typescript
-server.registerTool("get_stage", {
-  description: "Get ACM stage requirements and workflow. Use when an agent needs to understand what a stage involves, its phases, entry/exit criteria, and expected outputs. Do NOT use for transition guidance (use get_transition_prompt instead).",
-  inputSchema: z.object({
-    stage: z.enum(["discover", "design", "develop"]).describe("ACM stage name"),
-  }),
-}, handler);
+# Optional: model-specific settings
+settings:
+  kimi-k2:
+    temperature: 0.6
+    min_p: 0.01
+  gemini:
+    temperature: 0.7
+  deepseek:
+    temperature: 0.7
 ```
 
-**Source files:**
-- `ACM-DISCOVER-SPEC.md` → discover
-- `ACM-DESIGN-SPEC.md` → design
-- `ACM-DEVELOP-SPEC.md` → develop
+### config.yaml (Skill defaults, acm/skills/external-review/config.yaml)
 
-**Response:** Full spec content as text. Returns `isError` with actionable message for unsupported stages (e.g., "deliver" → "Stage 'deliver' is not yet supported. Supported stages: discover, design, develop. See backlog item B15.").
+```yaml
+# External Review Skill Configuration
+# Versioned with skill — safe to commit
 
-#### `get_review_prompt`
+version: "1.0.0"
+implements: "ACM-REVIEW-SPEC v1.2.0"
 
-Returns the review prompt for a given stage and phase.
+# Stage → prompt mapping (relative to acm/)
+prompts:
+  discover: "../prompts/external-review-prompt.md"
+  design: "../prompts/design-external-review-prompt.md"
+  develop: "../prompts/develop-external-review-prompt.md"
 
-```typescript
-server.registerTool("get_review_prompt", {
-  description: "Get the review prompt for a stage and review phase. Use when preparing to run an internal (Ralph Loop) or external review. Returns the full prompt text ready for use.",
-  inputSchema: z.object({
-    stage: z.enum(["discover", "design", "develop"]).describe("ACM stage"),
-    phase: z.enum(["internal", "external"]).describe("Review phase"),
-  }),
-}, handler);
+# Stage → default artifact path (relative to project root)
+artifacts:
+  discover: "docs/brief.md"
+  design: "docs/design-brief.md"
+  develop: "docs/implementation-spec.md"
+
+# Default models if --models not specified
+default_models:
+  - kimi-k2
+  - gemini
+
+# Cycle rules (embedded from ACM-REVIEW-SPEC v1.2.0)
+cycles:
+  min: 2
+  max: 10
+  structural_problem_signal: 4    # If past N cycles and still finding Critical
+  stuck_signal: 3                 # If same issue persists for N iterations
+
+# Execution settings
+execution:
+  parallel: true                  # Call models in parallel
+  timeout_seconds: 120            # Per-model timeout
+  retry_attempts: 2               # Retry on transient failure
 ```
-
-**Source files (prompt map):**
-
-| Stage | Internal | External |
-|-------|----------|----------|
-| discover | `prompts/ralph-review-prompt.md` | `prompts/external-review-prompt.md` |
-| design | `prompts/design-ralph-review-prompt.md` | `prompts/design-external-review-prompt.md` |
-| develop | `prompts/develop-ralph-review-prompt.md` | `prompts/develop-external-review-prompt.md` |
-
-**Response:** Raw prompt content as text.
-
-#### `get_transition_prompt`
-
-Returns the transition prompt for moving between stages, with optional prerequisite validation.
-
-```typescript
-server.registerTool("get_transition_prompt", {
-  description: "Get guidance for transitioning between ACM stages. Returns the transition prompt content. Set validate=true to also check prerequisites against the project's current state (reads status.md and brief).",
-  inputSchema: z.object({
-    transition: z.enum(["discover_to_design", "design_to_develop"]).describe("Stage transition"),
-    project_path: z.string().optional().describe("Project root path. Defaults to cwd."),
-    validate: z.boolean().optional().describe("If true, reads project status.md and brief to check prerequisites. Default: false."),
-  }),
-}, handler);
-```
-
-**Source files:**
-- `prompts/start-design-prompt.md` → discover_to_design
-- `prompts/start-develop-prompt.md` → design_to_develop
-
-**When `validate: true`:** Reads `{project_path}/status.md` and the project's brief file. Brief resolution: check `{project_path}/docs/brief.md` first; if missing, glob `{project_path}/docs/inbox/*-brief.md` and use the first match. Checks stage/phase/status from status.md frontmatter against transition prerequisites. Returns prompt content plus a validation summary (prerequisites met/not met, with specifics). Returns `isError` if status.md or brief cannot be found.
-
-### Artifacts (2 tools)
-
-#### `get_artifact_spec`
-
-Returns the specification for a named ACM artifact type.
-
-```typescript
-server.registerTool("get_artifact_spec", {
-  description: "Get the ACM specification for an artifact type. Use when you need to understand what a valid artifact looks like — required sections, frontmatter, formatting rules.",
-  inputSchema: z.object({
-    artifact: z.enum([
-      "brief", "intent", "status", "readme", "context",
-      "rules", "design", "backlog", "folder_structure",
-      "project_types", "stages", "review"
-    ]).describe("Artifact type"),
-  }),
-}, handler);
-```
-
-**Source file map:**
-
-| Artifact | File |
-|----------|------|
-| brief | `ACM-BRIEF-SPEC.md` |
-| intent | `ACM-INTENT-SPEC.md` |
-| status | `ACM-STATUS-SPEC.md` |
-| readme | `ACM-README-SPEC.md` |
-| context | `ACM-CONTEXT-ARTIFACT-SPEC.md` |
-| rules | `ACM-RULES-SPEC.md` |
-| design | `ACM-DESIGN-SPEC.md` |
-| backlog | `ACM-BACKLOG-SPEC.md` |
-| folder_structure | `ACM-FOLDER-STRUCTURE-SPEC.md` |
-| project_types | `ACM-PROJECT-TYPES-SPEC.md` |
-| stages | `ACM-STAGES-SPEC.md` |
-| review | `ACM-REVIEW-SPEC.md` |
-
-**Response:** Full spec content as text.
-
-#### `get_artifact_stub`
-
-Returns a starter template for a named artifact.
-
-```typescript
-server.registerTool("get_artifact_stub", {
-  description: "Get a starter template for an ACM artifact. Use when initializing a new project or creating a new artifact. Returns the template with placeholder values ready to fill in.",
-  inputSchema: z.object({
-    artifact: z.enum([
-      "brief", "intent", "status", "rules_constraints", "claude_md"
-    ]).describe("Artifact to get stub for"),
-    project_type: z.enum(["app", "workflow", "artifact"]).optional().describe("Project type — used to select the correct claude_md stub. Defaults to 'app'. Ignored for non-claude_md artifacts."),
-  }),
-}, handler);
-```
-
-**Source files:** `stubs/{artifact}.md` — direct file mapping (`brief` → `stubs/brief.md`, etc.). Note: `rules_constraints` maps to `stubs/rules-constraints.md` (underscore → hyphen conversion). The `claude_md` stub maps to `stubs/claude-md/` directory — returns the file matching the `project_type` input (`app.md`, `workflow.md`, or `artifact.md`). Defaults to `app.md` when `project_type` is omitted.
-
-### Project (3 tools)
-
-#### `get_project_type_guidance`
-
-Returns guidance for a project classification.
-
-```typescript
-server.registerTool("get_project_type_guidance", {
-  description: "Get ACM guidance for a project type classification. Use during Discover or Design to understand what outputs, review focus, and structure a project type requires.",
-  inputSchema: z.object({
-    type: z.enum(["app", "workflow", "artifact"]).describe("Project type"),
-    scale: z.enum(["personal", "commercial"]).optional().describe("Project scale modifier"),
-    scope: z.enum(["mvp", "full"]).optional().describe("Project scope modifier"),
-  }),
-}, handler);
-```
-
-**Source file:** `ACM-PROJECT-TYPES-SPEC.md` — reads spec, extracts relevant section for the requested type + modifiers.
-
-#### `check_project_structure`
-
-Validates a project's folder structure against ACM-FOLDER-STRUCTURE-SPEC.
-
-```typescript
-server.registerTool("check_project_structure", {
-  description: "Validate a project's folder structure against ACM spec. Checks for required directories and files. Use when auditing a project or after scaffolding.",
-  inputSchema: z.object({
-    project_path: z.string().optional().describe("Project root path. Defaults to cwd."),
-  }),
-}, handler);
-```
-
-**Logic:**
-1. Resolve project path (cwd or explicit)
-2. Check base structure existence: `.claude/`, `.claude/CLAUDE.md`, `.claude/rules/`, `docs/`, `docs/intent.md`, `docs/brief.md`, `docs/inbox/`, `_archive/`, `README.md`
-3. Return per-item pass/fail with overall summary
-
-**Response format:**
-```
-Project Structure Check: /path/to/project
-✓ .claude/CLAUDE.md
-✓ .claude/rules/
-✓ docs/
-✓ docs/intent.md
-✗ docs/brief.md — missing
-✓ docs/inbox/
-✓ _archive/
-✓ README.md
-
-Result: 7/8 passed. Missing: docs/brief.md
-```
-
-#### `check_project_health`
-
-Structural health checks — file presence, frontmatter validation, required sections.
-
-```typescript
-server.registerTool("check_project_health", {
-  description: "Run structural health checks on an ACM project. Checks file presence, frontmatter validity, and required sections in key artifacts. Does NOT perform semantic analysis. Use for project audits or pre-review validation.",
-  inputSchema: z.object({
-    project_path: z.string().optional().describe("Project root path. Defaults to cwd."),
-  }),
-}, handler);
-```
-
-**Checks performed:**
-1. **File presence** — same as `check_project_structure`
-2. **Frontmatter validation** — key artifacts (`intent.md`, `brief.md`, `status.md`, `CLAUDE.md`) have valid YAML frontmatter
-3. **Required sections** — brief has: Summary, Scope, Success Criteria, Constraints, Decisions; intent has: Problem, Outcome, Why It Matters; status has: Current State; CLAUDE.md has: Context Map or Orientation
-
-**Response:** Grouped by check category with pass/fail per item and overall health summary.
-
-### Governance (2 tools)
-
-#### `get_rules_spec`
-
-```typescript
-server.registerTool("get_rules_spec", {
-  description: "Get the ACM rules governance specification. Use when setting up or auditing a project's .claude/rules/ directory — covers what rules are, categories, file organization, and lifecycle.",
-  inputSchema: z.object({}),
-}, handler);
-```
-
-**Source file:** `ACM-RULES-SPEC.md`
-
-#### `get_context_spec`
-
-```typescript
-server.registerTool("get_context_spec", {
-  description: "Get the ACM specification for CLAUDE.md context artifacts. Use when creating or auditing CLAUDE.md files — covers required sections, what belongs in global vs project level.",
-  inputSchema: z.object({
-    level: z.enum(["global", "project"]).describe("Which CLAUDE.md spec to return"),
-  }),
-}, handler);
-```
-
-**Source files:**
-- `ACM-GLOBAL-CLAUDE-MD-SPEC.md` → global
-- `ACM-PROJECT-CLAUDE-MD-SPEC.md` → project
-
-### Capabilities (2 tools)
-
-#### `query_capabilities`
-
-```typescript
-server.registerTool("query_capabilities", {
-  description: "Search the capabilities registry by keyword, type, or tags. Use when an agent needs to find available tools, skills, agents, or plugins for a task. Returns matching capability summaries.",
-  inputSchema: z.object({
-    query: z.string().optional().describe("Keyword search across name, description, tags"),
-    type: z.enum(["skill", "tool", "agent", "plugin"]).optional().describe("Filter by capability type"),
-    tags: z.array(z.string()).optional().describe("Filter by tags (AND logic)"),
-  }),
-}, handler);
-```
-
-**Source file:** `~/code/_shared/capabilities-registry/inventory.json`
-
-**Logic:** Load inventory.json, filter by type/tags/keyword, return matching entries with name, type, description, tags, install_level.
-
-#### `get_capability_detail`
-
-```typescript
-server.registerTool("get_capability_detail", {
-  description: "Get full details for a specific capability by ID. Use when you need installation instructions, configuration, or complete metadata for a capability found via query_capabilities.",
-  inputSchema: z.object({
-    capability_id: z.string().regex(/^[a-z0-9][a-z0-9-]*$/).describe("Capability ID (e.g., 'acm-env', 'claude-md-management'). Must match pattern: lowercase alphanumeric with hyphens."),
-  }),
-}, handler);
-```
-
-**Source file:** Reads the capability's `capability.yaml` from `~/code/_shared/capabilities-registry/capabilities/{id}/capability.yaml`.
-
-### Knowledge (1 tool)
-
-#### `query_knowledge`
-
-```typescript
-server.registerTool("query_knowledge", {
-  description: "Search ACM knowledge base entries by topic. Simple text match across KB article titles and content. Use for finding process learnings and design patterns. For rich semantic search, use the Knowledge Base MCP server (when available).",
-  inputSchema: z.object({
-    query: z.string().describe("Search term or topic"),
-  }),
-}, handler);
-```
-
-**Source directory:** `~/code/_shared/acm/kb/`
-
-**Logic:**
-1. List all `.md` files in `kb/` (excluding `README.md`)
-2. For each file: read content, check if query appears in filename or content (case-insensitive)
-3. Return matching entries with title (from frontmatter or filename), relevance snippet (first match context), and file path
 
 ---
 
-## Path Configuration
+## MCP Server Specification
 
-### Mechanism
+### Tools
 
-Two environment variables control path resolution, with hardcoded defaults for MVP:
+#### `list_models`
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `ACM_ROOT` | `~/code/_shared/acm` | Root of ACM repository |
-| `ACM_REGISTRY_ROOT` | `~/code/_shared/capabilities-registry` | Root of capabilities registry |
+Returns available models from `models.yaml`.
 
-### Path Normalization
+**Parameters:** None
 
-All path inputs — env vars, tool arguments, and internal defaults — are normalized before use:
-
-1. **Tilde expansion:** Replace leading `~/` with `os.homedir() + '/'` (Node.js does not expand `~` automatically)
-2. **Resolution:** Apply `path.resolve()` to produce absolute paths
-3. **Validation:** Verify resolved path is within its expected base directory (see Path Sandboxing below)
-
-### Resolution Order
-
-```typescript
-// lib/paths.ts
-function normalizePath(p: string): string {
-  if (p.startsWith('~/')) {
-    p = path.join(os.homedir(), p.slice(2));
-  }
-  return path.resolve(p);
+**Response:**
+```json
+{
+  "models": [
+    {
+      "id": "kimi-k2",
+      "provider": "moonshot",
+      "model": "kimi-k2-0905",
+      "available": true
+    },
+    {
+      "id": "gemini",
+      "provider": "google", 
+      "model": "gemini-2.0-flash",
+      "available": true
+    }
+  ]
 }
-
-const ACM_ROOT = normalizePath(
-  process.env.ACM_ROOT || '~/code/_shared/acm'
-);
-
-const REGISTRY_ROOT = normalizePath(
-  process.env.ACM_REGISTRY_ROOT || '~/code/_shared/capabilities-registry'
-);
 ```
 
-### Path Sandboxing
+#### `review`
 
-Every file read is validated against allowed base directories before execution:
+Sends artifact + prompt to specified models in parallel, returns aggregated responses.
 
-| Tool Category | Allowed Base(s) |
-|---------------|----------------|
-| Orchestration, Artifacts, Governance, Knowledge | `ACM_ROOT` only |
-| Capabilities | `REGISTRY_ROOT` only |
-| Project (`check_project_structure`, `check_project_health`, `get_transition_prompt` with validate) | Resolved `project_path` only |
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `models` | string[] | Yes | Model IDs from models.yaml |
+| `artifact_content` | string | Yes | Full text of artifact being reviewed |
+| `prompt` | string | Yes | Review prompt with instructions |
+| `timeout` | number | No | Override default timeout (seconds) |
 
-**Enforcement:** After resolving a file path, call `fs.realpath()` and verify the result starts with the expected base directory. Reject with `isError` and actionable message if path escapes bounds. Constrain `capability_id` to pattern `^[a-z0-9][a-z0-9-]*$` before path construction.
+**Response:**
+```json
+{
+  "reviews": [
+    {
+      "model": "kimi-k2",
+      "status": "success",
+      "response": "## Review Feedback\n\n### Critical Issues\n...",
+      "tokens_used": { "input": 2341, "output": 892 },
+      "latency_ms": 4521,
+      "timestamp": "2026-01-31T14:23:45Z"
+    },
+    {
+      "model": "gemini",
+      "status": "success",
+      "response": "## Review Feedback\n\n### Critical Issues\n...",
+      "tokens_used": { "input": 2341, "output": 756 },
+      "latency_ms": 3892,
+      "timestamp": "2026-01-31T14:23:44Z"
+    }
+  ],
+  "models_called": ["kimi-k2", "gemini"],
+  "parallel": true,
+  "total_latency_ms": 4521
+}
+```
 
-### Consumer Wiring
+**Error Response:**
+```json
+{
+  "reviews": [
+    {
+      "model": "kimi-k2",
+      "status": "error",
+      "error": "API rate limit exceeded",
+      "retries_attempted": 2
+    }
+  ]
+}
+```
 
-`.mcp.json` in consumer project:
+### Provider Interface
+
+```python
+# base.py
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
+@dataclass
+class ReviewResponse:
+    status: str                    # "success" | "error"
+    response: str | None           # Model response text
+    error: str | None              # Error message if failed
+    tokens_used: dict | None       # {"input": N, "output": N}
+    latency_ms: int
+
+class BaseProvider(ABC):
+    """Abstract base class for LLM providers."""
+    
+    @abstractmethod
+    async def review(
+        self,
+        artifact_content: str,
+        prompt: str,
+        model: str,
+        settings: dict
+    ) -> ReviewResponse:
+        """Send review request to provider."""
+        pass
+    
+    @abstractmethod
+    async def health_check(self) -> bool:
+        """Verify API connectivity."""
+        pass
+```
+
+---
+
+## User Experience
+
+### Invocation
+
+```bash
+# Use defaults (models from config, auto-detect stage/artifact)
+/external-review
+
+# Specify models
+/external-review --models kimi-k2,gemini
+
+# Override stage detection
+/external-review --stage design
+
+# Override artifact path
+/external-review --artifact docs/custom-brief.md
+
+# Full override
+/external-review --stage design --artifact docs/design-brief.md --models kimi-k2,gemini,deepseek
+```
+
+### Confirmation Flow
+
+```
+> /external-review
+
+External Review Configuration
+─────────────────────────────
+Stage:     Design
+Artifact:  docs/design-brief.md
+Prompt:    acm/prompts/design-external-review-prompt.md
+Models:    kimi-k2, gemini (parallel)
+Cycles:    min 2, max 10
+
+Proceed? (y/n): y
+
+Starting external review cycle 1/10...
+  → Calling kimi-k2... done (4.2s)
+  → Calling gemini... done (3.8s)
+
+Synthesizing feedback from 2 models...
+
+Issues found:
+  • [Critical/Medium] Missing error handling for API timeout — auto-fixing
+  • [High/Low] Success criteria not measurable — auto-fixing  
+  • [High/High] Unclear data model for user sessions — flagging for user
+
+Auto-fixed 2 issues. 1 issue requires your input.
+
+───────────────────────────────────────────────────────────
+Flagged Issue: Unclear data model for user sessions
+Severity: High | Complexity: High
+
+Multiple reviewers flagged this:
+  • kimi-k2: "Session state structure undefined, could cause inconsistency"
+  • gemini: "No schema for session data, blocking for implementation"
+
+This needs investigation. Options:
+  1. Define session schema in design-brief.md
+  2. Defer to implementation with explicit spike task
+  3. Mark as out-of-scope with rationale
+
+Your decision: 
+```
+
+### Cycle Progression
+
+After user resolves flagged issues, cycle continues:
+
+```
+Continuing external review cycle 2/10...
+  → Calling kimi-k2... done (3.9s)
+  → Calling gemini... done (4.1s)
+
+Synthesizing feedback from 2 models...
+
+Issues found:
+  • [Low/N/A] Consider adding sequence diagram — logged only
+
+No Critical or High issues found. Minimum cycles (2) reached.
+
+External review complete.
+  Cycles: 2
+  Issues resolved: 3 (2 auto-fixed, 1 user-resolved)
+  Issues logged: 1 (Low severity)
+
+Updating artifact status to 'external-review-complete'...
+Done.
+```
+
+---
+
+## Integration with Ralph Loop
+
+The skill invokes Ralph Loop with the external review prompt. The prompt instructs Claude Code to:
+
+1. Call the MCP `review` tool with configured models
+2. Process aggregated responses
+3. Apply ACM-REVIEW-SPEC rules (severity, complexity, action matrix)
+4. Update artifact
+5. Check stop conditions
+
+**Ralph Loop invocation pattern:**
+
+```bash
+/ralph-loop:ralph-loop "$(cat acm/skills/external-review/assembled-prompt.md)" \
+  --max-iterations 10 \
+  --completion-promise "EXTERNAL_REVIEW_COMPLETE"
+```
+
+The assembled prompt includes:
+- Stage context
+- Artifact content
+- External review instructions
+- MCP tool usage instructions
+- Synthesis rules
+- Stop conditions
+
+---
+
+## Cycle Rules (from ACM-REVIEW-SPEC v1.2.0)
+
+### Minimum Cycles
+- **Phase 2 (External):** Minimum 2 cycles. Always.
+
+### Stop Conditions
+After each cycle:
+> "Did this cycle surface any Critical or High severity issues?"
+
+- **If yes:** Fix issues (or flag High complexity to user), run another cycle
+- **If no (and minimum met):** Review phase complete
+
+### Maximum Cycles
+- **Hard maximum:** 10 cycles
+- **Structural problem signal:** If past 4 cycles and still finding Critical issues, stop and flag
+- **Stuck signal:** If same issue persists for 3+ iterations, stop and flag
+
+---
+
+## Severity & Complexity Definitions (from ACM-REVIEW-SPEC v1.2.0)
+
+### Severity
+
+| Severity | Definition | Action |
+|----------|------------|--------|
+| **Critical** | Must resolve. Blocks next stage or fundamentally flawed. | Fix before proceeding |
+| **High** | Should resolve. Significant gap or weakness. | Fix before proceeding |
+| **Low** | Minor. Polish, cosmetic, or implementation detail. | Log only |
+
+### Complexity
+
+| Complexity | Definition | Examples |
+|------------|------------|----------|
+| **Low** | Direct edit, no research, clear fix | Fix typo, add missing field |
+| **Medium** | Design thinking, small refactor, clear path | Restructure section, add table |
+| **High** | Needs research, investigation, architectural rethinking | Evaluate alternatives, resolve conflicts |
+
+### Action Matrix
+
+| Severity | Complexity | Action |
+|----------|------------|--------|
+| Critical | Low | Auto-fix |
+| Critical | Medium | Auto-fix |
+| Critical | High | **Flag for user** |
+| High | Low | Auto-fix |
+| High | Medium | Auto-fix |
+| High | High | **Flag for user** |
+| Low | Any | Log only |
+
+---
+
+## Cross-Reviewer Synthesis
+
+When processing responses from multiple models:
+
+1. **Extract issues** from each model's response
+2. **Deduplicate** — same issue flagged by multiple models counts once
+3. **Consensus weight** — issues flagged by multiple models are higher confidence
+4. **Classify severity** — apply definitions, not model's assessment
+5. **Classify complexity** — based on fix effort, not model's opinion
+6. **Apply action matrix** — auto-fix or flag based on classification
+
+### Consensus Rules
+
+| Flagged By | Treatment |
+|------------|-----------|
+| All models | High confidence — likely real issue |
+| Majority of models | Medium confidence — investigate |
+| Single model | Lower confidence — verify before acting |
+
+Single-model issues that aren't clearly blocking may be logged rather than acted on.
+
+---
+
+## Artifact Updates
+
+After each cycle, update:
+
+### Issue Log
+
+| # | Issue | Source | Severity | Complexity | Status | Resolution |
+|---|-------|--------|----------|------------|--------|------------|
+| N | [description] | External-Kimi-K2, External-Gemini | Critical | Medium | Resolved | [what was done] |
+
+### Review Log
+
+```markdown
+### Phase 2: External Review
+
+**Date:** 2026-01-31
+**Mechanism/Reviewers:** External-Kimi-K2, External-Gemini (parallel, 2 cycles)
+**Issues Found:** 1 Critical, 2 High, 1 Low
+**Complexity Assessment:** 1 Low, 2 Medium, 1 High
+**Actions Taken:**
+- **Auto-fixed (2 issues):**
+  - Missing error handling (Critical/Medium) — Added timeout handling section
+  - Non-measurable success criteria (High/Low) — Rewrote with specific metrics
+- **Flagged for user (1 issue):**
+  - Unclear session data model (High/High) — User chose to define schema
+- **Logged only (1 issue):**
+  - Consider sequence diagram (Low/N/A) — Deferred to implementation
+
+**Cross-Reviewer Consensus:**
+- Session data model flagged by both reviewers (high confidence)
+- Error handling flagged by kimi-k2 only but clearly blocking
+
+**Outcome:** Phase 2 complete, design approved for Develop
+```
+
+---
+
+## Installation & Setup
+
+### Prerequisites
+
+- Claude Code with MCP support
+- Ralph Loop plugin installed
+- Python 3.11+
+- API keys for desired models
+
+### Step 1: Install Skill
+
+```bash
+# Clone/copy skill to ACM
+cp -r external-review ~/code/_shared/acm/skills/
+
+# Install Python dependencies
+cd ~/code/_shared/acm/skills/external-review/server
+pip install -r requirements.txt
+```
+
+### Step 2: Configure API Keys
+
+Create `~/.claude/models.yaml`:
+
+```yaml
+models:
+  kimi-k2:
+    provider: moonshot
+    endpoint: https://api.moonshot.cn/v1
+    model: kimi-k2-0905
+    api_key: "your-moonshot-api-key"
+    
+  gemini:
+    provider: google
+    endpoint: https://generativelanguage.googleapis.com/v1beta
+    model: gemini-2.0-flash
+    api_key: "your-google-api-key"
+```
+
+Or use environment variables:
+
+```bash
+export MOONSHOT_API_KEY="your-key"
+export GOOGLE_API_KEY="your-key"
+```
+
+And reference in models.yaml:
+
+```yaml
+models:
+  kimi-k2:
+    api_key_env: MOONSHOT_API_KEY
+```
+
+### Step 3: Register MCP Server
+
+Add to Claude Code MCP configuration:
 
 ```json
 {
   "mcpServers": {
-    "acm": {
-      "command": "node",
-      "args": ["/Users/jessepike/code/_shared/acm/acm-server/build/index.js"],
+    "external-review": {
+      "command": "python",
+      "args": ["~/code/_shared/acm/skills/external-review/server/external_review_server.py"],
       "env": {}
     }
   }
 }
 ```
 
-For non-default paths:
+### Step 4: Verify Installation
 
-```json
-{
-  "mcpServers": {
-    "acm": {
-      "command": "node",
-      "args": ["/Users/jessepike/code/_shared/acm/acm-server/build/index.js"],
-      "env": {
-        "ACM_ROOT": "/custom/path/to/acm",
-        "ACM_REGISTRY_ROOT": "/custom/path/to/capabilities-registry"
-      }
-    }
-  }
-}
+```bash
+# In Claude Code
+/external-review --help
+
+# Should show available models
+> MCP: list_models()
 ```
 
 ---
 
-## ACM Workflow Skill (Companion)
+## Capability Registry Entry
 
-### Location
+```yaml
+# capabilities-registry/capabilities/skills/external-review/capability.yaml
 
-`acm/skills/acm-workflow/` — follows the existing `acm/skills/external-review/` pattern.
-
-### Purpose
-
-The MCP server provides data access; the skill provides narrative workflow instructions. The skill teaches agents when and how to use each tool in the context of ACM stage workflows.
-
-### Structure
-
-```
-acm/skills/acm-workflow/
-├── skill.md          # Skill definition (description, triggers, instructions)
-└── references/
-    └── tool-guide.md # When-to-use guide for each MCP tool
-```
-
-### Skill Content (skill.md)
-
-The skill is a markdown document that Claude Code loads as context. It covers:
-
-1. **ACM stage workflow overview** — stages, phases, what happens in each
-2. **Tool reference table** — which tool to call for which task
-3. **Common workflows** — step-by-step sequences using MCP tools:
-   - "Start a new project" → `get_artifact_stub(brief)` + `get_artifact_stub(intent)` + `check_project_structure`
-   - "Prepare for review" → `get_review_prompt(stage, phase)` + validation
-   - "Transition between stages" → `get_transition_prompt(transition, validate=true)`
-   - "Audit a project" → `check_project_structure` + `check_project_health`
-4. **Tool naming conventions** — all tools are prefixed-namespaced (no collisions)
-
-### Consumer Wiring
-
-Consumer project's `.claude/CLAUDE.md` references the skill:
-
-```markdown
-## ACM Integration
-
-This project uses ACM for project management.
-See: ~/code/_shared/acm/skills/acm-workflow/skill.md
+name: external-review
+type: skill
+description: >-
+  MCP-based external review automation — calls external LLMs (Kimi K2, Gemini, DeepSeek)
+  for Phase 2 review within Ralph Loop cycles. Claude Code synthesizes feedback and
+  applies ACM-REVIEW-SPEC rules.
+source: internal
+upstream: ""
+version: "1.0.0"
+quality: 100
+tags: [review, acm, mcp, validation, multi-model, external]
+status: staging
+install_level: user
+added: "2026-01-31"
+updated: "2026-01-31"
 ```
 
 ---
 
-## Data Model
+## Model Recommendations
 
-This server has no persistent data model. All data comes from files on disk, read at request time.
+| Model | Provider | Input Cost | Output Cost | Notes |
+|-------|----------|------------|-------------|-------|
+| **Kimi K2** | Moonshot | $0.60/M | $2.50/M | Strong reasoning, auto-caching to $0.15/M, OpenAI-compatible |
+| **Gemini 2.0 Flash** | Google | $0.32/M | $2.63/M | Fast, different perspective |
+| **DeepSeek V3** | DeepSeek | $0.28/M | $1.14/M | Excellent value, good reasoning |
 
-### Source File Inventory
+**Default pair:** Kimi K2 + Gemini (different training data = diverse perspectives)
 
-| Category | Source Location | Format |
-|----------|---------------|--------|
-| Stage specs | `ACM-{STAGE}-SPEC.md` | Markdown with YAML frontmatter |
-| Review prompts | `prompts/*.md` | Markdown with YAML frontmatter |
-| Transition prompts | `prompts/start-{stage}-prompt.md` | Markdown with YAML frontmatter |
-| Artifact specs | `ACM-*-SPEC.md` | Markdown with YAML frontmatter |
-| Stubs | `stubs/*.md`, `stubs/claude-md/` | Markdown templates |
-| Project type spec | `ACM-PROJECT-TYPES-SPEC.md` | Markdown with YAML frontmatter |
-| Rules spec | `ACM-RULES-SPEC.md` | Markdown with YAML frontmatter |
-| Context specs | `ACM-GLOBAL-CLAUDE-MD-SPEC.md`, `ACM-PROJECT-CLAUDE-MD-SPEC.md` | Markdown with YAML frontmatter |
-| Capabilities inventory | `capabilities-registry/inventory.json` | JSON |
-| Capability details | `capabilities-registry/capabilities/{id}/capability.yaml` | YAML |
-| KB entries | `kb/*.md` | Markdown with YAML frontmatter |
-| Project status | `{project}/status.md` | Markdown with YAML frontmatter |
-| Project brief | `{project}/docs/brief.md` or `{project}/docs/inbox/*-brief.md` | Markdown with YAML frontmatter |
-
-### Frontmatter Parsing
-
-All ACM markdown files use YAML frontmatter. The `gray-matter` library parses this consistently. Key fields used by tools:
-
-- `type` — artifact type classification
-- `version` — spec version
-- `status` — artifact status (draft, complete, etc.)
-- `stage` — current stage (in status.md)
-- `phase` — current phase (in status.md)
+**Estimated cost per external review phase:** $0.02–$0.10 depending on artifact size and cycles.
 
 ---
 
-## Security
-
-This server has a minimal security surface:
+## Security Considerations
 
 | Concern | Mitigation |
 |---------|------------|
-| **No network access** | Server reads local files only; no HTTP, no APIs |
-| **No auth needed** | stdio transport, single local user |
-| **Read-only** | Server never writes to any file |
-| **Path traversal** | `project_path` inputs are resolved and validated against expected base directories; reject paths containing `..` that escape project roots |
-| **No secrets** | Server handles no credentials, tokens, or sensitive data |
-| **Logging** | stderr only, never stdout (would corrupt JSON-RPC) |
-| **Input validation** | All inputs validated via zod schemas before processing |
+| API keys in config | `models.yaml` at `~/.claude/`, gitignored, user-specific |
+| Artifact content sent to external APIs | User confirms before execution; same trust model as manual review |
+| API key exposure in logs | Server strips keys from error messages |
+| Rate limiting | Configurable retry with backoff; graceful degradation |
 
 ---
 
-## Capabilities
+## Future Enhancements
 
-### Runtime Requirements
-
-- Node.js ≥ 18
-- npm (for dependency installation)
-
-### Library Dependencies
-
-- `@modelcontextprotocol/sdk` — MCP protocol
-- `zod` (v3) — Schema validation
-- `gray-matter` — Frontmatter parsing
-
-### No External Services
-
-Zero external dependencies at runtime. No network calls, no APIs, no databases.
+- [ ] Support for aggregator providers (OpenRouter, Together AI)
+- [ ] Cost tracking and budget limits
+- [ ] Response caching for identical artifact+prompt combinations
+- [ ] Webhook notifications on completion
+- [ ] Integration with CI/CD for automated review gates
 
 ---
 
-## Interface & Format
+## References
 
-### Protocol
-
-MCP (Model Context Protocol) over stdio. JSON-RPC 2.0 messages on stdin/stdout.
-
-### Tool Response Format
-
-All tools return MCP `TextContent`:
-
-```typescript
-{
-  content: [{ type: "text", text: "..." }]
-}
-```
-
-For errors, use MCP's `isError` flag:
-
-```typescript
-{
-  content: [{ type: "text", text: "Stage 'deliver' is not yet supported. Supported stages: discover, design, develop. See backlog item B15." }],
-  isError: true
-}
-```
-
-**Error message guidelines** (per MCP design KB — errors are "next prompts"):
-- State what went wrong
-- State what the agent can do instead
-- Reference relevant backlog items or alternatives when applicable
-- Never return raw stack traces or internal errors
-
-### Server Metadata
-
-```typescript
-new McpServer({
-  name: "acm",
-  version: "1.0.0",
-});
-```
-
----
-
-## Decision Log
-
-| # | Decision | Options Considered | Chosen | Rationale |
-|---|----------|-------------------|--------|-----------|
-| D1 | No caching | Per-request reads vs startup cache vs TTL cache | Per-request reads | Specs actively evolving; local file I/O is fast enough (<50ms); eliminates cache invalidation complexity |
-| D2 | Path config via env vars | Env vars vs .mcp.json args vs config file | Env vars with hardcoded defaults | .mcp.json already supports `env` field; env vars are portable across shells; config file adds unnecessary complexity for MVP |
-| D3 | Companion skill as separate deliverable | Skill in server dir vs separate skills/ dir vs no skill | Separate `skills/acm-workflow/` | Follows existing `skills/external-review/` pattern; skill is markdown (not code); different lifecycle from server |
-| D4 | `get_transition_prompt` validate mode | Always validate vs never validate vs optional | Optional `validate` param (default false) | Static return is faster and simpler for most uses; validation available when needed; single tool instead of two |
-| D5 | Error responses | Structured JSON errors vs MCP isError + text vs plain text | MCP `isError` flag + actionable text | Follows protocol conventions; actionable messages per KB guidance; avoids over-engineering for read-only server |
-| D6 | Frontmatter parsing library | gray-matter vs custom regex vs js-yaml | gray-matter | Battle-tested, handles edge cases, small footprint, already standard in the ecosystem |
-| D7 | Health checks scope | Semantic alignment vs structural only | Structural only (file presence, frontmatter, required sections) | Semantic alignment requires LLM; structural checks are deterministic and sufficient for MVP |
-| D8 | Tool module organization | One file per tool vs one file per category vs single file | One file per category (6 files) | Matches the 6 categories from the brief; each file stays under ~200 lines; easy to navigate |
-
----
-
-## Backlog
-
-Items deferred from this design, for future consideration:
-
-| # | Item | Priority | Rationale for Deferral |
-|---|------|----------|----------------------|
-| DB1 | HTTP/SSE transport | Low | stdio sufficient for personal use; add when multi-user or remote needed |
-| DB2 | Tool response caching | Low | Not needed until performance proves insufficient |
-| DB3 | Semantic health checks | Medium | Requires LLM; add when ACM server composes with external review server |
-| DB4 | `deliver` stage support | Medium | Depends on ACM-DELIVER-SPEC.md (B15) |
-| DB5 | Skill installation automation | Low | Consumer wiring is manual for now (.mcp.json + CLAUDE.md reference) |
-| DB6 | Tool usage analytics | Low | Structured logging to stderr; analyze when needed |
-
----
-
-## Open Questions
-
-None — all resolved during intake.
-
----
-
-## Issue Log
-
-| # | Issue | Source | Severity | Complexity | Status | Resolution |
-|---|-------|--------|----------|------------|--------|------------|
-
-| 1 | `get_artifact_stub` for `claude_md` maps to directory with 3 files (app.md, artifact.md, workflow.md) but design doesn't specify selection logic | Ralph-Design | High | Low | Resolved | Added: stub returns file matching project type param, or concatenated index if no type provided |
-| 2 | `check_project_health` required sections for intent says "Purpose/Vision" but ACM-INTENT-SPEC requires "Problem", "Outcome", "Why It Matters" | Ralph-Design | High | Low | Resolved | Corrected required sections to match ACM-INTENT-SPEC |
-| 3 | Frontmatter `intent_ref` says `docs/intent.md` but intent.md is at project root `intent.md` | Ralph-Design | High | Low | Resolved | Fixed path to `intent.md` |
-| 4 | `get_artifact_stub` enum value `rules_constraints` doesn't match filename `rules-constraints.md` (underscore vs hyphen) | Ralph-Design | High | Low | Resolved | Added explicit filename mapping note clarifying underscore-to-hyphen conversion |
-| 5 | `get_transition_prompt` validate mode doesn't specify how to locate the project's brief file (could be `docs/brief.md` or `docs/inbox/*-brief.md`) | Ralph-Design | High | Low | Resolved | Added brief resolution logic: check `docs/brief.md` first, fall back to `docs/inbox/*-brief.md` |
-| 6 | Phase 1 internal review complete | Ralph-Design | - | - | Complete | 2 cycles: 5 High resolved in cycle 1, zero Critical/High in cycle 2 |
-| 7 | Missing tilde expansion for path inputs — Node.js doesn't expand `~` automatically | External-Gemini, External-GPT | High | Low | Resolved | Added normalizePath() with tilde expansion to lib/paths.ts spec |
-| 8 | Path sandboxing underspecified — free-form path inputs could read arbitrary files | External-GPT | High | Medium | Resolved | Added Path Sandboxing section with per-category base directory enforcement via realpath prefix checks |
-| 9 | Zod schema syntax wrong — `inputSchema: {...}` should be `inputSchema: z.object({...})` | External-GPT | High | Low | Resolved | Corrected all 13 tool schemas to use z.object() |
-| 10 | `get_artifact_stub(claude_md)` has no input to select project type — stub selection not deterministic | External-GPT | Medium | Low | Resolved | Added optional `project_type` param to schema, defaults to 'app' |
-| 11 | Validation logic in `check_project_health` is coupled to spec heading names — spec changes break code | External-Gemini | Medium | Low | Open | Valid concern; acceptable for MVP. Add code comment linking to spec versions during Develop. |
-| 12 | Phase 2 external review complete | External-Gemini, External-GPT | - | - | Complete | 2 reviewers: 3 High resolved, 1 Medium resolved, 1 Medium logged |
-
----
-
-## Develop Handoff
-
-### Design Summary
-
-A 13-tool read-only TypeScript MCP server (`acm/acm-server/`) paired with a companion ACM Workflow skill (`acm/skills/acm-workflow/`). The server reads ACM specs, prompts, stubs, and capabilities registry from disk at request time over stdio transport. All inputs validated with zod, all errors use MCP's `isError` flag with actionable text. Path resolution via `ACM_ROOT` and `ACM_REGISTRY_ROOT` env vars with hardcoded defaults.
-
-### Key Design Decisions
-
-| Decision | Rationale | Implication for Develop |
-|----------|-----------|------------------------|
-| No caching | Specs are evolving; local I/O is fast | Read files fresh every request; no cache invalidation logic needed |
-| Env vars for paths | .mcp.json supports `env`; portable | Implement path resolution in `lib/paths.ts` with env var fallback |
-| Structural health checks only | Semantic requires LLM | Health tool checks files, frontmatter, sections — no content analysis |
-| One file per tool category | 6 categories, manageable size | Create 6 tool files in `src/tools/` |
-| gray-matter for frontmatter | Standard library | Single dependency for all YAML frontmatter parsing |
-| Optional validation in transition tool | Keep simple path fast | `validate` param triggers status.md + brief reads |
-
-### Capabilities Needed
-
-- Node.js ≥ 18, npm
-- `@modelcontextprotocol/sdk`, `zod`, `gray-matter`
-- TypeScript compiler (`tsc`)
-
-### Open Questions for Develop
-
-None.
-
-### Success Criteria (Verify During Implementation)
-
-- [ ] Agent in consumer project can query stage requirements without ACM repo open
-- [ ] Agent can retrieve correct review prompt for any supported stage + phase (discover, design, develop)
-- [ ] Agent can validate project folder structure against ACM-FOLDER-STRUCTURE-SPEC
-- [ ] Agent can query capabilities registry by tags, type, or keyword
-- [ ] Agent can retrieve KB entries by topic
-- [ ] Tool count: 13 (within 5-15 range)
-- [ ] Server starts in <2 seconds, tool responses in <500ms
-- [ ] No stdout logging (stderr only)
-- [ ] Consumer project wires up via single `.mcp.json` entry
-
-### What Was Validated
-
-- All 12 artifact spec file references verified against disk — all exist
-- All 6 prompt file references verified — all exist
-- All 5 stub file references verified — all exist (including claude-md/ directory with 3 type-specific stubs)
-- Intent required sections corrected to match ACM-INTENT-SPEC
-- Brief resolution logic specified for transition validation
-- Stub filename mapping edge case (underscore → hyphen) documented
-- Path normalization (tilde expansion) specified for all path inputs
-- Path sandboxing enforcement specified per tool category
-- All zod schemas corrected to `z.object({...})` syntax
-- `capability_id` input constrained to safe pattern `^[a-z0-9][a-z0-9-]*$`
-- `get_artifact_stub` now has explicit `project_type` discriminator for claude_md stubs
-
-### Implementation Guidance
-
-**Recommended build order:**
-
-1. **Scaffold** — `npm init`, tsconfig, package.json, directory structure
-2. **Server entry point** — `index.ts` (transport), `server.ts` (McpServer instance)
-3. **Path resolution** — `lib/paths.ts` with env var support
-4. **File utilities** — `lib/files.ts` (readFile, readFrontmatter, fileExists)
-5. **Error helpers** — `lib/errors.ts` (isError response builder)
-6. **Orchestration tools** — `get_stage`, `get_review_prompt`, `get_transition_prompt`
-7. **Artifact tools** — `get_artifact_spec`, `get_artifact_stub`
-8. **Governance tools** — `get_rules_spec`, `get_context_spec`
-9. **Project tools** — `check_project_structure`, `check_project_health`, `get_project_type_guidance`
-10. **Capabilities tools** — `query_capabilities`, `get_capability_detail`
-11. **Knowledge tool** — `query_knowledge`
-12. **Companion skill** — `skills/acm-workflow/skill.md`
-13. **Consumer wiring** — `.mcp.json` template, test with consumer project
-
-**Edge cases to test:**
-- Missing spec files (graceful error, not crash)
-- Empty capabilities registry
-- Project with no frontmatter in artifacts
-- `validate: true` on transition tool with incomplete project
-- Tilde expansion in env var paths
-- KB directory with no matching results
-
-### Reference Documents
-
-Read in this order:
-1. `intent.md` — North Star
-2. `docs/inbox/acm-mcp-server-brief.md` — Scope and criteria (v0.5)
-3. `docs/design.md` — This document
-4. `docs/inbox/acm-mcp-server-architecture-decisions.md` — Bounded context analysis
-5. `kb/mcp-server-design-knowledge-base-agent-ready.md` — MCP design patterns
-
----
-
-## Review Log
-
-### Phase 1: Internal Review
-
-**Date:** 2026-01-31
-**Mechanism:** Ralph Loop (2 cycles)
-**Issues Found:** 0 Critical, 5 High
-**Actions Taken:**
-- **Auto-fixed (5 issues):**
-  - `claude_md` stub selection logic unspecified (High/Low) — Added project-type-based selection with app.md default
-  - Health check required sections for intent wrong (High/Low) — Corrected to match ACM-INTENT-SPEC (Problem, Outcome, Why It Matters)
-  - Frontmatter `intent_ref` path wrong (High/Low) — Fixed from `docs/intent.md` to `intent.md`
-  - `rules_constraints` enum/filename mismatch (High/Low) — Added underscore-to-hyphen mapping note
-  - Brief resolution for transition validation unspecified (High/Low) — Added docs/brief.md → docs/inbox/*-brief.md fallback logic
-
-**Outcome:** Phase 1 complete — 2 cycles, zero Critical/High in cycle 2. Design ready for Phase 2 or Develop.
-
-### Phase 2: External Review
-
-**Date:** 2026-01-31
-**Reviewers:** External-Gemini, External-GPT
-**Issues Found:** 0 Critical, 3 High, 2 Medium
-**Actions Taken:**
-- **Auto-fixed (4 issues):**
-  - Missing tilde expansion in path resolution (High/Low) — Added normalizePath() with `~/` → `os.homedir()` expansion
-  - Path sandboxing underspecified (High/Medium) — Added per-category base directory enforcement with realpath prefix checks
-  - Zod schema syntax incorrect (High/Low) — Corrected all 13 schemas to `z.object({...})`
-  - `claude_md` stub selection not deterministic (Medium/Low) — Added optional `project_type` input param
-- **Logged only (1 issue):**
-  - Health check validation coupled to spec headings (Medium/Low) — Valid concern, acceptable for MVP with code comments
-
-**Cross-Reviewer Consensus:**
-- Both flagged tilde expansion independently (Gemini High, GPT Medium)
-- GPT focused on security (path traversal, input sanitization); Gemini focused on runtime correctness
-- Both praised bounded-context separation and no-caching strategy
-
-**Questions Answered for Develop:**
-- `process.cwd()`: MCP servers spawned by Claude Code inherit the consumer project's cwd — this is the expected behavior
-- Relative `project_path` inputs: resolved via `path.resolve()` against `process.cwd()`, then sandboxed against the resolved base
-- `capability_id`: constrained to `^[a-z0-9][a-z0-9-]*$` pattern — no path traversal possible
-- Env var `~` usage: now explicitly handled via normalizePath()
-
-**Outcome:** Phase 2 complete — 3 High and 1 Medium resolved. Design ready for Develop.
+- ACM-REVIEW-SPEC.md (Phase 2 mechanism, severity definitions, cycle rules)
+- ACM-STAGES-SPEC.md (Stage definitions, phase transitions)
+- REGISTRY-SPEC.md (Capability registration)
 
 ---
 
@@ -834,6 +696,4 @@ Read in this order:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 0.1 | 2026-01-31 | Initial draft — all 13 tool schemas, architecture, tech stack, companion skill, path config, health checks, develop handoff |
-| 0.2 | 2026-01-31 | Ralph-Design cycle 1: Fixed intent_ref path, corrected health check required sections for intent, added claude_md stub selection logic, clarified rules_constraints filename mapping, added brief resolution logic for transition validation |
-| 0.3 | 2026-01-31 | Phase 2 external review (Gemini + GPT): Added tilde expansion and path sandboxing, corrected all zod schemas to z.object(), added project_type param to get_artifact_stub, constrained capability_id input pattern |
+| 1.0.0 | 2026-01-31 | Initial spec — architecture, MCP tools, UX flow, configuration |

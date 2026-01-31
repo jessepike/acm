@@ -1,12 +1,12 @@
 ---
 type: "design"
 project: "ACM MCP Server"
-version: "0.1"
-status: "draft"
+version: "0.2"
+status: "internal-review-complete"
 created: "2026-01-31"
 updated: "2026-01-31"
 brief_ref: "docs/inbox/acm-mcp-server-brief.md"
-intent_ref: "docs/intent.md"
+intent_ref: "intent.md"
 ---
 
 # Design: ACM MCP Server
@@ -182,7 +182,7 @@ server.registerTool("get_transition_prompt", {
 - `prompts/start-design-prompt.md` → discover_to_design
 - `prompts/start-develop-prompt.md` → design_to_develop
 
-**When `validate: true`:** Reads `{project_path}/status.md` and brief file, checks stage/phase/status against transition prerequisites. Returns prompt content plus a validation summary (prerequisites met/not met, with specifics).
+**When `validate: true`:** Reads `{project_path}/status.md` and the project's brief file. Brief resolution: check `{project_path}/docs/brief.md` first; if missing, glob `{project_path}/docs/inbox/*-brief.md` and use the first match. Checks stage/phase/status from status.md frontmatter against transition prerequisites. Returns prompt content plus a validation summary (prerequisites met/not met, with specifics). Returns `isError` if status.md or brief cannot be found.
 
 ### Artifacts (2 tools)
 
@@ -237,7 +237,7 @@ server.registerTool("get_artifact_stub", {
 }, handler);
 ```
 
-**Source files:** `stubs/{artifact}.md` — direct file mapping (`brief` → `stubs/brief.md`, etc.). The `claude_md` stub maps to `stubs/claude-md/` directory.
+**Source files:** `stubs/{artifact}.md` — direct file mapping (`brief` → `stubs/brief.md`, etc.). Note: `rules_constraints` maps to `stubs/rules-constraints.md` (underscore → hyphen conversion). The `claude_md` stub maps to `stubs/claude-md/` directory — returns the file matching the project type (`app.md`, `workflow.md`, or `artifact.md`). If no project type context is available, returns `app.md` as the default.
 
 ### Project (3 tools)
 
@@ -307,7 +307,7 @@ server.registerTool("check_project_health", {
 **Checks performed:**
 1. **File presence** — same as `check_project_structure`
 2. **Frontmatter validation** — key artifacts (`intent.md`, `brief.md`, `status.md`, `CLAUDE.md`) have valid YAML frontmatter
-3. **Required sections** — brief has: Summary, Scope, Success Criteria, Constraints, Decisions; intent has: Purpose/Vision; status has: Current State; CLAUDE.md has: Context Map or Orientation
+3. **Required sections** — brief has: Summary, Scope, Success Criteria, Constraints, Decisions; intent has: Problem, Outcome, Why It Matters; status has: Current State; CLAUDE.md has: Context Map or Orientation
 
 **Response:** Grouped by check category with pass/fail per item and overall health summary.
 
@@ -647,7 +647,12 @@ None — all resolved during intake.
 | # | Issue | Source | Severity | Complexity | Status | Resolution |
 |---|-------|--------|----------|------------|--------|------------|
 
-*No issues yet — awaiting review.*
+| 1 | `get_artifact_stub` for `claude_md` maps to directory with 3 files (app.md, artifact.md, workflow.md) but design doesn't specify selection logic | Ralph-Design | High | Low | Resolved | Added: stub returns file matching project type param, or concatenated index if no type provided |
+| 2 | `check_project_health` required sections for intent says "Purpose/Vision" but ACM-INTENT-SPEC requires "Problem", "Outcome", "Why It Matters" | Ralph-Design | High | Low | Resolved | Corrected required sections to match ACM-INTENT-SPEC |
+| 3 | Frontmatter `intent_ref` says `docs/intent.md` but intent.md is at project root `intent.md` | Ralph-Design | High | Low | Resolved | Fixed path to `intent.md` |
+| 4 | `get_artifact_stub` enum value `rules_constraints` doesn't match filename `rules-constraints.md` (underscore vs hyphen) | Ralph-Design | High | Low | Resolved | Added explicit filename mapping note clarifying underscore-to-hyphen conversion |
+| 5 | `get_transition_prompt` validate mode doesn't specify how to locate the project's brief file (could be `docs/brief.md` or `docs/inbox/*-brief.md`) | Ralph-Design | High | Low | Resolved | Added brief resolution logic: check `docs/brief.md` first, fall back to `docs/inbox/*-brief.md` |
+| 6 | Phase 1 internal review complete | Ralph-Design | - | - | Complete | 2 cycles: 5 High resolved in cycle 1, zero Critical/High in cycle 2 |
 
 ---
 
@@ -692,7 +697,12 @@ None.
 
 ### What Was Validated
 
-*Pending — design review not yet conducted.*
+- All 12 artifact spec file references verified against disk — all exist
+- All 6 prompt file references verified — all exist
+- All 5 stub file references verified — all exist (including claude-md/ directory with 3 type-specific stubs)
+- Intent required sections corrected to match ACM-INTENT-SPEC
+- Brief resolution logic specified for transition validation
+- Stub filename mapping edge case (underscore → hyphen) documented
 
 ### Implementation Guidance
 
@@ -723,7 +733,7 @@ None.
 ### Reference Documents
 
 Read in this order:
-1. `docs/intent.md` — North Star
+1. `intent.md` — North Star
 2. `docs/inbox/acm-mcp-server-brief.md` — Scope and criteria (v0.5)
 3. `docs/design.md` — This document
 4. `docs/inbox/acm-mcp-server-architecture-decisions.md` — Bounded context analysis
@@ -733,7 +743,20 @@ Read in this order:
 
 ## Review Log
 
-*Awaiting review.*
+### Phase 1: Internal Review
+
+**Date:** 2026-01-31
+**Mechanism:** Ralph Loop (2 cycles)
+**Issues Found:** 0 Critical, 5 High
+**Actions Taken:**
+- **Auto-fixed (5 issues):**
+  - `claude_md` stub selection logic unspecified (High/Low) — Added project-type-based selection with app.md default
+  - Health check required sections for intent wrong (High/Low) — Corrected to match ACM-INTENT-SPEC (Problem, Outcome, Why It Matters)
+  - Frontmatter `intent_ref` path wrong (High/Low) — Fixed from `docs/intent.md` to `intent.md`
+  - `rules_constraints` enum/filename mismatch (High/Low) — Added underscore-to-hyphen mapping note
+  - Brief resolution for transition validation unspecified (High/Low) — Added docs/brief.md → docs/inbox/*-brief.md fallback logic
+
+**Outcome:** Phase 1 complete — 2 cycles, zero Critical/High in cycle 2. Design ready for Phase 2 or Develop.
 
 ---
 
@@ -742,3 +765,4 @@ Read in this order:
 | Version | Date | Changes |
 |---------|------|---------|
 | 0.1 | 2026-01-31 | Initial draft — all 13 tool schemas, architecture, tech stack, companion skill, path config, health checks, develop handoff |
+| 0.2 | 2026-01-31 | Ralph-Design cycle 1: Fixed intent_ref path, corrected health check required sections for intent, added claude_md stub selection logic, clarified rules_constraints filename mapping, added brief resolution logic for transition validation |

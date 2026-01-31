@@ -46,10 +46,21 @@ acm-env defines expected state at two levels:
 
 | Skill | Purpose |
 |-------|---------|
-| `/acm-env:status` | Quick health dashboard — PASS/WARN/FAIL per check |
+| `/acm-env:status` | Scope-aware health dashboard — `--scope project` (default) or `--scope user` |
 | `/acm-env:setup` | Smart setup — detects mode (first-time, new project, existing project) |
 | `/acm-env:audit` | Deep environment audit with plugin delegation |
 | `/acm-env:reset` | Interactive reset to baseline with diffs and approval |
+
+### Status Command (`/acm-env:status`)
+
+Supports `--scope` flag:
+- **`project`** (default) — user-level foundation + project-level specifics + capabilities (plugins, MCP servers)
+- **`user`** — cross-project only: global config, user-level plugins, MCP servers, hooks
+
+Capabilities reporting checks:
+- **Plugins**: required/available/remove lists from `baseline.yaml`, cross-referenced with `installed_plugins.json` and `settings.json`
+- **MCP servers**: standalone (`~/.claude.json` → `mcpServers`), plugin-bundled (`.mcp.json` in plugin dirs), project-level (`.mcp.json` + project overrides in `~/.claude.json`)
+- **Remove list**: flags configured servers/plugins that should be removed per baseline
 
 ### Mode Detection (`/acm-env:setup`)
 

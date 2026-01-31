@@ -135,6 +135,17 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 
 | 2026-01-31 | B34 MCP Server Registry — Develop complete. All 7 WPs implemented. REGISTRY-SPEC.md v1.2.0 (3 MCP fields, 3 community sources, inbox). 4 legacy MCPs deleted+declined, 4 plugin-bundled MCPs created. baseline.yaml v2.1.0 (mcp_servers governance). refresh.md extended (community scan + triage). setup.md extended (MCP server checks). Inventory regenerated (39 caps). First triage: 500+ servers scanned, 0 high-relevance. Note: 4 plugin-bundled MCP upstream URLs unreachable (anthropics/claude-code-plugins likely private). |
 
+| 2026-01-31 | Scope-aware status command. Updated `/acm-env:status` with `--scope` flag (project default, user). Project scope shows user-level foundation + project specifics + capabilities (plugins, MCP servers). User scope shows cross-project config, plugins, MCP servers, hooks. Updated ACM-ENV-PLUGIN-SPEC.md with status command docs. |
+
+## Decisions
+
+| # | Decision | Rationale |
+|---|----------|-----------|
+| D1 | Single `--scope` flag, not two commands | Same conceptual operation at different scopes; less surface area |
+| D2 | Project scope is default | Most common use case — "what's affecting my project right now?" |
+| D3 | Project view includes user-level as foundation | User-level applies to every project; showing both gives full picture |
+| D4 | Add capabilities section (plugins + MCP) to dashboard | Status only checked config files, not actual capability state |
+
 ## Notes for Next Session
 
 B34 complete. acm-env plugin extended with MCP community scanning in refresh and MCP server checks in setup. Capabilities registry at 39 capabilities (19 plugins, 16 skills, 4 MCP tools). baseline.yaml v2.1.0 with mcp_servers governance. 19 declined entries.

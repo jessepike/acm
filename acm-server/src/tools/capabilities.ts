@@ -33,7 +33,12 @@ export function registerCapabilitiesTools(server: McpServer): void {
       const raw = await readFile(check.resolved);
       let entries: CapabilityEntry[];
       try {
-        entries = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        // inventory.json may be { capabilities: [...] } or a plain array
+        entries = Array.isArray(parsed) ? parsed : parsed.capabilities;
+        if (!Array.isArray(entries)) {
+          return errorResponse("inventory.json has unexpected format.");
+        }
       } catch {
         return errorResponse("Failed to parse inventory.json.");
       }

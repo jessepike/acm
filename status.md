@@ -9,8 +9,8 @@ updated: "2026-01-31"
 ## Current State
 
 - **Stage:** Develop (ACM framework itself)
-- **Focus:** ACM MCP server — Develop stage (planning phase complete, awaiting execution approval)
-- **Sub-project:** ACM MCP Server entering Develop after Design complete (design v0.3, Phase 1+2 reviews done)
+- **Focus:** ACM MCP server — Develop Phase 6 (Build) — Phases A-C complete
+- **Sub-project:** ACM MCP Server — 13 tools implemented, 59 tests passing, Phases D-E remaining
 
 ## What's Complete
 
@@ -134,6 +134,7 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 
 | 2026-01-31 | B34 MCP Server Registry — Develop complete. All 7 WPs implemented. REGISTRY-SPEC.md v1.2.0 (3 MCP fields, 3 community sources, inbox). 4 legacy MCPs deleted+declined, 4 plugin-bundled MCPs created. baseline.yaml v2.1.0 (mcp_servers governance). refresh.md extended (community scan + triage). setup.md extended (MCP server checks). Inventory regenerated (39 caps). First triage: 500+ servers scanned, 0 high-relevance. Note: 4 plugin-bundled MCP upstream URLs unreachable (anthropics/claude-code-plugins likely private). |
 | 2026-01-31 | Project separation — capabilities registry bootstrapped as independent project (BACKLOG.md, status.md, .claude/CLAUDE.md). Migrated B35→CR-1, B36→CR-2, B13→CR-3 to registry backlog. Archived processed B34 inbox docs. ACM backlog now ACM-scoped only. |
+| 2026-01-31 | ACM MCP Server — Develop Phase 6 build session. Phases A-C complete: scaffold + all 13 tools implemented (orchestration 3, artifacts 2, project 3, governance 2, capabilities 2, knowledge 1), vitest test suite with 59 tests all passing, server compiles and responds to MCP initialize. Fixed inventory.json parsing (wrapper object, not array). Phase D (companion skill) and Phase E (integration) remaining. |
 | 2026-01-31 | Scope-aware status command + environment cleanup. Updated `/acm-env:status` with `--scope` flag (project default, user). Project scope shows user-level foundation + project specifics + capabilities (plugins, MCP servers). User scope shows cross-project config, plugins, MCP servers, hooks. Updated ACM-ENV-PLUGIN-SPEC.md with status command docs. Ran status check — found global CLAUDE.md at 61 lines (removed frontmatter → 52, PASS). Audited MCP server state: 0 standalone user-level, 13 plugin-bundled, 0 project-level for ACM. Identified 6 unwanted plugins with bundled MCP servers (asana, firebase, gitlab, laravel-boost, linear, slack) — added to baseline remove list + declined.yaml (21→27 declined). Clarified status vs inventory separation: status=validation (PASS/FAIL), capabilities=discovery (what's available). |
 
 ## Decisions

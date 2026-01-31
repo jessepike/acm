@@ -13,25 +13,26 @@ spec: "ACM-BACKLOG-SPEC.md"
 
 ## Queue
 
-| ID | Item | Type | Component | Pri | Size | Status |
-|----|------|------|-----------|-----|------|--------|
-| B42 | Structured session handoff spec — define a parseable handoff format that agents produce at phase boundaries so next session can auto-orient (read order, what's done, build notes, remaining work) | Enhancement | ACM | P1 | M | Pending |
-| B43 | Automated phase transitions — agent completes phase → commit → produce handoff → `/clear` → next session auto-resumes from handoff without human prompting. Extends Phase Boundary Protocol in ACM-DEVELOP-SPEC.md | Enhancement | ACM | P1 | L | Pending |
-| B35 | Agents not consulting capabilities-registry before installing capabilities — review process and diagnose why | Bug | acm-env | P1 | M | Pending |
-| B34 | Evaluate MCP tools for environment — memory-mcp, filesystem-mcp, sequentialthinking-mcp, everything-mcp | Enhancement | acm-env | P1 | M | Pending |
-| B15 | Deliver stage spec | New spec | ACM | P2 | M | Pending |
-| B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | Pending |
-| B19 | Scaffold memory repo at `~/code/_shared/memory/` | Setup | memory | P2 | S | Pending |
-| B36 | ACM MCP server — maintenance primitive not addressed in tool surface | Enhancement | acm-server | P3 | S | Pending |
-| B37 | Align "meta layer" → "environment layer" terminology across all specs and prompts | Terminology | ACM | P2 | M | Pending |
-| B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | Pending |
-| B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | Blocked by B15 |
-| B40 | Update ACM-STAGES-SPEC.md environment layer references to include ACM MCP server alongside acm-env | Docs | ACM | P2 | S | Done |
-| B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | Pending |
-| B14 | Automated multi-model review orchestration | Architecture | ACM | P3 | L | Pending |
-| B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | Pending |
-| B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | Pending |
-| B22 | Community knowledge ingestion pipeline | Architecture | kb | P3 | L | Pending |
+| ID | Item | Type | Component | Pri | Size | Stage | Status |
+|----|------|------|-----------|-----|------|-------|--------|
+| B42 | Structured session handoff spec — define a parseable handoff format that agents produce at phase boundaries so next session can auto-orient (read order, what's done, build notes, remaining work) | Enhancement | ACM | P1 | M | — | Pending |
+| B43 | Automated phase transitions — agent completes phase → commit → produce handoff → `/clear` → next session auto-resumes from handoff without human prompting. Extends Phase Boundary Protocol in ACM-DEVELOP-SPEC.md | Enhancement | ACM | P1 | L | — | Pending |
+| B35 | Agents not consulting capabilities-registry before installing capabilities — review process and diagnose why | Bug | acm-env | P1 | M | — | Pending |
+| B34 | Evaluate MCP tools for environment — memory-mcp, filesystem-mcp, sequentialthinking-mcp, everything-mcp | Enhancement | acm-env | P1 | M | — | Pending |
+| B44 | Standardize brief frontmatter `status` field to use stage-based values (`discover-complete`, `design-in-progress`, etc.) — let ACM MCP server surface pipeline position via `check_project_health` | Enhancement | ACM | P2 | M | — | Pending |
+| B15 | Deliver stage spec | New spec | ACM | P2 | M | — | Pending |
+| B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | — | Pending |
+| B19 | Scaffold memory repo at `~/code/_shared/memory/` | Setup | memory | P2 | S | — | Pending |
+| B36 | ACM MCP server — maintenance primitive not addressed in tool surface | Enhancement | acm-server | P3 | S | — | Pending |
+| B37 | Align "meta layer" → "environment layer" terminology across all specs and prompts | Terminology | ACM | P2 | M | — | Pending |
+| B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | — | Pending |
+| B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
+| B40 | Update ACM-STAGES-SPEC.md environment layer references to include ACM MCP server alongside acm-env | Docs | ACM | P2 | S | — | Done |
+| B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | — | Pending |
+| B14 | Automated multi-model review orchestration (external-review skill) | Architecture | ACM | P3 | L | Design | Pending |
+| B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | — | Pending |
+| B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | — | Pending |
+| B22 | Community knowledge ingestion pipeline | Architecture | kb | P3 | L | — | Pending |
 
 ---
 

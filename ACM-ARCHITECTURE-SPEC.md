@@ -1,7 +1,7 @@
 ---
 type: "specification"
 description: "Defines the ACM framework architecture — the two-layer model, six environment primitives, and component relationships"
-version: "1.1.0"
+version: "1.2.0"
 updated: "2026-01-31"
 scope: "acm"
 lifecycle: "reference"
@@ -268,6 +268,8 @@ Every ACM project gets both. Rules are created at project init (`.claude/rules/`
 │   │       └── constraints.md    # Non-negotiable rules
 │   ├── ACM-*-SPEC.md             # Process specs (orchestration contracts)
 │   ├── ACM-ARCHITECTURE-SPEC.md   # This spec (architecture vision)
+│   ├── acm-server/               # ACM MCP server (read-only tool interface)
+│   ├── skills/                   # ACM-process skills (review automation, workflow)
 │   ├── prompts/                  # Stage prompts
 │   ├── kb/                       # Knowledge base (curated learnings)
 │   ├── scripts/                  # Init, orchestration scripts
@@ -288,6 +290,8 @@ Every ACM project gets both. Rules are created at project init (`.claude/rules/`
     ├── scripts/                  # Distillation, cleanup
     └── MEMORY-SPEC.md            # How memory works
 ```
+
+**ACM-process skills** (`acm/skills/`) are tightly coupled to ACM orchestration — review automation, workflow tools, stage transitions. They live inside ACM because they implement ACM's own process. General-purpose capabilities (frontend-design, pdf, etc.) live in the capabilities-registry.
 
 **Maintenance** and **Validation** are distributed — each component owns its own maintenance scripts and validation skills. They don't have separate repos.
 

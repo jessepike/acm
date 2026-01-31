@@ -9,8 +9,8 @@ updated: "2026-01-31"
 ## Current State
 
 - **Stage:** Develop (ACM framework itself)
-- **Focus:** ACM MCP server — Design stage (intake phase)
-- **Sub-project:** ACM MCP Server entering Design after Discover complete (brief v0.5, Phase 1+2 reviews done)
+- **Focus:** ACM MCP server — Develop stage (capability-assessment phase)
+- **Sub-project:** ACM MCP Server entering Develop after Design complete (design v0.3, Phase 1+2 reviews done)
 
 ## What's Complete
 

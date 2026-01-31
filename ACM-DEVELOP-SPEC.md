@@ -56,6 +56,22 @@ Develop transforms a validated design into a working deliverable. This stage han
 | **5. Environment Setup** | Install dependencies, configure capabilities | Environment verified | — |
 | **6. Build** | Actual implementation with testing | 95%+ tests pass, human validates | The deliverable |
 
+### Concrete Actions at Each Phase
+
+**What gets installed/executed when:**
+
+| Phase | What Gets Installed/Executed | Approval Needed |
+|-------|------------------------------|-----------------|
+| **1. Intake & Validation** | Nothing — ask questions, clarify design | Human confirms understanding to proceed |
+| **2. Capability Assessment** | Nothing — document what's needed in manifest.md + capabilities.md | Human approves capability list to proceed |
+| **3. Planning** | Nothing — create plan.md + tasks.md | Not yet (wait for HARD GATE) |
+| **HARD GATE** | Nothing — present all 4 planning artifacts for review | **Human approves ALL planning artifacts** |
+| **4. Review Loop** | Nothing — review plan via Ralph Loop + external reviewers | Auto-proceed when no Critical/High issues |
+| **5. Environment Setup** | ✅ Install Python packages (pip install)<br>✅ Activate plugins<br>✅ Create venv, config files | Already approved at HARD GATE |
+| **6. Build** | ✅ Write code<br>✅ Run tests<br>✅ Create deliverable | Already approved at HARD GATE |
+
+**Key insight:** Approving capability assessment ≠ installing anything. It means "yes, this list makes sense, proceed to planning." Actual installations only happen in Phase 5 after HARD GATE approval.
+
 ---
 
 ## Phase Boundary Protocol

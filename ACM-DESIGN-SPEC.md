@@ -263,6 +263,10 @@ Design outputs vary by project type. Use this as guidance, not rigid requirement
 | **Decision Log** | Key decisions with rationale |
 | **Backlog** | Deferred items for future consideration |
 | **Open Questions** | Anything unresolved (should be minimal) |
+| **Issue Log** | Issues found during review with severity, complexity, and resolution |
+| **Develop Handoff** | Stage transition document — summary, decisions, capabilities, open questions, success criteria, implementation guidance |
+| **Review Log** | Chronological record of review phases, findings, and actions taken |
+| **Revision History** | Version history with dates and changes |
 
 ### App (Additional)
 
@@ -293,6 +297,61 @@ Design outputs vary by project type. Use this as guidance, not rigid requirement
 
 ---
 
+## Develop Handoff Section
+
+**Purpose:** Create a stage transition document that gives Develop everything needed to start implementation without re-reading the entire design.
+
+**Location:** Between Issue Log and Review Log sections in design.md.
+
+**Required subsections:**
+
+### Design Summary
+- 2-3 sentence overview of what was designed
+- Project type, scope, architecture approach
+
+### Key Design Decisions
+- Table format: Decision | Rationale | Implication for Develop
+- Include decisions from Decision Log that directly affect implementation
+- Focus on "what Develop needs to know" not exhaustive history
+
+### Capabilities Needed
+- Runtime, libraries, tools, integrations
+- Configuration requirements (.env, config files)
+- Any external service dependencies
+
+### Open Questions for Develop
+- List all Open Questions marked "Implement during Develop" or "Address during Develop"
+- Number them for easy tracking
+- Include context for why they're deferred (not just "figure it out")
+
+### Success Criteria (Verify During Implementation)
+- Copy relevant success criteria from Brief
+- Make them checkboxes so Develop can track
+- These are the acceptance tests
+
+### What Was Validated
+- Summarize review outcomes
+- Note what core design elements were validated
+- Give Develop confidence about what's solid
+
+### Implementation Guidance
+- Recommended build order
+- Edge cases to test
+- Integration test strategy
+- Project structure reference
+
+### Reference Documents
+- Point to Intent, Brief, Design
+- Specify read order
+
+**Why this matters:**
+- Develop stage often starts in a new session or by a different person
+- Handoff prevents context loss at stage transitions
+- Makes design decisions actionable
+- Reduces time to productive implementation
+
+---
+
 ## Exit Criteria
 
 Design is complete when:
@@ -304,6 +363,7 @@ Design is complete when:
 - [ ] No P1 issues open in Issue Log
 - [ ] Decision log captures key choices with rationale
 - [ ] Open Questions empty or explicitly deferred to Develop
+- [ ] **Develop Handoff section complete** — summarizes design, decisions, open questions, success criteria, implementation guidance
 - [ ] status.md updated with stage completion
 - [ ] Human sign-off
 

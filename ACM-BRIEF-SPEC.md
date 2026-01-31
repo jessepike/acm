@@ -296,9 +296,44 @@ intent_ref: "./intent.md"
 
 ## Issue Log
 
-| # | Issue | Source | Impact | Priority | Status | Resolution |
-|---|-------|--------|--------|----------|--------|------------|
+| # | Issue | Source | Severity | Complexity | Status | Resolution |
+|---|-------|--------|----------|------------|--------|------------|
 | - | - | - | - | - | - | - |
+
+## Review Log
+
+### Phase 1: Internal Review
+
+**Date:** YYYY-MM-DD
+**Mechanism:** Ralph Loop (N cycles)
+**Issues Found:** N Critical, N High, N Low
+**Complexity Assessment:** N Low, N Medium, N High
+**Actions Taken:**
+- **Auto-fixed (N issues):**
+  - [Issue] (Severity/Complexity) — [Resolution]
+- **Logged only (N issues):**
+  - [Issue] (Low/N/A) — [Why deferred]
+
+**Outcome:** [Status and next steps]
+
+### Phase 2: External Review
+
+**Date:** YYYY-MM-DD
+**Reviewers:** External-Model1, External-Model2
+**Issues Found:** N Critical, N High, N Low
+**Complexity Assessment:** N Low, N Medium, N High
+**Actions Taken:**
+- **Auto-fixed (N issues):**
+  - [Issue] (Severity/Complexity) — [Resolution]
+- **Flagged for user (N issues):**
+  - [Issue] (Severity/High) — [Investigation needed]
+- **Logged only (N issues):**
+  - [Issue] (Low/N/A) — [Why deferred]
+
+**Cross-Reviewer Consensus:**
+- [Issues with consensus and weighting]
+
+**Outcome:** [Status and next steps]
 
 ## Revision History
 

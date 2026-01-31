@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Defines the two-phase review mechanism used across all ACM stages"
-version: "1.0.0"
-updated: "2026-01-30"
+version: "1.2.0"
+updated: "2026-01-31"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/ACM-REVIEW-SPEC.md"
@@ -106,13 +106,63 @@ Used consistently across all stages and both phases.
 
 ---
 
+## Complexity Assessment
+
+After severity classification, assess the **effort required to fix** each Critical/High issue.
+
+| Complexity | Definition | Examples |
+|-----------|------------|----------|
+| **Low** | Direct edit, no research, clear fix | Change endpoint ID, add missing field to spec, fix typo in schema |
+| **Medium** | Requires design thinking, small refactor, clear path forward | Redesign cursor logic, add table columns + update data flow, restructure section |
+| **High** | Needs research, investigation, architectural rethinking | Evaluate alternative architectures, spike on unknown API behavior, resolve conflicting requirements |
+
+**Purpose:** Complexity guides **action-taking**. Low/Medium complexity issues are fixed automatically. High complexity issues are surfaced to the user for investigation.
+
+---
+
+## Action-Taking Matrix
+
+Once issues are classified by severity and complexity, take action according to this matrix:
+
+| Severity | Complexity | Action |
+|----------|-----------|--------|
+| **Critical** | Low | Fix automatically — direct edit, no user approval needed |
+| **Critical** | Medium | Fix automatically — apply design thinking, implement clear path |
+| **Critical** | High | **Flag for user** — needs research, investigation, or architectural discussion |
+| **High** | Low | Fix automatically — direct edit, no user approval needed |
+| **High** | Medium | Fix automatically — apply design thinking, implement clear path |
+| **High** | High | **Flag for user** — needs research, investigation, or architectural discussion |
+| **Low** | Any | Log only — do not spend cycles fixing |
+
+### Auto-Fix Guidelines
+
+When fixing automatically (Critical/High + Low/Medium complexity):
+- Apply the minimal fix that resolves the issue
+- Update related sections for consistency (e.g., if changing a schema, update data flow descriptions)
+- Do not expand scope beyond the identified issue
+- Log the fix in the Issue Log with source attribution and resolution
+
+### User Flag Guidelines
+
+When flagging for user (Critical/High + High complexity):
+- Clearly state the issue and why it's blocking
+- Identify what research or investigation is needed
+- Propose 2-3 potential approaches if possible
+- Wait for user decision before proceeding
+
+---
+
 ## Issue Logging
 
 All issues are logged in the artifact's Issue Log section using this format:
 
-| # | Issue | Source | Severity | Status | Resolution |
-|---|-------|--------|----------|--------|------------|
-| N | [description] | [source] | Critical/High/Low | Open/Resolved/Deferred | [resolution or -] |
+| # | Issue | Source | Severity | Complexity | Status | Resolution |
+|---|-------|--------|----------|------------|--------|------------|
+| N | [description] | [source] | Critical/High/Low | Low/Medium/High/N/A | Open/Resolved/Deferred | [resolution or -] |
+
+**Complexity column:**
+- For Critical/High issues: specify Low/Medium/High to indicate fix effort
+- For Low severity issues: use N/A (not fixing, so complexity is irrelevant)
 
 ### Source Attribution
 
@@ -129,9 +179,71 @@ All issues are logged in the artifact's Issue Log section using this format:
 
 When a review phase completes, add a summary entry:
 
-| # | Issue | Source | Severity | Status | Resolution |
-|---|-------|--------|----------|--------|------------|
-| N | Phase {1/2} review complete | {source} | - | Complete | {cycle count}: {issues found} Critical, {n} High resolved |
+| # | Issue | Source | Severity | Complexity | Status | Resolution |
+|---|-------|--------|----------|------------|--------|------------|
+| N | Phase {1/2} review complete | {source} | - | - | Complete | {cycle count}: {issues found} Critical, {n} High resolved |
+
+---
+
+## Review Log
+
+In addition to the Issue Log, each reviewable artifact MUST include a **Review Log** section that captures the review process narrative.
+
+### Purpose
+
+The Review Log provides a chronological record of what happened during reviews — what was found, what actions were taken, and the outcome. This transparency helps:
+- Track the review process over time
+- Understand what issues were addressed and how
+- Provide context for future maintainers
+- Document cross-reviewer consensus
+
+### Location
+
+Place the Review Log section immediately after the Issue Log and before the Revision History.
+
+### Format
+
+```markdown
+## Review Log
+
+### Phase {1/2}: {Internal/External} Review
+
+**Date:** YYYY-MM-DD
+**Mechanism/Reviewers:** {Ralph Loop N cycles | External-Model1, External-Model2}
+**Issues Found:** {N} Critical, {N} High, {N} Low
+**Complexity Assessment:** {N} Low, {N} Medium, {N} High (for Critical/High issues only)
+**Actions Taken:**
+- **Auto-fixed ({N} issues):**
+  - {Issue description} ({Severity}/{Complexity}) — {What was done}
+  - {Issue description} ({Severity}/{Complexity}) — {What was done}
+- **Flagged for user ({N} issues):**
+  - {Issue description} ({Severity}/High) — {What needs investigation}
+- **Logged only ({N} issues):**
+  - {Issue description} (Low/N/A) — {Why deferred}
+
+**Cross-Reviewer Consensus:** (Phase 2 only)
+- {Issues flagged by multiple reviewers and how weighted}
+
+**Outcome:** {Phase complete/incomplete, what happens next}
+```
+
+### Required Fields
+
+| Field | Description |
+|-------|-------------|
+| **Date** | ISO date (YYYY-MM-DD) when review phase occurred |
+| **Mechanism/Reviewers** | Phase 1: "Ralph Loop (N cycles)"; Phase 2: Comma-separated reviewer sources |
+| **Issues Found** | Count by severity (Critical, High, Low) |
+| **Complexity Assessment** | Count by complexity (Low, Medium, High) for Critical/High issues only |
+| **Actions Taken** | Grouped by action type (auto-fixed, flagged, logged) with severity/complexity and brief description of resolution |
+| **Cross-Reviewer Consensus** | Phase 2 only: Note which issues had consensus and how they were weighted |
+| **Outcome** | Status and next steps (e.g., "Phase 2 complete, design approved for Develop") |
+
+### When to Update
+
+- **After Phase 1 completes:** Add Phase 1 entry
+- **After Phase 2 completes:** Add Phase 2 entry
+- **During multi-cycle reviews:** Update the entry after each cycle if significant new issues are found
 
 ---
 
@@ -183,10 +295,13 @@ When Phase 2 stop conditions are met (or user decides to skip):
 After receiving Phase 2 feedback:
 
 1. **Filter aggressively** — Ignore suggestions that expand scope
-2. Extract only issues that genuinely block the next stage
-3. Log in artifact's Issue Log with source attribution
-4. Cross-reference multiple reviewers — if only one flags it and it's not clearly blocking, it's probably not Critical/High
-5. **Cross-reviewer consensus** — Issues flagged by multiple reviewers are weighted higher
+2. **Extract blocking issues** — Only issues that genuinely block the next stage
+3. **Assess severity** — Apply Critical/High/Low definitions
+4. **Cross-reference reviewers** — If only one flags it and it's not clearly blocking, it's probably not Critical/High
+5. **Consensus weighting** — Issues flagged by multiple reviewers are weighted higher
+6. **Assess complexity** — For each Critical/High issue, determine Low/Medium/High fix effort
+7. **Take action** — Apply the action-taking matrix (auto-fix Low/Medium, flag High to user)
+8. **Log all issues** — Record in Issue Log with source attribution, severity, complexity, and resolution
 
 ---
 
@@ -241,3 +356,14 @@ Modules are appended to the base prompt, not separate files.
 - **Internal is mandatory, external is user-driven** — agents don't decide review depth
 - **YAGNI is non-negotiable** — reviewers find problems, not opportunities
 - **Tool is prescribed** — Ralph Loop plugin, not ad-hoc agent invocations
+- **Action follows assessment** — severity + complexity determine whether to auto-fix or flag for user
+
+---
+
+## Revision History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2026-01-30 | Initial spec — two-phase model, severity definitions, cycle rules |
+| 1.1.0 | 2026-01-31 | Added complexity assessment and action-taking matrix for external review processing |
+| 1.2.0 | 2026-01-31 | Added Review Log section requirement for capturing review process narrative |

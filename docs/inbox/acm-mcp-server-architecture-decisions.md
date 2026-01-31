@@ -84,7 +84,7 @@ These are distinct bounded contexts that coexist:
 
 ### Governance
 - `get_rules_spec` — what rules a project should have
-- `get_global_context_spec` — what goes in CLAUDE.md
+- `get_context_spec` — what goes in CLAUDE.md (global or project level)
 
 ### Capabilities
 - `query_capabilities` — search registry by need/tags

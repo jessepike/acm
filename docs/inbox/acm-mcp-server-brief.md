@@ -1,9 +1,9 @@
 ---
 type: "brief"
 project: "ACM MCP Server"
-version: "0.3"
-status: "draft"
-review_cycle: 0
+version: "0.4"
+status: "internal-review-complete"
+review_cycle: 2
 created: "2026-01-31"
 updated: "2026-01-31"
 intent_ref: "../intent.md"
@@ -65,6 +65,10 @@ This directly serves ACM's intent: stages that guide work, specs as contracts, a
 - [ ] No stdout logging (stderr only, per MCP stdio requirements)
 - [ ] Consumer project wires up via a single `.mcp.json` entry
 
+## Open Questions
+
+None — all resolved during Discover. See Decisions table.
+
 ## Constraints
 
 - **Read-only:** The server reads ACM artifacts but never modifies them. Write operations stay in human-controlled workflows.
@@ -85,350 +89,22 @@ This directly serves ACM's intent: stages that guide work, specs as contracts, a
 
 ---
 
-## Tool Design
+## Tool Surface
 
-### Orchestration (3 tools)
+13 tools across 6 categories:
 
-**`get_stage`**
+| Category | Tools | Purpose |
+|----------|-------|---------|
+| **Orchestration** (3) | `get_stage`, `get_review_prompt`, `get_transition_prompt` | Query stage requirements, review prompts, transition guidance |
+| **Artifacts** (2) | `get_artifact_spec`, `get_artifact_stub` | Retrieve artifact specifications and starter templates |
+| **Project** (3) | `get_project_type_guidance`, `check_project_structure`, `check_project_health` | Project classification guidance, structure validation, health checks |
+| **Governance** (2) | `get_rules_spec`, `get_context_spec` | Query rules governance model and CLAUDE.md specs |
+| **Capabilities** (2) | `query_capabilities`, `get_capability_detail` | Search and inspect capabilities registry entries |
+| **Knowledge** (1) | `query_knowledge` | Search ACM knowledge base entries by topic (interim — KB MCP server will supersede for rich search) |
 
-Query stage requirements, phases, and gates for a given ACM stage.
+**Known gap:** `deliver` stage is a valid input for `get_stage` but ACM-DELIVER-SPEC.md does not exist yet. Returns actionable error. (Backlog: B15, B39)
 
-- Input: `stage` (enum: discover, design, develop, deliver)
-- Returns: Stage purpose, phases with descriptions, entry/exit criteria, key artifacts produced, gates
-- Reads: `ACM-STAGES-SPEC.md`, `ACM-{STAGE}-SPEC.md`
-- When to use: Starting work on a project stage, understanding what's required
-- When NOT to use: For review-specific information (use `get_review_prompt` instead)
-- Known gap: `deliver` is a valid enum value but ACM-DELIVER-SPEC.md does not exist yet. Returns `NOT_FOUND` with remediation. (Backlog: B15, B39)
-
-**`get_review_prompt`**
-
-Retrieve the review prompt for a specific stage and review phase.
-
-- Input: `stage` (enum: discover, design, develop), `phase` (enum: internal, external)
-- Returns: Full review prompt text, ready for use with Ralph Loop or external review server
-- Reads: `prompts/` directory, mapped as:
-  - discover/internal → `ralph-review-prompt.md`
-  - discover/external → `external-review-prompt.md`
-  - design/internal → `design-ralph-review-prompt.md`
-  - design/external → `design-external-review-prompt.md`
-  - develop/internal → `develop-ralph-review-prompt.md`
-  - develop/external → `develop-external-review-prompt.md`
-- When to use: Running internal review (Ralph Loop) or external review (external-review MCP server)
-- Note: Deliver stage review prompts not yet created
-
-**`get_transition_prompt`**
-
-Retrieve the prompt for transitioning between stages.
-
-- Input: `from_stage` (enum: discover, design, develop), `to_stage` (enum: design, develop, deliver)
-- Returns: Transition prompt text, pre-conditions, context to carry forward
-- Reads: `prompts/start-*.md`, `prompts/*-intake-prompt.md`, mapped as:
-  - discover→design → `start-design-prompt.md`, `design-intake-prompt.md`
-  - design→develop → `start-develop-prompt.md`
-- When to use: Project is ready to move to next stage
-- When NOT to use: Mid-stage work (use `get_stage` instead)
-
-### Artifacts (2 tools)
-
-**`get_artifact_spec`**
-
-Retrieve the specification for a given ACM artifact type — required sections, format, lifecycle, and exit criteria.
-
-- Input: `artifact` (enum: intent, brief, status, rules, project-claude-md, global-claude-md, folder-structure, readme, backlog, context-artifact)
-- Returns: Spec content — purpose, required sections, format requirements, lifecycle, exit criteria, relationships to other artifacts
-- Reads: `ACM-{ARTIFACT}-SPEC.md`, mapped as:
-  - intent → `ACM-INTENT-SPEC.md`
-  - brief → `ACM-BRIEF-SPEC.md`
-  - status → `ACM-STATUS-SPEC.md`
-  - rules → `ACM-RULES-SPEC.md`
-  - project-claude-md → `ACM-PROJECT-CLAUDE-MD-SPEC.md`
-  - global-claude-md → `ACM-GLOBAL-CLAUDE-MD-SPEC.md`
-  - folder-structure → `ACM-FOLDER-STRUCTURE-SPEC.md`
-  - readme → `ACM-README-SPEC.md`
-  - backlog → `ACM-BACKLOG-SPEC.md`
-  - context-artifact → `ACM-CONTEXT-ARTIFACT-SPEC.md`
-- When to use: Creating or validating an artifact, understanding what "good" looks like
-- When NOT to use: Just need a starter template (use `get_artifact_stub`)
-
-**`get_artifact_stub`**
-
-Retrieve a starter template for a given artifact type.
-
-- Input: `artifact` (enum: intent, brief, status, rules-constraints, claude-md-app, claude-md-artifact, claude-md-workflow)
-- Returns: Template text ready to be placed in a new project
-- Reads: `stubs/` directory, mapped as:
-  - intent → `stubs/intent.md`
-  - brief → `stubs/brief.md`
-  - status → `stubs/status.md`
-  - rules-constraints → `stubs/rules-constraints.md`
-  - claude-md-app → `stubs/claude-md/app.md`
-  - claude-md-artifact → `stubs/claude-md/artifact.md`
-  - claude-md-workflow → `stubs/claude-md/workflow.md`
-- When to use: Scaffolding a new project or adding a missing artifact
-- When NOT to use: Need to understand spec requirements (use `get_artifact_spec`)
-
-### Project (3 tools)
-
-**`get_project_type_guidance`**
-
-Get type-specific guidance for a project classification — what's different about this type, required brief extensions, review depth, recommended CLAUDE.md structure.
-
-- Input: `project_type` (enum: artifact, app, workflow), optional `scale` (enum: personal, shared, community, commercial), optional `scope` (enum: mvp, full-build), optional `complexity` (enum: standalone, multi-component)
-- Returns: Type description, required brief extensions for this type, recommended review cycle count, CLAUDE.md template variant, type-specific constraints
-- Reads: `ACM-PROJECT-TYPES-SPEC.md`, `ACM-BRIEF-SPEC.md` (type extensions section), `ACM-PROJECT-CLAUDE-MD-SPEC.md`
-- When to use: Starting Discover on a new project, classifying a project
-
-**`check_project_structure`**
-
-Validate a project's folder and artifact structure against ACM specs. Defaults to current working directory.
-
-- Input: optional `project_path` (string, defaults to cwd)
-- Returns: Pass/fail checklist — required folders present/missing, required artifacts present/missing, optional artifacts detected, overall status
-- Reads: `ACM-FOLDER-STRUCTURE-SPEC.md`, then inspects target project filesystem
-- When to use: After project init, during audits, before stage transitions
-- When NOT to use: For content-level validation (use `check_project_health`)
-
-**`check_project_health`**
-
-Comprehensive health check — structure, artifact content, stage alignment, drift indicators. Defaults to current working directory.
-
-- Input: optional `project_path` (string, defaults to cwd)
-- Returns: Health report with sections:
-  - Structure: folder/artifact presence (delegates to `check_project_structure` logic)
-  - Intent: present, non-empty, within word count guidance
-  - Brief: present, status field, review cycle count
-  - Status: present, recently updated, current stage indicated
-  - CLAUDE.md: present, within line limit, contains required references
-  - Rules: present if declared, constraint file exists
-  - Drift indicators: stage claimed vs artifacts present, brief scope vs actual deliverables
-- Reads: Multiple ACM specs, then inspects target project artifacts
-- When to use: Periodic health checks, before stage transitions, during reviews
-- When NOT to use: Just need structure validation (use `check_project_structure`)
-
-### Governance (2 tools)
-
-**`get_rules_spec`**
-
-Retrieve the rules governance model — what `.claude/rules/` contains, how it relates to CLAUDE.md, precedence hierarchy.
-
-- Input: none
-- Returns: Rules spec content — purpose, precedence model (rules > context), what belongs in rules vs CLAUDE.md, starter template reference
-- Reads: `ACM-RULES-SPEC.md`
-- When to use: Setting up project governance, understanding rule/context boundary
-
-**`get_context_spec`**
-
-Retrieve the CLAUDE.md spec for a given level — required content, constraints, what to include/exclude.
-
-- Input: `level` (enum: global, project)
-- Returns: Spec content — purpose, required sections, max line count, content boundaries, examples
-- Reads: `ACM-GLOBAL-CLAUDE-MD-SPEC.md` (global) or `ACM-PROJECT-CLAUDE-MD-SPEC.md` (project)
-- When to use: Creating or auditing CLAUDE.md files
-
-### Capabilities (2 tools)
-
-**`query_capabilities`**
-
-Search the capabilities registry for skills, tools, agents, or plugins matching criteria.
-
-- Input: optional `query` (string — keyword search across name, description, tags), optional `type` (enum: skill, tool, agent, plugin), optional `tags` (string[]), optional `status` (enum: active, staging, archive, default: active), `limit` (int, default: 10, max: 50)
-- Returns: Array of matching capabilities — name, type, description, quality score, tags, status, source
-- Reads: `~/code/_shared/capabilities-registry/inventory.json`
-- When to use: Capability assessment during Design/Develop, finding tools for a specific need
-- When NOT to use: Interactive install/management (use `/acm-env:capabilities`)
-
-**`get_capability_detail`**
-
-Get full details for a specific capability including its manifest and skill content if applicable.
-
-- Input: `name` (string), `type` (enum: skill, tool, agent, plugin)
-- Returns: Full capability.yaml contents, SKILL.md content (if skill type), file listing
-- Reads: `~/code/_shared/capabilities-registry/capabilities/{type}/{name}/`
-- When to use: Deep dive on a specific capability before using it
-- When NOT to use: Browsing/searching (use `query_capabilities` first)
-
-### Knowledge (1 tool)
-
-**`query_knowledge`**
-
-Search ACM knowledge base entries by topic. Simple text matching against titles and content.
-
-- Input: `topic` (string)
-- Returns: Array of matching KB entries — filename, title (from frontmatter or first heading), matching excerpts
-- Reads: `~/code/_shared/acm/kb/*.md` (scans all markdown files, case-insensitive text match)
-- When to use: Looking up ACM learnings, patterns, or validated findings
-- When NOT to use: Searching the full knowledge base system (future: use knowledge-base MCP server)
-- Note: Interim solution. Will be superseded by the knowledge-base MCP server for rich semantic search. This tool will remain for ACM-specific process learnings.
-
-**Total: 13 tools**
-
----
-
-## Error Design
-
-Following MCP server design KB (see `acm/kb/mcp-server-design-knowledge-base-agent-ready.md`):
-
-### Error Response Format
-
-All tool responses follow a consistent structure:
-
-```typescript
-// Success
-{
-  ok: true,
-  result: { ... },      // Tool-specific typed result
-  summary: string,       // Short human-readable summary
-  warnings: string[]     // Optional warnings (e.g., "Deliver stage spec not yet created")
-}
-
-// Error
-{
-  ok: false,
-  error_code: string,    // Machine-readable: NOT_FOUND, INVALID_ARGUMENT, INTERNAL_ERROR
-  summary: string,       // Human-readable: what went wrong
-  remediation: string    // What the agent can do about it
-}
-```
-
-### Error Behaviors
-
-- **Missing spec file:** `NOT_FOUND` with remediation: "ACM-DELIVER-SPEC.md does not exist yet. The Deliver stage spec has not been created."
-- **Invalid enum value:** `INVALID_ARGUMENT` with remediation listing valid values
-- **Project path not found:** `NOT_FOUND` with remediation: "Directory does not exist. Check the path or omit project_path to use cwd."
-- **No search results:** Return `ok: true` with empty results and hints: "No capabilities matched tags ['supabase']. Try broader tags or run /acm-env:refresh to update the registry."
-- **File read failure:** `INTERNAL_ERROR` with remediation: "Could not read {file}. Check file permissions."
-
----
-
-## Implementation
-
-### Technology
-
-- **SDK:** `@modelcontextprotocol/sdk` (TypeScript)
-- **Transport:** `StdioServerTransport`
-- **Runtime:** Node.js (LTS)
-- **File reading:** Node.js `fs/promises` — read files at request time, no caching
-- **YAML parsing:** `js-yaml` for frontmatter extraction from spec files
-- **JSON parsing:** Native `JSON.parse` for inventory.json
-- **Validation:** `zod` for input schema validation (comes with MCP SDK)
-- **Logging:** `console.error` only (stderr) — never stdout per stdio transport rules
-
-### Project Structure
-
-Located at `acm/acm-server/` within the ACM repo:
-
-```
-acm/acm-server/
-├── src/
-│   ├── index.ts              # Server entry, tool registration
-│   ├── tools/
-│   │   ├── orchestration.ts  # get_stage, get_review_prompt, get_transition_prompt
-│   │   ├── artifacts.ts      # get_artifact_spec, get_artifact_stub
-│   │   ├── project.ts        # get_project_type_guidance, check_project_structure, check_project_health
-│   │   ├── governance.ts     # get_rules_spec, get_context_spec
-│   │   ├── capabilities.ts   # query_capabilities, get_capability_detail
-│   │   └── knowledge.ts      # query_knowledge
-│   ├── readers/
-│   │   ├── spec-reader.ts    # Read and parse ACM spec files (frontmatter + content)
-│   │   ├── prompt-reader.ts  # Read prompt files by stage+phase mapping
-│   │   ├── stub-reader.ts    # Read stub templates by artifact type mapping
-│   │   ├── registry-reader.ts # Read inventory.json, query capabilities, read capability details
-│   │   └── kb-reader.ts      # Scan kb/ directory, text-match against entries
-│   └── config.ts             # Path configuration (ACM_ROOT, REGISTRY_ROOT, overridable)
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-### Path Configuration
-
-```typescript
-// config.ts — resolved at startup, overridable via environment variables
-export const ACM_ROOT = process.env.ACM_ROOT || path.join(os.homedir(), 'code/_shared/acm');
-export const REGISTRY_ROOT = process.env.REGISTRY_ROOT || path.join(os.homedir(), 'code/_shared/capabilities-registry');
-```
-
-### File Mapping Tables
-
-The server maintains static maps from tool input enums to file paths. Examples:
-
-```typescript
-// Spec files
-const SPEC_MAP: Record<string, string> = {
-  'intent': 'ACM-INTENT-SPEC.md',
-  'brief': 'ACM-BRIEF-SPEC.md',
-  'status': 'ACM-STATUS-SPEC.md',
-  // ...
-};
-
-// Prompt files (stage × phase)
-const PROMPT_MAP: Record<string, Record<string, string>> = {
-  'discover': { 'internal': 'ralph-review-prompt.md', 'external': 'external-review-prompt.md' },
-  'design': { 'internal': 'design-ralph-review-prompt.md', 'external': 'design-external-review-prompt.md' },
-  'develop': { 'internal': 'develop-ralph-review-prompt.md', 'external': 'develop-external-review-prompt.md' },
-};
-
-// Stub files
-const STUB_MAP: Record<string, string> = {
-  'intent': 'intent.md',
-  'brief': 'brief.md',
-  'claude-md-app': 'claude-md/app.md',
-  // ...
-};
-```
-
----
-
-## Consumer Wiring
-
-### Per-project (recommended)
-
-Add to `.mcp.json` in the consumer project root:
-
-```json
-{
-  "mcpServers": {
-    "acm": {
-      "command": "node",
-      "args": ["/Users/jessepike/code/_shared/acm/acm-server/build/index.js"]
-    }
-  }
-}
-```
-
-### Global (alternative)
-
-Add to `~/.claude.json` to make available in all projects:
-
-```json
-{
-  "mcpServers": {
-    "acm": {
-      "command": "node",
-      "args": ["/Users/jessepike/code/_shared/acm/acm-server/build/index.js"]
-    }
-  }
-}
-```
-
-### Alongside External Review Server
-
-Projects using both ACM process knowledge and external review:
-
-```json
-{
-  "mcpServers": {
-    "acm": {
-      "command": "node",
-      "args": ["/Users/jessepike/code/_shared/acm/acm-server/build/index.js"]
-    },
-    "external-review": {
-      "command": "python",
-      "args": ["/Users/jessepike/code/_shared/acm/skills/external-review/server/external_review_server.py"]
-    }
-  }
-}
-```
+**Design principle:** All tools are read-only, outcome-oriented, with flat schemas and actionable errors per MCP server design KB.
 
 ---
 
@@ -470,9 +146,35 @@ The architecture spec defines a self-improvement loop: capture → distill → a
 
 ## Issue Log
 
-| # | Issue | Source | Impact | Priority | Status | Resolution |
-|---|-------|--------|--------|----------|--------|------------|
-| - | - | - | - | - | - | - |
+| # | Issue | Source | Severity | Complexity | Status | Resolution |
+|---|-------|--------|----------|------------|--------|------------|
+| 1 | Missing Open Questions section | Ralph-Design | Critical | Low | Resolved | Added section |
+| 2 | Missing Review Log section | Ralph-Design | Critical | Low | Resolved | Added section |
+| 3 | Issue Log columns used Impact/Priority instead of Severity/Complexity | Ralph-Design | High | Low | Resolved | Fixed column headers |
+| 4 | Brief contains Design-stage content (implementation details, code samples, directory structure) | Ralph-Design | Critical | Medium | Resolved | Moved implementation details to Design Notes appendix; kept tool surface summary |
+| 5 | Tool naming inconsistency between architecture decisions doc and brief | Ralph-Design | High | Low | Resolved | Standardized to `get_context_spec` |
+| 6 | Architecture decisions doc heading says "Three-Server" but body says two | Ralph-Design | Low | N/A | Open | Minor — in ephemeral doc |
+| 7 | Phase 1 review complete | Ralph-Design | - | - | Complete | 2 cycles: 3 Critical, 2 High resolved |
+
+## Review Log
+
+### Phase 1: Internal Review
+
+**Date:** 2026-01-31
+**Mechanism:** Ralph Loop (2 cycles)
+**Issues Found:** 3 Critical, 2 High, 1 Low
+**Complexity Assessment:** 3 Low, 1 Medium (for Critical/High issues)
+**Actions Taken:**
+- **Auto-fixed (5 issues):**
+  - Missing Open Questions section (Critical/Low) — Added section
+  - Missing Review Log section (Critical/Low) — Added section
+  - Issue Log wrong columns (High/Low) — Fixed to Severity/Complexity
+  - Design-stage content in brief (Critical/Medium) — Moved to Design Notes appendix
+  - Tool naming inconsistency (High/Low) — Standardized naming
+- **Logged only (1 issue):**
+  - Architecture decisions heading mismatch (Low/N/A) — Ephemeral doc, minor
+
+**Outcome:** Phase 1 complete — 2 cycles, zero Critical/High in final cycle. Brief ready for Design.
 
 ## Revision History
 
@@ -481,3 +183,4 @@ The architecture spec defines a self-improvement loop: capture → distill → a
 | 0.1 | 2026-01-31 | Initial draft |
 | 0.2 | 2026-01-31 | Resolved open questions (server location, path args, KB search). Added decisions table. Added external review alignment. Expanded tool descriptions with when-to-use/when-not. Added error response format. Added path configuration details. Added relationship to external review and Ralph Loop. |
 | 0.3 | 2026-01-31 | Internal review fixes: added maintenance primitive exclusion note, standardized "environment layer" terminology, added self-improvement loop connection, added deliver stage known gap. Updated ACM-ENVIRONMENT-SPEC.md references to ACM-ARCHITECTURE-SPEC.md. Added backlog items B36-B40. |
+| 0.4 | 2026-01-31 | Ralph-Design review cycle 1: Added missing Open Questions and Review Log sections. Fixed Issue Log columns to match ACM-REVIEW-SPEC. Moved implementation details (tool schemas, code samples, directory structure, consumer wiring) to design.md scope — replaced with tool surface summary table. Standardized tool naming. |

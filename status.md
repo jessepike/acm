@@ -175,9 +175,16 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 - `skills/external-review/SKILL.md` — orchestration instructions for Claude Code
 - `.mcp.json` — external-review server registered
 
+**What was configured this session:**
+- Created `~/.claude/models.yaml` — 3 models (gemini, gpt, kimi) with `api_key_env` references
+- API keys stored as env vars in `~/.zshrc` (GOOGLE_API_KEY, OPENAI_API_KEY, MOONSHOT_API_KEY)
+- Created `skills/external-review/README.md` — setup, API key config, MCP tools, testing docs
+
 **What's next:**
+- Restart Claude Code (MCP servers need new env vars)
+- Live test: `list_models` should show 3 models with `available: true`
+- Live test: `review` with a real artifact to confirm end-to-end
 - Develop internal review (Phase 7) via Ralph Loop
-- Then decide on external review for the build
 - Then close out B14
 
 **Repos:**

@@ -9,18 +9,33 @@ These are non-negotiable rules for conducting reviews in ACM projects.
 - Internal review (Phase 1) is MANDATORY for every reviewable artifact at every stage
 - External review (Phase 2) is USER-DRIVEN — only conduct when the user requests it
 
+## Preferred Invocation
+
+Use the `acm-review` plugin commands for all reviews:
+
+| Command | What It Does |
+|---------|-------------|
+| `/acm-review:artifact` | Full review: Phase 1 internal → Phase 2 external |
+| `/acm-review:artifact-internal` | Phase 1 internal only |
+| `/acm-review:artifact-external` | Phase 2 external only |
+
+These commands handle stage detection, prompt resolution, and Ralph Loop invocation automatically.
+
 ## Prompt Usage
 
 - Use the stage-specific review prompt from `~/code/_shared/acm/prompts/` — do not write custom review prompts
-- Invoke with: `/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/{prompt}.md)" --max-iterations 10 --completion-promise "{PROMISE}"`
+- Internal review: `/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/{prompt}.md)" --max-iterations 10 --completion-promise "{PROMISE}"`
+- External review: `/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/{external-ralph-prompt}.md)" --max-iterations 10 --completion-promise "EXTERNAL_REVIEW_COMPLETE"`
 
 ### Prompt Map
 
-| Stage | Internal Prompt | External Prompt | Promise |
-|-------|-----------------|-----------------|---------|
-| Discover | `ralph-review-prompt.md` | `external-review-prompt.md` | `INTERNAL_REVIEW_COMPLETE` |
-| Design | `design-ralph-review-prompt.md` | `design-external-review-prompt.md` | `DESIGN_INTERNAL_REVIEW_COMPLETE` |
-| Develop | `develop-ralph-review-prompt.md` | `develop-external-review-prompt.md` | `DEVELOP_INTERNAL_REVIEW_COMPLETE` |
+| Stage | Internal Prompt | External Ralph Prompt | External Model Prompt | Internal Promise | External Promise |
+|-------|-----------------|----------------------|----------------------|------------------|------------------|
+| Discover | `ralph-review-prompt.md` | `external-ralph-prompt.md` | `external-review-prompt.md` | `INTERNAL_REVIEW_COMPLETE` | `EXTERNAL_REVIEW_COMPLETE` |
+| Design | `design-ralph-review-prompt.md` | `design-external-ralph-prompt.md` | `design-external-review-prompt.md` | `DESIGN_INTERNAL_REVIEW_COMPLETE` | `EXTERNAL_REVIEW_COMPLETE` |
+| Develop | `develop-ralph-review-prompt.md` | `develop-external-ralph-prompt.md` | `develop-external-review-prompt.md` | `DEVELOP_INTERNAL_REVIEW_COMPLETE` | `EXTERNAL_REVIEW_COMPLETE` |
+
+**Note:** External Ralph Prompts instruct Claude (inside Ralph Loop) to call the MCP `review()` tool each cycle. External Model Prompts are sent to the external models via the MCP server.
 
 ## Review Mechanism
 

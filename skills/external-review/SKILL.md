@@ -16,9 +16,13 @@ arguments:
 
 # External Review Skill
 
-You are executing an automated Phase 2 external review. External LLM models will review the artifact and you will synthesize their feedback into a fix-iterate loop.
+You are executing a single cycle of Phase 2 external review. External LLM models review the artifact and you synthesize their feedback.
 
-## Step 1: Resolve Configuration
+**Preferred invocation:** Use `/acm-review:artifact-external` (or `/acm-review:artifact` for full review) which handles iteration via Ralph Loop automatically. This skill is the single-cycle engine called within that loop.
+
+## Step 1: Resolve Configuration (if invoked standalone)
+
+If invoked directly (not via Ralph Loop), resolve configuration:
 
 ### Stage Detection
 1. If `--stage` argument provided, use it
@@ -42,7 +46,7 @@ You are executing an automated Phase 2 external review. External LLM models will
 2. Otherwise, use `default_models` from `config.yaml`
 3. Verify models exist via MCP: `external-review.list_models()`
 
-## Step 2: Confirm Before Execute
+## Step 2: Confirm Before Execute (if invoked standalone)
 
 Display the resolved configuration and wait for user confirmation:
 
@@ -53,16 +57,13 @@ Stage:     {stage}
 Artifact:  {artifact_path}
 Prompt:    {prompt_source}
 Models:    {model_list} (parallel)
-Cycles:    min 1, max 10
 
 Proceed? (y/n):
 ```
 
 **Do NOT proceed without explicit user confirmation.**
 
-## Step 3: Execute Review Loop
-
-For each cycle (up to max 10):
+## Step 3: Execute Single Review Cycle
 
 ### 3a. Call External Models
 
@@ -141,46 +142,14 @@ Format findings in the artifact's Issue Log section:
    - Tokens: {total_input} in / {total_output} out
    ```
 
-### 3g. Check Stop Conditions
+## Step 4: Report
 
-After each cycle, evaluate:
-
-| Condition | Action |
-|-----------|--------|
-| Zero Critical + zero High issues (and min 1 cycle met) | **Stop — review complete** |
-| Cycle 10 reached | **Hard stop** |
-| Critical issues persist past cycle 4 | **Stop — structural problem** (flag to user) |
-| Same issue persists 3+ cycles unchanged | **Stop — stuck** (flag to user) |
-| Critical/High issues remain and fixable | Continue to next cycle |
-
-### 3h. Loop
-
-If not done: re-read the updated artifact from disk and call `external-review.review()` again with the same prompt.
-
-## Step 4: Complete
-
-When review is complete:
-
-1. Update artifact frontmatter status if applicable
-2. Log final review summary
-3. Report results:
-   ```
-   External review complete.
-     Cycles:          {N}
-     Issues resolved: {N} ({N} auto-fixed, {N} user-resolved)
-     Issues logged:   {N} (Low severity)
-     Total cost:      ${total_cost_usd}
-     Total tokens:    {input} in / {output} out
-   ```
-
-## Invocation via Ralph Loop
-
-This skill is designed to work within the Ralph Loop. The standard invocation:
-
-```bash
-/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/{stage}-external-review-prompt.md)" \
-  --max-iterations 10 \
-  --completion-promise "EXTERNAL_REVIEW_COMPLETE"
+Report single-cycle results:
 ```
-
-The skill handles context assembly; Ralph Loop handles the iteration mechanics.
+External review cycle complete.
+  Issues found:    {N} (Critical: {N}, High: {N}, Low: {N})
+  Auto-fixed:      {N}
+  Flagged to user: {N}
+  Cost:            ${total_cost_usd}
+  Tokens:          {input} in / {output} out
+```

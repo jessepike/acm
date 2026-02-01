@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Detailed specification for the Develop stage workflow"
-version: "1.2.0"
-updated: "2026-01-29"
+version: "1.3.0"
+updated: "2026-01-31"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/ACM-DEVELOP-SPEC.md"
@@ -81,17 +81,51 @@ Every phase transition requires context clearing to prevent accumulated drift an
 **Protocol (agent-driven):**
 
 1. Agent completes phase work
-2. Agent updates `status.md` with phase completion and summary
-3. Agent updates `tasks.md` if applicable
-4. Agent runs `/clear`
-5. Agent re-reads artifacts fresh: `CLAUDE.md` → `status.md` → `tasks.md` → `plan.md`
-6. Agent confirms: **"Phase N complete. Starting Phase N+1. Here's what I see: [brief summary of current state and next actions]"**
+2. Agent updates the **Handoff** block in `tasks.md` (see format below)
+3. Agent updates `status.md` with phase completion summary
+4. Agent commits all changes
+5. Agent runs `/clear`
+6. Agent re-reads artifacts fresh: `CLAUDE.md` → `status.md` → `tasks.md` → `plan.md`
+7. Agent confirms: **"Phase N complete. Starting Phase N+1. Here's what I see: [brief summary from handoff block]"**
 
 **Why:** Multi-phase execution accumulates stale context. Agents carry assumptions forward that may no longer apply. Clearing context and re-reading from artifacts ensures each phase starts from ground truth, not memory.
 
+### Handoff Block
+
+The Handoff section lives at the top of `tasks.md` (after frontmatter, before phase tables). It is **overwritten** at each phase boundary — only the current handoff matters.
+
+**Required format:**
+
+```markdown
+## Handoff
+
+| Field | Value |
+|-------|-------|
+| Phase | {completed phase name} |
+| Status | Complete |
+| Next | {next phase name} |
+| Blocker | {blocker or "None"} |
+
+**Done this phase:**
+- {task ID}: {brief summary}
+- {task ID}: {brief summary}
+
+**Next phase requires:**
+- {what to start, key dependencies, any setup needed}
+
+**Build notes:**
+- {decisions made, gotchas discovered, anything the next phase needs to know}
+```
+
+**Rules:**
+- **Overwrite, don't append.** Each boundary replaces the previous handoff block.
+- **Keep it short.** 10-20 lines max. This is orientation, not a journal.
+- **Build notes are optional.** Omit the section if there's nothing worth noting.
+- **Phase field uses the phase name**, not just a number (e.g., "Phase B: Providers", not "B").
+
 **What carries across phases (via artifacts, not memory):**
-- `status.md` — current state, what was done
-- `tasks.md` — task status, completion notes
+- `tasks.md` — handoff block + task status (primary orientation artifact)
+- `status.md` — current state, session-level summary
 - `plan.md` — implementation plan, decision log
 - `manifest.md` / `capabilities.md` — dependencies and capabilities
 
@@ -260,17 +294,28 @@ None required for this project.
 - **Parallelization opportunities:** What can run concurrently
 - **Risk areas:** Known challenges, mitigation approaches
 
-#### tasks.md — Atomic Task List
+#### tasks.md — Handoff + Atomic Task List
 
+**Structure:** Handoff block first, then phase tables.
+
+- **Handoff block:** Structured phase transition data (see Phase Boundary Protocol)
 - **Atomic tasks:** Small, single-agent executable chunks
 - **Grouped by phase:** Matches plan.md phases
-- **Grouped by domain:** Frontend, backend, testing, etc.
 - **Clear acceptance criteria:** How to know task is complete
 - **Dependencies noted:** What must complete before this task
 
 **Task format (table with status):**
 
 ```markdown
+## Handoff
+
+| Field | Value |
+|-------|-------|
+| Phase | — |
+| Status | Not started |
+| Next | Phase 1: Core Structure |
+| Blocker | None |
+
 ## Phase 1: Core Structure
 
 | ID | Task | Status | Acceptance Criteria | Depends | Capability |

@@ -156,11 +156,13 @@ If the human has feedback, iterate on planning artifacts. Do not move forward un
 
 If you do not have explicit human approval, STOP and ask for it.
 
-**Phase boundary protocol:** Before starting each execution phase:
-1. Update status.md with phase completion
-2. Run `/clear` to reset context
-3. Re-read: CLAUDE.md → status.md → tasks.md → plan.md
-4. Confirm: "Phase N complete. Starting Phase N+1. Here's what I see: [summary]"
+**Phase boundary protocol:** At each phase transition:
+1. Update the Handoff block in tasks.md (phase, status, next, done this phase, next phase requires)
+2. Update status.md with phase completion summary
+3. Commit all changes
+4. Run `/clear` to reset context
+5. Re-read: CLAUDE.md → status.md → tasks.md (handoff block first) → plan.md
+6. Confirm: "Phase N complete. Starting Phase N+1. Here's what I see: [summary from handoff]"
 
 Execution phases:
 1. Review Loop — Run internal review (Ralph Loop) on plan, then external review

@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Defines the ACM stage workflow model and meta layer"
-version: "1.1.0"
-updated: "2026-01-27"
+version: "1.2.0"
+updated: "2026-02-01"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/ACM-STAGES-SPEC.md"
@@ -57,6 +57,7 @@ Some artifacts persist across all stages:
 | `intent.md` | North Star — why we're doing this | Created in Discover, stable thereafter |
 | `status.md` | Session state — where we left off | Updated every session, all stages |
 | `CLAUDE.md` | Context manifest — what to load | Evolves with project, references status.md |
+| `docs/acm/` | Stage planning workspace | Created in Develop, archived at stage completion |
 
 **Agent Session Protocol:**
 1. Session start: Read CLAUDE.md → Read status.md → Understand state
@@ -146,14 +147,46 @@ Happens once at project inception, before Discover begins.
 
 ## Stage Transitions
 
-Each transition may require stage-specific setup:
+Each transition requires the completing stage to execute the **Stage Boundary Handoff Protocol** (below), plus stage-specific setup:
 
 | Transition | Setup Activity |
 |------------|----------------|
 | Init → Discover | Scaffold folders, load rules, prep validation prompts |
-| Discover → Design | Verify intent clarity, prep decision frameworks |
-| Design → Develop | Environment ready, tools installed, plan created |
-| Develop → Deliver | Deployment config, handoff prep, documentation |
+| Discover → Design | Handoff protocol, verify intent clarity, prep decision frameworks |
+| Design → Develop | Handoff protocol, environment ready, tools installed, plan created |
+| Develop → Deliver | Handoff protocol, deployment config, documentation |
+
+---
+
+## Universal Exit Criteria
+
+Every stage must satisfy these before transitioning. Stage-specific exit criteria (defined in each stage spec) layer on top.
+
+- [ ] Primary deliverable(s) exist with required content
+- [ ] No Critical or High issues open (post-review)
+- [ ] Alignment verified with intent.md and brief.md
+- [ ] All work committed (atomic commits, no uncommitted changes)
+- [ ] Documentation appropriate to deliverable exists
+- [ ] Workspace cleanup complete (no transients, .gitignore current)
+- [ ] status.md updated with stage completion (THE SEAL — last step)
+- [ ] Human sign-off obtained
+
+---
+
+## Stage Boundary Handoff Protocol
+
+When transitioning between stages, the completing agent:
+
+1. Completes all stage-specific exit criteria
+2. Updates status.md with structured stage handoff:
+   - **What was produced** — deliverable summary + key files
+   - **Success criteria status** — from brief.md
+   - **Known limitations / deferred items**
+   - **Read order for next stage agent**
+3. Commits with `chore({stage}): stage complete — {summary}`
+4. Runs `/clear`
+
+The next stage agent starts by reading `CLAUDE.md` → `status.md` (which contains the handoff).
 
 ---
 

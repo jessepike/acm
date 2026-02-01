@@ -1,7 +1,7 @@
 ---
 project: "ACM (Agentic Context Management)"
 stage: "Develop"
-updated: "2026-01-31"
+updated: "2026-02-01"
 ---
 
 # Status
@@ -26,7 +26,7 @@ updated: "2026-01-31"
 - [x] ACM-DESIGN-SPEC.md — phases, inputs, outputs, exit criteria
 
 ### Develop Stage Spec
-- [x] ACM-DEVELOP-SPEC.md (v1.2.0) — phases, intake, planning, build, review, phase boundary protocol
+- [x] ACM-DEVELOP-SPEC.md (v2.0.0) — 8 phases, two-tier testing, progressive disclosure, build-to-design verification, closeout
 
 ### Supporting Specs
 - [x] ACM-BRIEF-SPEC.md (v2.1.0)
@@ -140,6 +140,7 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 | 2026-01-31 | ACM MCP Server build complete — all phases. Phase D: companion skill (skills/acm-workflow/). Phase E: consumer wiring (.mcp.json), README, all 9 success criteria verified. Manual testing via MCP Inspector + Claude in Chrome — 4 tools tested across all categories, all passing. KB article: MCP-SERVER-MANUAL-TESTING.md. Architecture spec updated to v1.3.0 — new MCP Server Interface Layer section, MCP tool references on Orchestration/Capabilities/Knowledge/Validation primitives. Archived experiments/, cleaned up transient build docs. |
 | 2026-01-31 | B14 External Review Skill — Design complete. Reviewed external review spec against ACM Architecture Spec and MCP Server Brief for alignment (all clean). Updated ACM-ARCHITECTURE-SPEC v1.2.0 (added skills/ and acm-server/ to physical layout). Added Stage column to BACKLOG.md for pipeline tracking. Archived ACM MCP server docs to _archive/. Moved spec from docs/inbox/ to docs/design.md, created discover-brief.md. Phase 1 internal review: 2 Ralph Loop cycles, 3C + 3H resolved (frontmatter, artifact paths, Phase 2 min cycles, ACM MCP server integration, moonshot→openai_compat collapse). Phase 2 external review (Gemini + GPT): 1 cycle, 1C + 3H resolved (provider ID mapping, artifact_content→artifact_path, extra_params pass-through, retry policy). Design v1.3.0 complete. Added B44 (frontmatter stage tracking), B45 (stage transition cleanup). |
 | 2026-01-31 | B14 Develop Phases 1-4 complete. Phase 1 (Intake): resolved 6 design questions (path validation→project root+home, partial load, no cost metadata, project .mcp.json, venv, official mcp SDK). Phase 2 (Capability Assessment): manifest.md + capabilities.md. Phase 3 (Planning): plan.md + tasks.md (11 tasks, 6 phases). HARD GATE approved. Phase 4 (Review): Ralph Loop internal review — 3 cycles, 1C + 4H resolved (TDD co-location, venv task, server entry point, requirements.txt sequencing). Plan v1.1.0 ready for build. |
+| 2026-02-01 | ACM-DEVELOP-SPEC.md v2.0.0 — major revision. Added Phase 7 (Documentation) + Phase 8 (Closeout). Two-tier testing model (automated + real-world). Progressive disclosure in tasks.md. Build-to-design verification in Phase 6. Commit cadence section. Universal + type-specific exit criteria. Removed registration from Develop (→ Deliver). ACM-STAGES-SPEC.md v1.2.0 — universal exit criteria + stage boundary handoff protocol. ACM-FOLDER-STRUCTURE-SPEC.md v1.2.0 — docs/acm/ convention for stage planning artifacts. Moved B14 artifacts to docs/acm/. Added B46-B51 to backlog. |
 | 2026-01-31 | B14 Develop Phases 5-6 complete — full build. Phase A: scaffold, venv, config loading (9 tests), path validation (7 tests), provider base, MCP entry point + list_models. Phase B: OpenAI-compat provider (5 tests), Google provider (5 tests) — both with retry/backoff/extra_params. Phase C: review tool with parallel asyncio.gather, partial failures (5 tests). Phase D: config.yaml + SKILL.md. Phase E: integration tests (3 tests). Phase F: .mcp.json registration. Total: 34 tests passing, all 11 tasks done. |
 
 ## Decisions

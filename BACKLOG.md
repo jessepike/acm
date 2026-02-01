@@ -2,7 +2,7 @@
 type: "tracking"
 description: "ACM backlog — prioritized queue of potential work items"
 version: "2.0.0"
-updated: "2026-01-31"
+updated: "2026-02-01"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/BACKLOG.md"
@@ -29,6 +29,12 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
 | B40 | Update ACM-STAGES-SPEC.md environment layer references to include ACM MCP server alongside acm-env | Docs | ACM | P2 | S | — | Done |
 | B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | — | Pending |
+| B46 | Update start-develop-prompt.md for Phase 7-8 + testing emphasis | Enhancement | Prompts | P2 | S | — | Pending |
+| B47 | Update develop-ralph-review-prompt.md to check testing strategy in plan | Enhancement | Prompts | P2 | S | — | Pending |
+| B48 | Create hooks for phase boundary commit + tasks.md enforcement | Enhancement | acm-env | P2 | M | — | Pending |
+| B49 | Update ACM-DESIGN-SPEC.md with stage boundary handoff pattern | Enhancement | ACM | P2 | S | — | Pending |
+| B50 | Update ACM-DISCOVER-SPEC.md with stage boundary handoff pattern | Enhancement | ACM | P2 | S | — | Pending |
+| B51 | Update ACM MCP server get_stage enum to include 'deliver' once spec exists | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
 | B14 | Automated multi-model review orchestration (external-review skill + MCP server) | Architecture | ACM | P1 | L | Develop | In Progress |
 | B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | — | Pending |
 | B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | — | Pending |

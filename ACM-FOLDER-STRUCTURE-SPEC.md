@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Defines minimal folder structure for ACM projects"
-version: "1.1.0"
-updated: "2026-01-24"
+version: "1.2.0"
+updated: "2026-02-01"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/ACM-FOLDER-STRUCTURE-SPEC.md"
@@ -38,12 +38,25 @@ project-root/
 ├── docs/                      # Main folder for markdown/context/reference
 │   ├── intent.md              # North Star (from Discover)
 │   ├── brief.md               # Detailed scope (from Discover)
+│   ├── acm/                   # Stage planning artifacts (workspace)
+│   │   └── archive/           # Completed planning artifacts
 │   └── inbox/                 # Triage zone (new/unprocessed items)
 ├── _archive/                  # Inactive artifacts (not deleted, not active)
 └── README.md                  # What this is, how to use it
 ```
 
-**Core folders:** 6 items. This is the irreducible minimum.
+**Core folders:** 7 items. This is the irreducible minimum.
+
+**`docs/acm/` contents (created during Develop, populated per stage):**
+
+```
+docs/acm/
+├── plan.md            # Implementation plan (Develop)
+├── tasks.md           # Task tracking (Develop)
+├── manifest.md        # Dependencies (Develop)
+├── capabilities.md    # Agent infrastructure (Develop)
+└── archive/           # Completed planning artifacts
+```
 
 ---
 
@@ -156,6 +169,8 @@ project-root/
 | `.claude/rules/` | Hard constraints (policy) | Reference (protected) | Human only |
 | `docs/` | Main context/reference folder | Reference | Human + Agent |
 | `docs/inbox/` | Triage zone | Ephemeral | Human + Agent |
+| `docs/acm/` | Stage planning artifacts, agent workspace | Ephemeral → Archive after stage | Agent |
+| `docs/acm/archive/` | Completed planning artifacts | Archived | Agent |
 | `docs/intent.md` | North Star | Reference (protected) | Human |
 | `docs/brief.md` | Scope and criteria | Reference | Human + Agent |
 | `_archive/` | Inactive artifacts | Archived | Human + Agent |
@@ -181,7 +196,7 @@ These emerge during Design/Develop, not at Project Init:
 
 ```bash
 # Project Init creates:
-mkdir -p .claude/rules docs/inbox _archive
+mkdir -p .claude/rules docs/inbox docs/acm/archive _archive
 touch .claude/CLAUDE.md
 touch docs/intent.md docs/brief.md
 touch README.md
@@ -201,6 +216,7 @@ touch README.md
 | Trigger | Action |
 |---------|--------|
 | Stage transition | Clear `docs/inbox/`, review ephemeral |
+| Stage completion | Archive planning artifacts from `docs/acm/` to `docs/acm/archive/` |
 | Project milestone | Review `docs/`, archive obsolete |
 | Context bloat | Audit all folders, prune aggressively |
 
@@ -219,6 +235,7 @@ Before exiting Project Init:
 - [ ] `docs/intent.md` exists (can be stub)
 - [ ] `docs/brief.md` exists (can be stub)
 - [ ] `docs/inbox/` exists
+- [ ] `docs/acm/archive/` exists
 - [ ] `_archive/` exists
 - [ ] `README.md` exists (can be minimal)
 - [ ] Type-specific folders created

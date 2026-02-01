@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Detailed specification for the Develop stage workflow"
-version: "1.3.0"
-updated: "2026-01-31"
+version: "2.0.0"
+updated: "2026-02-01"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/ACM-DEVELOP-SPEC.md"
@@ -20,7 +20,7 @@ Define the Develop stage — the third stage in the ACM workflow where a validat
 
 > **"Are we building it correctly?"**
 
-Develop transforms a validated design into a working deliverable. This stage handles capability assessment, planning, environment setup, and actual implementation with thorough automated testing before any human involvement.
+Develop transforms a validated design into a working deliverable. This stage handles capability assessment, planning, environment setup, implementation, documentation, and structured closeout.
 
 **Primary Deliverables (in sequence):**
 
@@ -31,6 +31,7 @@ Develop transforms a validated design into a working deliverable. This stage han
 | 3 | `plan.md` | Implementation plan with phases/milestones | How to build it |
 | 4 | `tasks.md` | Atomic task list with status tracking | What to do |
 | 5 | The deliverable | Code, artifact, or workflow | The actual thing |
+| 6 | Documentation | README, API docs, usage guides | How to use it |
 
 **Sequence matters.** Capabilities informs planning. Planning informs tasks. Do not create later artifacts until earlier ones are approved.
 
@@ -48,13 +49,15 @@ Develop transforms a validated design into a working deliverable. This stage han
 
 **HARD GATE:** After Phase 3, STOP. Present all planning artifacts for human review before execution.
 
-**EXECUTION PHASES (4-6):** Require approved plan.
+**EXECUTION PHASES (4-8):** Require approved plan.
 
 | Phase | Description | Exit Gate | Artifacts |
 |-------|-------------|-----------|-----------|
 | **4. Review Loop** | Validate plan via internal/external review | No Critical/High issues | Updated plan artifacts |
 | **5. Environment Setup** | Install dependencies, configure capabilities | Environment verified | — |
-| **6. Build** | Actual implementation with testing | 95%+ tests pass, human validates | The deliverable |
+| **6. Build** | Implementation with testing + build-to-design verification | 95%+ tests pass, verification complete | The deliverable |
+| **7. Documentation** | README, API docs, usage guides | Docs exist and accurate | Documentation |
+| **8. Closeout** | Cleanup, verification, archive, seal | All criteria met, status.md sealed | — |
 
 ### Concrete Actions at Each Phase
 
@@ -68,7 +71,9 @@ Develop transforms a validated design into a working deliverable. This stage han
 | **HARD GATE** | Nothing — present all 4 planning artifacts for review | **Human approves ALL planning artifacts** |
 | **4. Review Loop** | Nothing — review plan via Ralph Loop + external reviewers | Auto-proceed when no Critical/High issues |
 | **5. Environment Setup** | ✅ Install Python packages (pip install)<br>✅ Activate plugins<br>✅ Create venv, config files | Already approved at HARD GATE |
-| **6. Build** | ✅ Write code<br>✅ Run tests<br>✅ Create deliverable | Already approved at HARD GATE |
+| **6. Build** | ✅ Write code<br>✅ Run tests<br>✅ Create deliverable<br>✅ Build-to-design verification | Already approved at HARD GATE |
+| **7. Documentation** | ✅ Write/update README, API docs, guides | Already approved at HARD GATE |
+| **8. Closeout** | ✅ Cleanup, archive, status seal | Already approved at HARD GATE |
 
 **Key insight:** Approving capability assessment ≠ installing anything. It means "yes, this list makes sense, proceed to planning." Actual installations only happen in Phase 5 after HARD GATE approval.
 
@@ -83,12 +88,16 @@ Every phase transition requires context clearing to prevent accumulated drift an
 1. Agent completes phase work
 2. Agent updates the **Handoff** block in `tasks.md` (see format below)
 3. Agent updates `status.md` with phase completion summary
-4. Agent commits all changes
-5. Agent runs `/clear`
-6. Agent re-reads artifacts fresh: `CLAUDE.md` → `status.md` → `tasks.md` → `plan.md`
-7. Agent confirms: **"Phase N complete. Starting Phase N+1. Here's what I see: [brief summary from handoff block]"**
+4. **Agent commits all changes** (mandatory — not optional)
+5. Agent updates `current_phase` in `tasks.md` frontmatter
+6. Agent moves completed tasks to Completed section in `tasks.md`
+7. Agent runs `/clear`
+8. Agent re-reads artifacts fresh: `CLAUDE.md` → `status.md` → `tasks.md` → `plan.md`
+9. Agent confirms: **"Phase N complete. Starting Phase N+1. Here's what I see: [brief summary from handoff block]"**
 
 **Why:** Multi-phase execution accumulates stale context. Agents carry assumptions forward that may no longer apply. Clearing context and re-reading from artifacts ensures each phase starts from ground truth, not memory.
+
+**Stage boundary** uses the heavier protocol defined in ACM-STAGES-SPEC.md (Stage Boundary Handoff Protocol). Phase boundary is internal to a stage; stage boundary transitions between stages.
 
 ### Handoff Block
 
@@ -149,7 +158,7 @@ What enters the Develop stage:
 | `intent.md` | Discover | North Star — referenced throughout |
 | `discover-brief.md` | Discover | Contract — referenced for success criteria |
 | Project classification | Brief | Type + modifiers determine deliverable shape |
-| ACM specs | Meta layer | Develop spec, testing requirements |
+| ACM specs | Environment layer | Develop spec, testing requirements |
 
 ---
 
@@ -159,12 +168,13 @@ What Develop produces:
 
 | Output | Description | Location |
 |--------|-------------|----------|
-| `manifest.md` | Software dependencies, libraries, packages | `/docs/manifest.md` |
-| `capabilities.md` | Skills, tools, sub-agents, MCP servers | `/docs/capabilities.md` |
-| `plan.md` | Implementation plan — phases, milestones, approach | `/docs/plan.md` |
-| `tasks.md` | Atomic task list with status tracking | `/docs/tasks.md` |
-| Updated design docs | If gaps found during validation | `/docs/design*.md` |
+| `manifest.md` | Software dependencies, libraries, packages | `docs/acm/manifest.md` |
+| `capabilities.md` | Skills, tools, sub-agents, MCP servers | `docs/acm/capabilities.md` |
+| `plan.md` | Implementation plan — phases, milestones, approach | `docs/acm/plan.md` |
+| `tasks.md` | Atomic task list with status tracking | `docs/acm/tasks.md` |
+| Updated design docs | If gaps found during validation | `docs/design*.md` |
 | The deliverable | Code, artifact, or workflow | Type-specific location |
+| Documentation | README, API docs, usage guides | Project root + type-specific |
 
 ---
 
@@ -224,6 +234,14 @@ What the agent team needs to execute. **Required sections:**
 | **Sub-agents** | Specialized agents for specific domains | ui-expert, backend-specialist |
 | **CLIs & Tools** | External command-line tools and utilities | npm, git, playwright |
 | **Testing Capabilities** | Test frameworks and validation tools | Jest, Playwright, axe-core |
+
+**Testing capabilities MUST be identified in Phase 2.** The build agent needs to know upfront:
+- Test framework (Jest, Pytest, Vitest)
+- E2E tools (Playwright, Cypress)
+- Browser testing tools (Claude in Chrome, MCP Inspector)
+- Linters / static analysis
+
+If testing tools are missing from capabilities.md, Phase 2 is incomplete.
 
 **Registry Query Step (mandatory):**
 
@@ -300,42 +318,54 @@ None required for this project.
 - **Phases:** Logical groupings of work (e.g., Phase 1: Core structure, Phase 2: Features, Phase 3: Polish)
 - **Milestones:** Key checkpoints with deliverables
 - **Approach:** How we'll tackle each phase
-- **Testing strategy:** TDD approach, what gets tested, acceptance criteria
+- **Testing Strategy:** What frameworks (from capabilities.md), what gets tested (unit, integration, E2E, browser), coverage targets (default: 95%+), browser testing plan (if applicable — Claude in Chrome or MCP Inspector)
 - **Parallelization opportunities:** What can run concurrently
 - **Risk areas:** Known challenges, mitigation approaches
 
+If the testing strategy section is missing or incomplete, Phase 3 is incomplete.
+
 #### tasks.md — Handoff + Atomic Task List
 
-**Structure:** Handoff block first, then phase tables.
+**Structure:** Handoff block first, then phase tables with progressive disclosure.
 
-- **Handoff block:** Structured phase transition data (see Phase Boundary Protocol)
-- **Atomic tasks:** Small, single-agent executable chunks
-- **Grouped by phase:** Matches plan.md phases
-- **Clear acceptance criteria:** How to know task is complete
-- **Dependencies noted:** What must complete before this task
+```markdown
+---
+current_phase: "Phase 1: Core Structure"
+---
+
+## Handoff
+[Current phase handoff — overwritten each boundary]
+
+## Active Tasks
+[Current phase tasks — what the agent works on]
+
+## Upcoming
+[Next phase(s) — planning reference]
+
+## Completed
+[Previous phases — kept for traceability, agents skip unless investigating]
+```
+
+**Progressive disclosure rules:**
+- Agent reads Handoff + Active Tasks. Start from Handoff, work Active Tasks. Skip Completed unless investigating history.
+- When phase completes: move tasks to Completed, promote next to Active
+- `current_phase` in frontmatter tells agent where to start
 
 **Task format (table with status):**
 
 ```markdown
-## Handoff
+## Active Tasks
 
-| Field | Value |
-|-------|-------|
-| Phase | — |
-| Status | Not started |
-| Next | Phase 1: Core Structure |
-| Blocker | None |
-
-## Phase 1: Core Structure
-
-| ID | Task | Status | Acceptance Criteria | Depends | Capability |
-|----|------|--------|---------------------|---------|------------|
-| 1.1 | Set up Next.js project | pending | `npm run dev` starts, shows default page | — | npm CLI |
-| 1.2 | Configure Tailwind CSS | pending | Tailwind classes apply correctly | 1.1 | frontend-design skill |
-| 1.3 | Create base layout | pending | Layout renders with header/footer slots | 1.2 | — |
+| ID | Task | Status | Acceptance Criteria | Testing | Depends | Capability |
+|----|------|--------|---------------------|---------|---------|------------|
+| 1.1 | Set up Next.js project | pending | `npm run dev` starts | Unit: project loads | — | npm CLI |
+| 1.2 | Configure Tailwind CSS | pending | Tailwind classes apply | Unit: class resolution | 1.1 | frontend-design |
+| 1.3 | Create base layout | pending | Layout renders with slots | Unit: render test | 1.2 | — |
 ```
 
 **Status values:** `pending`, `in-progress`, `done`, `blocked`
+
+**Testing column:** What tests cover this task. Links task to testing strategy.
 
 **Capability column:** Links task to required capability from capabilities.md. Validates agent has what it needs.
 
@@ -353,12 +383,7 @@ None required for this project.
 
 **Purpose:** Validate the plan and capability assessment before environment setup.
 
-**Two-Phase Review Model:**
-
-| Phase | Reviewer | Focus |
-|-------|----------|-------|
-| **Internal** | Primary agent (Ralph Loop) | Completeness, feasibility, task coverage |
-| **External** | GPT, Gemini, etc. | Blind spots, alternative approaches, risk identification |
+Invoke review per ACM-REVIEW-SPEC.md. Use `get_review_prompt('develop', phase)` from ACM MCP server.
 
 **What gets reviewed:**
 - manifest.md
@@ -376,7 +401,7 @@ All artifacts reviewed together — they must align.
 - Are there parallelization opportunities not captured?
 - Any risks not addressed?
 
-**Exit signal:** No P1 issues. Plan is executable.
+**Exit signal:** No Critical/High issues. Plan is executable.
 
 **Design updates:** If review surfaces gaps in design, update design artifacts (document and move on — no re-review of design).
 
@@ -434,7 +459,7 @@ Verify acceptance criteria met
     ↓
 Mark task complete in tasks.md
     ↓
-Sign off
+Commit
 ```
 
 **Parallelization:**
@@ -448,19 +473,99 @@ Sign off
 - No "ready for testing" when basic functionality fails
 - Integration tests where components interact
 
+**Build-to-Design Verification (after all tasks complete):**
+
+Before proceeding to Phase 7, verify implementation against design:
+
+1. Re-read design.md
+2. For each major design requirement, identify where it's implemented
+3. Simple checklist format:
+   ```
+   Design Requirement → Implementation
+   - [ ] Two MCP tools (list_models, review) → external_review_server.py
+   - [ ] Parallel execution → asyncio.gather in review()
+   - [ ] Provider abstraction → providers/base.py + 2 implementations
+   ```
+4. Flag gaps: fix small ones, flag significant ones for human
+
+Not a full audit. A structured sanity check: "did we build what we designed?"
+
 **What gets maintained during Build:**
 - `tasks.md` — Updated as tasks complete
 - `status.md` — Updated by primary agent (not sub-agents)
 - `backlog.md` — New ideas/improvements captured
-- `decision-log` — Key implementation decisions documented
+- Decision log (in plan.md) — Key implementation decisions documented
 
 **Critical rule:** Do NOT ask for human testing until:
 - All tasks marked complete
 - Automated tests pass (95%+ rate)
 - Basic functionality verified
 - Agent has done thorough self-validation
+- Build-to-design verification complete
 
-**Exit signal:** All tasks complete. Automated tests pass. Ready for human validation.
+**Exit signal:** All tasks complete. Automated tests pass. Build-to-design verification complete. Ready for documentation.
+
+---
+
+### 7. Documentation
+
+**Purpose:** Write documentation while the build is fresh. Don't defer — context degrades rapidly.
+
+**Activities:**
+- Write/update README.md (installation, usage, key features)
+- Create API docs or tool reference (if applicable)
+- Document configuration options
+- Write testing instructions
+
+**Documentation by project type:**
+
+| Type | Required Docs |
+|------|---------------|
+| App | README (install, run, configure), architecture notes |
+| MCP Server | README (install, .mcp.json wiring, tool reference), testing instructions |
+| Workflow | README (trigger setup, configuration), runbook |
+| Artifact | README (usage, inputs/outputs), format spec |
+
+**Exit signal:** Documentation exists, is accurate, enables a new user to use the deliverable.
+
+---
+
+### 8. Closeout
+
+**Purpose:** Structured verification, cleanup, and seal. This is not a formality — it's the quality gate.
+
+**Ordered checklist:**
+
+#### 8.1 Cleanup
+
+- [ ] .gitignore updated (venv, node_modules, __pycache__, build artifacts)
+- [ ] Transient files deleted (temp outputs, debug logs)
+- [ ] No secrets in repo
+- [ ] No commented-out code blocks
+
+#### 8.2 Success Criteria Gate
+
+- [ ] Load brief.md → success criteria
+- [ ] Map each criterion to evidence (code location, test result, feature)
+- [ ] Mark each: met / partial (with explanation) / not met (BLOCKS completion)
+- [ ] Document mapping in status.md
+
+#### 8.3 Artifact Lifecycle
+
+- Keep in `docs/`: intent.md, brief.md, design.md (cross-stage reference)
+- Archive to `docs/acm/archive/`: plan.md, tasks.md, manifest.md, capabilities.md
+- Keep in project: deliverable, tests, documentation
+
+#### 8.4 Commit Verification
+
+- [ ] No uncommitted changes
+- [ ] Commit history shows atomic commits (not one giant commit)
+
+#### 8.5 status.md Update (THE SEAL)
+
+- Mark stage complete
+- Include structured stage handoff (per ACM-STAGES-SPEC.md Stage Boundary Handoff Protocol)
+- This is the LAST step
 
 ---
 
@@ -468,7 +573,33 @@ Sign off
 
 Testing is not optional. It's core to Develop.
 
-### Testing Levels
+### Planning-Time Decisions (Phase 2-3)
+
+- plan.md MUST specify frameworks, coverage targets, browser testing plan
+- capabilities.md MUST include testing tools in the Testing Capabilities section
+- If planning doesn't answer these questions, Phase 3 is incomplete:
+  - What test framework?
+  - What gets unit tested vs integration tested vs E2E tested?
+  - What's the coverage target?
+  - Is browser testing needed? With what tool?
+
+### Two-Tier Testing Model
+
+| Tier | What | When | Tools |
+|------|------|------|-------|
+| **Tier 1: Automated** | Unit, integration, E2E via frameworks | During build | Jest, Pytest, Vitest, Playwright |
+| **Tier 2: Real-world** | Interactive testing in browser or inspector | After automated tests pass | Claude in Chrome, MCP Inspector |
+
+### Testing by Project Type
+
+| Type | Automated Focus | Browser Testing? |
+|------|-----------------|------------------|
+| App | Unit, integration, E2E, accessibility | Yes (Claude in Chrome) |
+| MCP Server | Tool handlers, params, error paths | Yes (MCP Inspector) |
+| Workflow | Unit, integration, error handling | No (unless UI) |
+| Artifact | Validation, format, content accuracy | No |
+
+### Testing Requirements
 
 | Level | What | When |
 |-------|------|------|
@@ -477,22 +608,21 @@ Testing is not optional. It's core to Develop.
 | **End-to-end tests** | Full user flows | Before human handoff |
 | **Smoke tests** | Basic functionality | Continuous |
 
-### Testing Requirements by Type
+---
 
-| Project Type | Testing Focus |
-|--------------|---------------|
-| **App** | Unit, integration, E2E, accessibility, performance |
-| **Workflow** | Unit, integration, error handling, idempotency |
-| **Artifact** | Validation, format compliance, content accuracy |
+## Commit Cadence
 
-### Testing Capabilities
+**Hard requirements:**
+- Commit after every task completion
+- Commit at every phase boundary
+- Commit before requesting human input
+- Conventional format: `type(scope): description`
 
-These should be identified in capabilities.md:
-- Test runners (Jest, Pytest, etc.)
-- E2E frameworks (Playwright, Cypress)
-- Accessibility checkers
-- Performance profilers
-- Linters and static analysis
+**Anti-patterns:**
+- One giant commit at the end
+- "wip" commit messages
+- Uncommitted work across sessions
+- Skipping commits between phases
 
 ---
 
@@ -513,17 +643,37 @@ During Develop, these artifacts require ongoing updates:
 
 ## Exit Criteria
 
-Develop is complete when:
+### Universal Criteria
 
-- [ ] All tasks in tasks.md marked complete
+Per ACM-STAGES-SPEC.md:
+
+- [ ] Primary deliverable(s) exist with required content
+- [ ] No Critical or High issues open (post-review)
+- [ ] Alignment verified with intent.md and brief.md
+- [ ] All work committed (atomic commits, no uncommitted changes)
+- [ ] Documentation appropriate to deliverable exists
+- [ ] Workspace cleanup complete (no transients, .gitignore current)
+- [ ] status.md updated with stage completion (THE SEAL — last step)
+- [ ] Human sign-off obtained
+
+### Develop-Specific Criteria
+
 - [ ] Automated tests pass (95%+ rate)
-- [ ] Success criteria from Brief are verifiable
-- [ ] No critical bugs or broken functionality
-- [ ] Basic user flows work end-to-end
-- [ ] status.md updated with stage completion
-- [ ] Human validation confirms readiness
+- [ ] Build-to-design verification complete
+- [ ] Success criteria from brief mapped to evidence (all met)
+
+### Type-Specific Criteria
+
+| Type | Additional Criteria |
+|------|---------------------|
+| App | Browser testing complete, accessibility checked |
+| MCP Server | Inspector testing complete |
+| Workflow | Error handling tested |
+| Artifact | Format validation passes |
 
 **The handoff test:** Human tests the most basic functionality. If it fails, Develop is not done.
+
+**Registration and deployment are Deliver stage activities.** Do not include .mcp.json registration, capability registry updates, or deployment in Develop exit criteria.
 
 ---
 
@@ -546,8 +696,8 @@ Develop is complete when:
 |------|-----------|---------|
 | intent.md | Always | North Star |
 | design.md | Develop stage | Primary input |
-| plan.md | Develop stage (after created) | Implementation guide |
-| tasks.md | Develop stage (after created) | Task tracking |
+| docs/acm/plan.md | Develop stage (after created) | Implementation guide |
+| docs/acm/tasks.md | Develop stage (after created) | Task tracking |
 | ACM-DEVELOP-SPEC.md | Develop stage (reference) | Stage workflow |
 ```
 
@@ -618,22 +768,17 @@ Develop makes heavy use of sub-agents for parallelization.
 │         ▼                                                           │
 │  ┌──────────────────────┐                                           │
 │  │      PLANNING        │  Human: Low-Med | Agent: High             │
-│  │  - plan.md           │  (phases, milestones)                     │
-│  │  - tasks.md          │  (atomic tasks)                           │
+│  │  - plan.md           │  (phases, milestones, testing strategy)   │
+│  │  - tasks.md          │  (atomic tasks with testing column)       │
 │  └──────┬───────────────┘                                           │
 │         │ "Plan drafted"                                            │
 │         ▼                                                           │
 │  ┌────────────────────────────────────────────────────────┐         │
 │  │                    REVIEW LOOP                          │         │
-│  │  ┌─────────────────┐       ┌─────────────────────────┐ │         │
-│  │  │ INTERNAL        │       │ EXTERNAL                │ │         │
-│  │  │ (Ralph Loop)    │  ───► │ (GPT, Gemini)           │ │         │
-│  │  │                 │       │                         │ │         │
-│  │  │ Plan complete?  │       │ Blind spots?            │ │         │
-│  │  │ Tasks atomic?   │       │ Risks?                  │ │         │
-│  │  └─────────────────┘       └─────────────────────────┘ │         │
+│  │  Per ACM-REVIEW-SPEC.md                                 │         │
+│  │  Internal (Ralph Loop) then External (user-driven)      │         │
 │  └────────────────────────────────────────────────────────┘         │
-│         │ "No P1 issues"                                            │
+│         │ "No Critical/High issues"                                 │
 │         ▼                                                           │
 │  ┌──────────────────────┐                                           │
 │  │  ENVIRONMENT SETUP   │  Human: Low | Agent: High                 │
@@ -649,11 +794,29 @@ Develop makes heavy use of sub-agents for parallelization.
 │  │  - Task execution    │  ←─── Sub-agents (parallel)               │
 │  │  - Automated testing │                                           │
 │  │  - 95%+ pass rate    │                                           │
+│  │  - Design verify     │                                           │
 │  └──────┬───────────────┘                                           │
-│         │ "All tests pass"                                          │
+│         │ "All tests pass + design verified"                        │
+│         ▼                                                           │
+│  ┌──────────────────────┐                                           │
+│  │   DOCUMENTATION      │  Human: None | Agent: High                │
+│  │  - README            │                                           │
+│  │  - API docs          │                                           │
+│  │  - Testing guide     │                                           │
+│  └──────┬───────────────┘                                           │
+│         │ "Docs complete"                                           │
+│         ▼                                                           │
+│  ┌──────────────────────┐                                           │
+│  │      CLOSEOUT        │  Human: Low | Agent: High                 │
+│  │  - Cleanup           │                                           │
+│  │  - Success criteria  │                                           │
+│  │  - Archive artifacts │                                           │
+│  │  - THE SEAL          │                                           │
+│  └──────┬───────────────┘                                           │
+│         │ "Stage complete"                                          │
 │         ▼                                                           │
 │  ┌──────────────────────────────────────┐                           │
-│  │  OUTPUTS: The deliverable + docs      │                          │
+│  │  OUTPUTS: Deliverable + docs + seal   │                          │
 │  └──────────────────────────────────────┘                           │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -664,10 +827,25 @@ Develop makes heavy use of sub-agents for parallelization.
 
 ---
 
+## Revision History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2026-01-28 | Initial specification |
+| 1.1.0 | 2026-01-29 | Added registry query step, testing capabilities section |
+| 1.2.0 | 2026-01-29 | Added phase boundary protocol with context clearing |
+| 1.3.0 | 2026-01-31 | Added handoff block in tasks.md, registry summary enforcement |
+| 2.0.0 | 2026-02-01 | Major revision: 8 phases (added Documentation + Closeout), two-tier testing model, progressive disclosure in tasks.md, build-to-design verification, commit cadence, universal + type-specific exit criteria, removed registration from Develop |
+
+---
+
 ## References
 
+- ACM-STAGES-SPEC.md (Universal exit criteria, stage boundary handoff)
+- ACM-REVIEW-SPEC.md (Review mechanism — cycles, severity, stop conditions)
 - ACM-DESIGN-SPEC.md (Design is primary input)
 - ACM-BRIEF-SPEC.md (Success criteria reference)
 - ACM-INTENT-SPEC.md (North Star reference)
 - ACM-PROJECT-TYPES-SPEC.md (Deliverable shape)
+- ACM-FOLDER-STRUCTURE-SPEC.md (docs/acm/ convention)
 - ACM-TAXONOMY.md (Terminology)

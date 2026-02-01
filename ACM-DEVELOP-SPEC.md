@@ -225,18 +225,28 @@ What the agent team needs to execute. **Required sections:**
 | **CLIs & Tools** | External command-line tools and utilities | npm, git, playwright |
 | **Testing Capabilities** | Test frameworks and validation tools | Jest, Playwright, axe-core |
 
-**Registry Query Step:**
+**Registry Query Step (mandatory):**
 
 Before documenting capabilities, query available resources:
 
-1. **Check registry inventory** — Read `~/code/_shared/capabilities-registry/INVENTORY.md` for available skills/tools
+1. **Read registry inventory** — `~/code/_shared/capabilities-registry/INVENTORY.md`
 2. **Match to requirements** — Which available capabilities apply to this project?
 3. **Identify gaps** — What's needed but not in registry? (manual specification required)
 4. **Document source** — For each capability, note: registry path OR manual specification
+5. **Write Registry Summary** — Include as the first section of capabilities.md (see format below)
+
+**Why mandatory:** Without the summary, the HARD GATE reviewer cannot verify the registry was consulted. A missing or empty Registry Summary section means Phase 2 is incomplete.
 
 Example capabilities.md structure:
 
 ```markdown
+## Registry Summary
+
+- **Registry consulted:** ~/code/_shared/capabilities-registry/INVENTORY.md
+- **Total available:** 39 capabilities (16 skills, 4 tools, 15 plugins, 4 MCP servers)
+- **Matched:** 3 (frontend-design, webapp-testing, filesystem-mcp)
+- **Gaps:** 1 (context7-mcp — not in registry, manual specification)
+
 ## MCP Servers
 
 | Server | Purpose | Source |

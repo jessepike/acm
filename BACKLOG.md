@@ -16,7 +16,7 @@ spec: "ACM-BACKLOG-SPEC.md"
 | ID | Item | Type | Component | Pri | Size | Stage | Status |
 |----|------|------|-----------|-----|------|-------|--------|
 | B42 | Structured session handoff — handoff block in tasks.md + updated Phase Boundary Protocol (merged B43) | Enhancement | ACM | P1 | M | — | Done |
-| B35 | Agents not consulting capabilities-registry before installing capabilities — review process and diagnose why | Bug | acm-env | P1 | M | — | Pending |
+| B35 | Agents not consulting capabilities-registry before installing capabilities — review process and diagnose why | Bug | acm-env | P1 | M | — | Done |
 | B34 | Evaluate MCP tools for environment — memory-mcp, filesystem-mcp, sequentialthinking-mcp, everything-mcp | Enhancement | acm-env | P1 | M | — | Pending |
 | B44 | Standardize brief frontmatter `status` field to use stage-based values (`discover-complete`, `design-in-progress`, etc.) — let ACM MCP server surface pipeline position via `check_project_health` | Enhancement | ACM | P2 | M | — | Pending |
 | B45 | Stage transition cleanup process — when a sub-project completes a stage or the docs/ workspace shifts to a new sub-project, archive previous stage artifacts to `_archive/{project-name}/`. Define convention in ACM-STAGES-SPEC or ACM-FOLDER-STRUCTURE-SPEC. | Enhancement | ACM | P2 | S | — | Pending |
@@ -41,6 +41,7 @@ spec: "ACM-BACKLOG-SPEC.md"
 | ID | Item | Completed | Notes |
 |----|------|-----------|-------|
 | B42 | Structured session handoff (merged B43) | 2026-01-31 | Handoff block in tasks.md, Phase Boundary Protocol v1.3.0, tasks.md stub, start-develop-prompt updated. |
+| B35 | Registry consultation enforcement | 2026-01-31 | Required Registry Summary section in capabilities.md. Start-develop prompt uses MUST language + completeness gate. |
 | B33 | Environment cleanup — remove cruft plugins, legacy commands, fix upstream URLs | 2026-01-30 | Removed superpowers/example-skills/serena. Deleted 3 legacy commands. Disabled frontend-design/context7/playwright at user level. |
 | B32 | Plugin baseline governance — baseline.yaml v2.0.0 | 2026-01-30 | Required (6), available (15), remove (3) plugin lists. Reset command extended with plugin checking. |
 | B31 | `declined.yaml` — blocklist for evaluated-and-rejected capabilities | 2026-01-30 | 15 entries. Integrated into sync pipeline. |

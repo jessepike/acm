@@ -16,7 +16,6 @@ spec: "ACM-BACKLOG-SPEC.md"
 | ID | Item | Type | Component | Pri | Size | Stage | Status |
 |----|------|------|-----------|-----|------|-------|--------|
 | B59 | Review function tuning sprint — run 10-20 reviews, log observations in KB, tune prompts/config. Tracking: `kb/EXTERNAL-REVIEW-MODEL-RELIABILITY.md` | Enhancement | Review | P1 | M | Develop | In Progress |
-| B53 | Slim rules/review-process.md to enforcement-only (~10 lines) — move mechanism details (prompt map, invocation syntax, cycle counts) into review skill | Enhancement | ACM | P1 | S | — | Pending |
 | B44 | Standardize brief frontmatter `status` field to use stage-based values (`discover-complete`, `design-in-progress`, etc.) — let ACM MCP server surface pipeline position via `check_project_health` | Enhancement | ACM | P2 | M | — | Pending |
 | B45 | Stage transition cleanup process — when a sub-project completes a stage or the docs/ workspace shifts to a new sub-project, archive previous stage artifacts to `_archive/{project-name}/`. Define convention in ACM-STAGES-SPEC or ACM-FOLDER-STRUCTURE-SPEC. | Enhancement | ACM | P2 | S | — | Pending |
 | B15 | Deliver stage spec | New spec | ACM | P2 | M | — | Pending |
@@ -46,6 +45,7 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B55 | Universal exit criteria + stage boundary handoff in DISCOVER-SPEC | 2026-02-01 | v1.3.0 — structured exit criteria (universal + discover-specific), handoff protocol, docs/acm/ convention, updated references. |
 | B56 | Universal exit criteria + stage boundary handoff in DESIGN-SPEC | 2026-02-01 | v1.1.0 — structured exit criteria (universal + design-specific + type-specific), handoff protocol, docs/acm/ convention, updated references. |
 | B57 | docs/acm/ convention in DISCOVER-SPEC and DESIGN-SPEC | 2026-02-01 | Planning Artifacts Convention section added to both specs. |
+| B53 | Slim review-process.md to enforcement-only | 2026-02-01 | Reduced from 53 lines to 14. Removed prompt map, invocation syntax, cycle counts — all handled by acm-review plugin. |
 | B52 | Unified review skill (acm-review plugin) | 2026-02-01 | 3 commands: artifact (full P1→P2), artifact-internal (P1), artifact-external (P2). Plugin registered under acm-plugins marketplace. |
 | B54 | Elevate ACM-ARCHITECTURE-SPEC.md to master framework spec v2.0.0 | 2026-02-01 | Spec map, framework diagram, stages overview, artifact flow, interface map, spec index. Reviewed to v2.0.1 (memory marked planned, primitive assignments corrected). |
 | B14 | Automated multi-model review orchestration (external-review skill + MCP server) | 2026-02-01 | Build complete: 34 tests, 2 MCP tools, 2 providers, config loading, path validation. acm-review plugin created with 3 commands. Pending: B59 tuning sprint, then closeout. |

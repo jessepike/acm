@@ -615,30 +615,38 @@ Testing is not optional. It's core to Develop.
   - What's the coverage target?
   - Is browser testing needed? With what tool?
 
-### Two-Tier Testing Model
+### Three-Tier Testing Model
 
 | Tier | What | When | Tools |
 |------|------|------|-------|
 | **Tier 1: Automated** | Unit, integration, E2E via frameworks | During build | Jest, Pytest, Vitest, Playwright |
-| **Tier 2: Real-world** | Interactive testing in browser or inspector | After automated tests pass | Claude in Chrome, MCP Inspector |
+| **Tier 2: Browser/Real-world** | Interactive testing in browser or inspector | After Tier 1 passes | Claude in Chrome, MCP Inspector |
+| **Tier 3: Manual** | User acceptance, edge cases, subjective validation | After Tier 2 passes | Human testing |
 
 ### Testing by Project Type
 
-| Type | Automated Focus | Browser Testing? |
-|------|-----------------|------------------|
-| App | Unit, integration, E2E, accessibility | Yes (Claude in Chrome) |
-| MCP Server | Tool handlers, params, error paths | Yes (MCP Inspector) |
-| Workflow | Unit, integration, error handling | No (unless UI) |
-| Artifact | Validation, format, content accuracy | No |
+| Type | Automated Focus | Browser Testing? | Manual Testing? |
+|------|-----------------|------------------|-----------------|
+| App | Unit, integration, E2E, accessibility | Yes (Claude in Chrome) | Yes (user acceptance) |
+| MCP Server | Tool handlers, params, error paths | Yes (MCP Inspector) | Yes (tool validation) |
+| Workflow | Unit, integration, error handling | No (unless UI) | Yes (trigger test) |
+| Artifact | Validation, format, content accuracy | No | Yes (visual inspection) |
 
-### Testing Requirements
+### Progressive Testing
 
-| Level | What | When |
-|-------|------|------|
-| **Unit tests** | Individual functions/components | During task implementation |
-| **Integration tests** | Component interactions | After related tasks complete |
-| **End-to-end tests** | Full user flows | Before human handoff |
-| **Smoke tests** | Basic functionality | Continuous |
+Test results feed into each other:
+1. Tier 1 must pass (95%+ rate) before Tier 2 begins
+2. Tier 2 must pass before Tier 3 begins
+3. Issues found in later tiers trigger fixes and re-testing from Tier 1
+
+### Critical Rule
+
+Do NOT mark build complete until:
+- All three tiers complete
+- All critical issues fixed
+- Human confirms acceptance
+
+See `kb/MANUAL-TESTING-GUIDE.md` for Tier 3 manual testing procedures.
 
 ---
 
@@ -690,7 +698,10 @@ Per ACM-STAGES-SPEC.md:
 
 ### Develop-Specific Criteria
 
-- [ ] Automated tests pass (95%+ rate)
+- [ ] All three testing tiers complete (automated, browser, manual)
+- [ ] Tier 1: Automated tests pass (95%+ rate)
+- [ ] Tier 2: Browser/real-world testing complete
+- [ ] Tier 3: Manual validation complete with human acceptance
 - [ ] Build-to-design verification complete
 - [ ] Success criteria from brief mapped to evidence (all met)
 

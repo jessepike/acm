@@ -184,10 +184,11 @@ Execution phases:
 3. Documentation — README, API docs, usage guides as appropriate
 4. Closeout — Artifact lifecycle, commit verification, status.md update (THE SEAL)
 
-**Testing model (two-tier):**
+**Testing model (three-tier):**
 - **Tier 1: Automated** — Unit, integration, E2E via test frameworks. Run during build.
-- **Tier 2: Real-world** — Interactive testing in browser/inspector. Run after automated tests pass.
-- Plan must specify which tier applies per project type (see ACM-DEVELOP-SPEC.md).
+- **Tier 2: Browser/Real-world** — Interactive testing in browser/inspector. Run after Tier 1 passes.
+- **Tier 3: Manual** — User acceptance, edge cases, subjective validation. Run after Tier 2 passes. See `kb/MANUAL-TESTING-GUIDE.md`.
+- All three tiers required for all project types. Plan must specify approach per tier (see ACM-DEVELOP-SPEC.md).
 
 **Build-to-design verification:** Before exiting Phase 6, verify every design requirement has a corresponding implementation + test. Document coverage in tasks.md.
 

@@ -753,6 +753,8 @@ Do NOT mark validation complete until:
 - All critical issues fixed
 - Human confirms usability
 
+See `kb/MANUAL-TESTING-GUIDE.md` for Tier 3 manual testing procedures.
+
 ---
 
 ## Commit Cadence

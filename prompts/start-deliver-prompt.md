@@ -218,12 +218,12 @@ Execution phases:
 4. Milestone Closeout (cleanup, access docs, THE SEAL)
 
 **Testing model (three-tier):**
-- **Tier 1: Automated** — API tests, integration tests, E2E tests in production. Run first.
+- **Tier 1: Automated** — API tests, integration tests, E2E tests in production. Run first. 95%+ pass rate required.
 - **Tier 2: Browser/Agent** — Interactive testing via Claude in Chrome, MCP Inspector. Run after Tier 1 passes.
-- **Tier 3: Manual** — User acceptance testing. Run after Tier 2 passes.
-- Plan must specify which tiers apply per project type (see ACM-DELIVER-SPEC.md).
+- **Tier 3: Manual** — User acceptance testing. Run after Tier 2 passes. See `kb/MANUAL-TESTING-GUIDE.md`.
+- Document results in `docs/acm/test-results.md`.
 
-**Progressive testing:** Tier 1 must pass before Tier 2 begins. Tier 2 must pass before Tier 3 begins.
+**Progressive testing:** Tier 1 must pass before Tier 2 begins. Tier 2 must pass before Tier 3 begins. Issues found in later tiers require re-testing from Tier 1.
 
 ---
 

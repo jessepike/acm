@@ -122,7 +122,7 @@ Log issues in plan.md Issue Log:
 - [ ] Plan covers all design requirements
 - [ ] Tasks are atomic and executable
 - [ ] Capabilities are sufficient
-- [ ] Testing strategy is adequate (two-tier model addressed, project-type appropriate)
+- [ ] Testing strategy is adequate (three-tier model addressed, project-type appropriate)
 - [ ] Build-to-design verification step included in plan
 
 ## Completion

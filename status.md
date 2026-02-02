@@ -26,7 +26,7 @@ updated: "2026-02-01"
 - [x] ACM-DESIGN-SPEC.md — phases, inputs, outputs, exit criteria
 
 ### Develop Stage Spec
-- [x] ACM-DEVELOP-SPEC.md (v2.0.0) — 8 phases, two-tier testing, progressive disclosure, build-to-design verification, closeout
+- [x] ACM-DEVELOP-SPEC.md (v2.1.0) — 8 phases, three-tier testing, progressive disclosure, build-to-design verification, closeout
 
 ### Supporting Specs
 - [x] ACM-BRIEF-SPEC.md (v2.1.0)

@@ -15,36 +15,28 @@ spec: "ACM-BACKLOG-SPEC.md"
 
 | ID | Item | Type | Component | Pri | Size | Stage | Status |
 |----|------|------|-----------|-----|------|-------|--------|
-| B42 | Structured session handoff — handoff block in tasks.md + updated Phase Boundary Protocol (merged B43) | Enhancement | ACM | P1 | M | — | Done |
-| B35 | Agents not consulting capabilities-registry before installing capabilities — review process and diagnose why | Bug | acm-env | P1 | M | — | Done |
-| B34 | Evaluate MCP tools for environment — memory-mcp, filesystem-mcp, sequentialthinking-mcp, everything-mcp | Enhancement | acm-env | P1 | M | — | Pending |
+| B59 | Review function tuning sprint — run 10-20 reviews, log observations in KB, tune prompts/config. Tracking: `kb/EXTERNAL-REVIEW-MODEL-RELIABILITY.md` | Enhancement | Review | P1 | M | Develop | In Progress |
+| B52 | Unified review skill — single skill wrapping internal (Ralph Loop) + external (MCP server) as two phases. Replaces separate external-review skill. | Enhancement | ACM | P1 | M | — | Pending |
+| B53 | Slim rules/review-process.md to enforcement-only (~10 lines) — move mechanism details (prompt map, invocation syntax, cycle counts) into review skill | Enhancement | ACM | P1 | S | — | Blocked by B52 |
 | B44 | Standardize brief frontmatter `status` field to use stage-based values (`discover-complete`, `design-in-progress`, etc.) — let ACM MCP server surface pipeline position via `check_project_health` | Enhancement | ACM | P2 | M | — | Pending |
 | B45 | Stage transition cleanup process — when a sub-project completes a stage or the docs/ workspace shifts to a new sub-project, archive previous stage artifacts to `_archive/{project-name}/`. Define convention in ACM-STAGES-SPEC or ACM-FOLDER-STRUCTURE-SPEC. | Enhancement | ACM | P2 | S | — | Pending |
 | B15 | Deliver stage spec | New spec | ACM | P2 | M | — | Pending |
 | B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | — | Pending |
 | B19 | Scaffold memory repo at `~/code/_shared/memory/` | Setup | memory | P2 | S | — | Pending |
-| B36 | ACM MCP server — maintenance primitive not addressed in tool surface | Enhancement | acm-server | P3 | S | — | Pending |
 | B37 | Align "meta layer" → "environment layer" terminology across all specs and prompts | Terminology | ACM | P2 | M | — | Pending |
-| B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | — | Pending |
 | B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
-| B40 | Update ACM-STAGES-SPEC.md environment layer references to include ACM MCP server alongside acm-env | Docs | ACM | P2 | S | — | Done |
 | B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | — | Pending |
 | B46 | Update start-develop-prompt.md for Phase 7-8 + testing emphasis | Enhancement | Prompts | P2 | S | — | Pending |
 | B47 | Update develop-ralph-review-prompt.md to check testing strategy in plan | Enhancement | Prompts | P2 | S | — | Pending |
 | B48 | Create hooks for phase boundary commit + tasks.md enforcement | Enhancement | acm-env | P2 | M | — | Pending |
-| B49 | Update ACM-DESIGN-SPEC.md with stage boundary handoff pattern | Enhancement | ACM | P2 | S | — | Superseded by B56 |
-| B50 | Update ACM-DISCOVER-SPEC.md with stage boundary handoff pattern | Enhancement | ACM | P2 | S | — | Superseded by B55 |
 | B51 | Update ACM MCP server get_stage enum to include 'deliver' once spec exists | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
-| B54 | Elevate ACM-ARCHITECTURE-SPEC.md to master framework spec — add framework-level workflow diagram, macro coverage of all areas (stages, orchestration, capabilities, knowledge, memory, maintenance, validation), how specs/rules/skills/MCP connect | Enhancement | ACM | P1 | L | — | Pending |
 | B55 | Add universal exit criteria reference + stage boundary handoff to ACM-DISCOVER-SPEC.md (align with DEVELOP pattern) | Enhancement | ACM | P2 | S | — | Pending |
 | B56 | Add universal exit criteria reference + stage boundary handoff to ACM-DESIGN-SPEC.md (align with DEVELOP pattern) | Enhancement | ACM | P2 | S | — | Pending |
 | B57 | Add docs/acm/ convention acknowledgment to ACM-DISCOVER-SPEC.md and ACM-DESIGN-SPEC.md | Enhancement | ACM | P2 | S | — | Pending |
+| B36 | ACM MCP server — maintenance primitive not addressed in tool surface | Enhancement | acm-server | P3 | S | — | Pending |
+| B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | — | Pending |
 | B58 | Add revision history section to all stage specs (DISCOVER, DESIGN, STAGES, ARCHITECTURE) for consistency with DEVELOP | Enhancement | ACM | P3 | S | — | Pending |
-| B52 | Unified review skill — single skill wrapping internal (Ralph Loop) + external (MCP server) as two phases. Replaces separate external-review skill. | Enhancement | ACM | P1 | M | — | Pending |
-| B53 | Slim rules/review-process.md to enforcement-only (~10 lines) — move mechanism details (prompt map, invocation syntax, cycle counts) into review skill | Enhancement | ACM | P1 | S | — | Blocked by B52 |
-| B54 | Create start-discover-prompt.md — entry-point prompt for Discover stage, parallel to Design/Develop | Enhancement | Prompts | P3 | S | — | Pending |
-| B59 | Review function tuning sprint — run 10-20 reviews, log observations in KB, tune prompts/config. Tracking: `kb/EXTERNAL-REVIEW-MODEL-RELIABILITY.md` | Enhancement | Review | P1 | M | Develop | In Progress |
-| B14 | Automated multi-model review orchestration (external-review skill + MCP server) | Architecture | ACM | P1 | L | Develop | In Progress |
+| B60 | Create start-discover-prompt.md — entry-point prompt for Discover stage, parallel to Design/Develop | Enhancement | Prompts | P3 | S | — | Pending |
 | B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | — | Pending |
 | B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | — | Pending |
 | B22 | Community knowledge ingestion pipeline | Architecture | kb | P3 | L | — | Pending |
@@ -55,6 +47,10 @@ spec: "ACM-BACKLOG-SPEC.md"
 
 | ID | Item | Completed | Notes |
 |----|------|-----------|-------|
+| B54 | Elevate ACM-ARCHITECTURE-SPEC.md to master framework spec v2.0.0 | 2026-02-01 | Spec map, framework diagram, stages overview, artifact flow, interface map, spec index. Reviewed to v2.0.1 (memory marked planned, primitive assignments corrected). |
+| B14 | Automated multi-model review orchestration (external-review skill + MCP server) | 2026-02-01 | Build complete: 34 tests, 2 MCP tools, 2 providers, config loading, path validation. acm-review plugin created with 3 commands. Pending: B59 tuning sprint, then closeout. |
+| B34 | MCP Server Registry — evaluate and register MCP tools | 2026-01-31 | REGISTRY-SPEC.md v1.2.0, 4 plugin-bundled MCPs, baseline v2.1.0, refresh+setup extended, first triage (500+ scanned, 0 high-relevance). |
+| B40 | Update ACM-STAGES-SPEC.md environment layer references | 2026-01-31 | ACM MCP server added alongside acm-env. |
 | B42 | Structured session handoff (merged B43) | 2026-01-31 | Handoff block in tasks.md, Phase Boundary Protocol v1.3.0, tasks.md stub, start-develop-prompt updated. |
 | B35 | Registry consultation enforcement | 2026-01-31 | Required Registry Summary section in capabilities.md. Start-develop prompt uses MUST language + completeness gate. |
 | B33 | Environment cleanup — remove cruft plugins, legacy commands, fix upstream URLs | 2026-01-30 | Removed superpowers/example-skills/serena. Deleted 3 legacy commands. Disabled frontend-design/context7/playwright at user level. |

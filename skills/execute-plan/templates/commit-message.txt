@@ -1,0 +1,9 @@
+feat({{PHASE_NAME}}): {{DESCRIPTION}}
+
+Acceptance:
+{{ACCEPTANCE_CRITERIA}}
+
+Task: {{TASK_ID}}
+Tests: {{TEST_FILE_PATHS}}
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>

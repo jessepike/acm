@@ -1,0 +1,1 @@
+**{{TIMESTAMP}}** — {{EVENT_TYPE}}: {{EVENT_DESCRIPTION}}

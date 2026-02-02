@@ -1,7 +1,7 @@
 ---
 type: "specification"
 description: "Master framework specification — defines ACM's architecture, stage pipeline, artifact flow, six environment primitives, interface map, and spec index. The single entry point for understanding ACM."
-version: "2.0.0"
+version: "2.0.1"
 updated: "2026-02-01"
 scope: "acm"
 lifecycle: "reference"
@@ -141,7 +141,7 @@ The project layer is a four-stage pipeline. Each stage produces artifacts that p
 
 ## Artifact Flow Model
 
-How artifacts flow through the framework — what each stage produces and what persists:
+How artifacts flow through the framework — what each stage produces and what persists. These are artifacts in **consumer projects** that follow ACM stages (not in the ACM repo itself):
 
 ```
 Discover: intent.md, brief.md ──────────────────────────────→ (persist all stages)
@@ -252,15 +252,15 @@ These are not sequential — they are ambient. They are always available, and th
 
 **Owns:** Session state, cross-agent continuity, project history, raw experience data.
 
-**Implemented by:** Memory layer — a standalone repo for persistent state.
+**Implemented by:** Memory layer — a standalone repo for persistent state. **Status: planned (B18-B19), not yet built.**
 
-**Key behaviors:**
+**Key behaviors (planned):**
 - Stores session logs and decisions
 - Enables cross-session continuity (agent picks up where last session left off)
 - Accumulates raw experience data that feeds knowledge distillation
 - Provides per-project memory and cross-project memory
 
-**Location:** `~/code/_shared/memory/` — own repo.
+**Location:** `~/code/_shared/memory/` — own repo (planned).
 
 **Characteristics:**
 - Raw and temporal — captured as things happen
@@ -405,7 +405,7 @@ Unified view of how external consumers and internal components interact with ACM
 │   ├── inventory.json            # Source of truth (machine-readable)
 │   └── INVENTORY.md              # Generated from JSON (agent-queryable)
 │
-└── memory/                       # Memory
+└── memory/                       # Memory (PLANNED — not yet built, see B18-B19)
     ├── sessions/                 # Raw session logs
     ├── projects/                 # Per-project memory
     ├── scripts/                  # Distillation, cleanup
@@ -423,10 +423,10 @@ Unified view of how external consumers and internal components interact with ACM
 ```
 acm (orchestration) ──references──→ capabilities-registry (capabilities)
 acm (orchestration) ──contains───→ kb/ (knowledge)
-acm (orchestration) ──references──→ memory (session state)
+acm (orchestration) ──references──→ memory (session state) [PLANNED]
 
 capabilities-registry ──self-maintains──→ (sync, freshness)
-memory ──feeds──→ kb/ (distillation: raw memory → curated knowledge)
+memory ──feeds──→ kb/ (distillation: raw memory → curated knowledge) [PLANNED]
 
 validation (skills) ──reads──→ acm specs (contracts to validate against)
 maintenance (scripts) ──lives in──→ each component
@@ -435,7 +435,7 @@ maintenance (scripts) ──lives in──→ each component
 **Coupling rules:**
 - ACM references registry and memory but doesn't manage them
 - Registry and memory don't know about each other
-- Registry doesn't know about ACM — it's consumed, not coupled
+- Registry doesn't depend on ACM — it's consumed, not coupled (ecosystem-aware via CLAUDE.md context, but no functional dependency)
 - Each component is self-contained and self-maintaining
 - Components point to each other but don't own each other
 
@@ -497,7 +497,7 @@ The server is read-only, has no network access, and reads all data from disk at 
 
 ## Self-Improvement Loop
 
-The environment layer enables continuous improvement across projects:
+The environment layer is designed to enable continuous improvement across projects:
 
 1. **Capture** — During projects, agents log decisions, friction, learnings to memory
 2. **Distill** — Periodically, a skill processes raw memory into KB entries or spec update proposals
@@ -505,6 +505,8 @@ The environment layer enables continuous improvement across projects:
 4. **Validate** — Ongoing checks ensure specs, capabilities, and knowledge stay current and aligned
 
 This loop is the mechanism by which the system gets better over time. It is not a stage — it is ambient behavior of the environment layer.
+
+**Current status:** Steps 3 (Apply) and 4 (Validate) are operational — KB is queryable via MCP and validation skills exist. Steps 1 (Capture) and 2 (Distill) depend on the memory layer (B18-B19, planned). KB entries are currently created manually during project work.
 
 ---
 
@@ -514,7 +516,7 @@ Complete table of all ACM specifications:
 
 | Spec | Version | Governs | Primitive |
 |---|---|---|---|
-| ACM-ARCHITECTURE-SPEC.md | 2.0.0 | Framework architecture (this doc) | All |
+| ACM-ARCHITECTURE-SPEC.md | 2.0.1 | Framework architecture (this doc) | All |
 | ACM-STAGES-SPEC.md | 1.2.0 | Stage workflow, exit criteria, handoff | Orchestration |
 | ACM-DISCOVER-SPEC.md | 1.2.0 | Discover stage | Orchestration |
 | ACM-DESIGN-SPEC.md | 1.0.0 | Design stage | Orchestration |
@@ -523,8 +525,8 @@ Complete table of all ACM specifications:
 | ACM-PROJECT-TYPES-SPEC.md | 2.0.0 | Project classification | Orchestration |
 | ACM-BRIEF-SPEC.md | 2.1.0 | Brief artifact format | Orchestration |
 | ACM-INTENT-SPEC.md | 1.0.1 | Intent artifact format | Orchestration |
-| ACM-STATUS-SPEC.md | 1.1.0 | Status artifact format | Memory |
-| ACM-README-SPEC.md | 1.0.0 | README artifact format | Knowledge |
+| ACM-STATUS-SPEC.md | 1.1.0 | Status artifact format | Orchestration |
+| ACM-README-SPEC.md | 1.0.0 | README artifact format | Orchestration |
 | ACM-CONTEXT-ARTIFACT-SPEC.md | 1.0.0 | CLAUDE.md format (shared) | Orchestration |
 | ACM-GLOBAL-CLAUDE-MD-SPEC.md | 1.1.0 | Global CLAUDE.md format | Orchestration |
 | ACM-PROJECT-CLAUDE-MD-SPEC.md | 1.1.0 | Project CLAUDE.md format | Orchestration |
@@ -556,6 +558,7 @@ Complete table of all ACM specifications:
 | 1.2.0 | 2026-01-31 | Skills/ and acm-server/ in physical layout |
 | 1.3.0 | 2026-01-31 | MCP server interface layer section |
 | 2.0.0 | 2026-02-01 | Elevated to master framework spec — added spec map, framework diagram, stages overview, artifact flow, interface map, spec index |
+| 2.0.1 | 2026-02-01 | Review pass — marked memory as planned (B18-B19), clarified artifact flow is consumer-project scoped, corrected spec index primitive assignments (STATUS→Orchestration, README→Orchestration), clarified registry coupling, added self-improvement loop implementation status |
 
 ---
 

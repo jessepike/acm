@@ -1,20 +1,20 @@
 ---
 type: "specification"
-description: "Master framework specification — defines ACM's architecture, stage pipeline, artifact flow, six environment primitives, interface map, and spec index. The single entry point for understanding ACM."
+description: "Master framework specification — defines ADF's architecture, stage pipeline, artifact flow, six environment primitives, interface map, and spec index. The single entry point for understanding ADF."
 version: "2.0.1"
 updated: "2026-02-01"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-ARCHITECTURE-SPEC.md"
+location: "adf/ADF-ARCHITECTURE-SPEC.md"
 ---
 
-# ACM Architecture Specification
+# ADF Architecture Specification
 
 ## Purpose
 
-This is the **master framework specification** for ACM (Agentic Development Framework). It is the single entry point for understanding how ACM works — the two-layer model, the six environment primitives, the stage pipeline, artifact flow, interface map, and the complete spec index.
+This is the **master framework specification** for ADF (Agentic Development Framework). It is the single entry point for understanding how ADF works — the two-layer model, the six environment primitives, the stage pipeline, artifact flow, interface map, and the complete spec index.
 
-All other ACM specs define narrower slices. This spec defines the whole.
+All other ADF specs define narrower slices. This spec defines the whole.
 
 ---
 
@@ -39,7 +39,7 @@ All other ACM specs define narrower slices. This spec defines the whole.
 
 ## Two-Layer Model
 
-ACM operates as two distinct layers:
+ADF operates as two distinct layers:
 
 ### Project Layer (the stages)
 
@@ -87,7 +87,7 @@ How the full framework fits together — environment as outer boundary, primitiv
 │                                                                         │
 │  Orchestration ◄─── ACM Specs + Prompts                                │
 │  Capabilities  ◄─── capabilities-registry/                              │
-│  Knowledge     ◄─── acm/kb/                                            │
+│  Knowledge     ◄─── adf/kb/                                            │
 │  Memory        ◄─── memory/                                             │
 │  Maintenance   ◄─── distributed (each component)                        │
 │  Validation    ◄─── distributed (skills + MCP health checks)            │
@@ -105,10 +105,10 @@ How the full framework fits together — environment as outer boundary, primitiv
 │  └─────────────────────────────────────────────────────────────────┘     │
 │                                                                         │
 │  Cross-stage: status.md (every session) │ CLAUDE.md (evolves)           │
-│  Cross-stage: docs/acm/ (planning artifacts)                            │
+│  Cross-stage: docs/adf/ (planning artifacts)                            │
 │                                                                         │
 │  ┌── INTERFACES ──────────────────────────────────────────────────┐     │
-│  │  ACM MCP server ─── read-only spec/prompt/capability/KB access │     │
+│  │  ADF MCP server ─── read-only spec/prompt/capability/KB access │     │
 │  │  acm-env plugin ─── environment management, health, hooks      │     │
 │  │  .claude/rules/ ─── policy enforcement (human-controlled)      │     │
 │  │  CLAUDE.md ──────── context and orientation (agent-writable)   │     │
@@ -135,18 +135,18 @@ The project layer is a four-stage pipeline. Each stage produces artifacts that p
 
 - Universal exit criteria exist for each stage — see ADF-STAGES-SPEC.md
 - Stage boundary handoff protocol: verify exit criteria → update status.md → commit → clear context
-- Cross-stage artifacts that persist through all stages: status.md, CLAUDE.md, docs/acm/
+- Cross-stage artifacts that persist through all stages: status.md, CLAUDE.md, docs/adf/
 
 ---
 
 ## Artifact Flow Model
 
-How artifacts flow through the framework — what each stage produces and what persists. These are artifacts in **consumer projects** that follow ACM stages (not in the ACM repo itself):
+How artifacts flow through the framework — what each stage produces and what persists. These are artifacts in **consumer projects** that follow ADF stages (not in the ADF repo itself):
 
 ```
 Discover: intent.md, brief.md ──────────────────────────────→ (persist all stages)
 Design:   design.md ─────────────────────────────────────────→ (persist all stages)
-Develop:  docs/acm/{plan,tasks,manifest,capabilities}.md ───→ (archive at stage end)
+Develop:  docs/adf/{plan,tasks,manifest,capabilities}.md ───→ (archive at stage end)
           deliverable, tests, README ────────────────────────→ (persist)
 Deliver:  deployed artifact ─────────────────────────────────→ (final)
 ```
@@ -178,7 +178,7 @@ These are not sequential — they are ambient. They are always available, and th
 
 **Owns:** Stage workflow, phase models, gates, prompts, context management rules.
 
-**Implemented by:** ACM specs and prompts, exposed to consumer projects via the ACM MCP server.
+**Implemented by:** ADF specs and prompts, exposed to consumer projects via the ADF MCP server.
 
 **Key behaviors:**
 - Defines stage entry/exit criteria
@@ -188,7 +188,7 @@ These are not sequential — they are ambient. They are always available, and th
 
 **MCP tools:** `get_stage`, `get_review_prompt`, `get_transition_prompt`
 
-**Location:** `~/code/_shared/acm/` — specs, prompts, stubs.
+**Location:** `~/code/_shared/adf/` — specs, prompts, stubs.
 
 ---
 
@@ -196,7 +196,7 @@ These are not sequential — they are ambient. They are always available, and th
 
 **Owns:** Inventory of skills, tools, and agents available for use across projects.
 
-**Implemented by:** Capability Registry — a standalone, self-maintaining catalog. Queryable from consumer projects via the ACM MCP server.
+**Implemented by:** Capability Registry — a standalone, self-maintaining catalog. Queryable from consumer projects via the ADF MCP server.
 
 **Key behaviors:**
 - Catalogs available skills, tools, and agents
@@ -226,7 +226,7 @@ These are not sequential — they are ambient. They are always available, and th
 
 **Owns:** Curated learnings, validated patterns, reusable best practices.
 
-**Implemented by:** Knowledge base within ACM (`acm/kb/`). Searchable from consumer projects via the ACM MCP server.
+**Implemented by:** Knowledge base within ADF (`adf/kb/`). Searchable from consumer projects via the ADF MCP server.
 
 **Key behaviors:**
 - Stores distilled, evergreen findings
@@ -236,7 +236,7 @@ These are not sequential — they are ambient. They are always available, and th
 
 **MCP tools:** `query_knowledge`
 
-**Location:** `~/code/_shared/acm/kb/` — within ACM for now. Tightly coupled to process learnings.
+**Location:** `~/code/_shared/adf/kb/` — within ADF for now. Tightly coupled to process learnings.
 
 **Characteristics:**
 - Curated, not raw — every entry is validated and distilled
@@ -244,7 +244,7 @@ These are not sequential — they are ambient. They are always available, and th
 - Read-heavy — consumed frequently, updated occasionally
 - Human-approved — entries are reviewed before addition
 
-**Future consideration:** May extract to own repo if growth warrants separation from ACM process specs.
+**Future consideration:** May extract to own repo if growth warrants separation from ADF process specs.
 
 ---
 
@@ -301,7 +301,7 @@ These are not sequential — they are ambient. They are always available, and th
 
 **Owns:** Drift detection, spec compliance, correctness checks.
 
-**Implemented by:** Skills that run checks against specs. Validation is a behavior, not a component. Structural checks are also exposed via the ACM MCP server.
+**Implemented by:** Skills that run checks against specs. Validation is a behavior, not a component. Structural checks are also exposed via the ADF MCP server.
 
 **Key behaviors:**
 - Project health checks: "Is this project aligned with its intent?"
@@ -358,7 +358,7 @@ The environment layer distinguishes **policy** from **guidance** using two compl
 
 **Context** is guidance. It helps Claude understand *how we work here* — project goals, terminology, workflow norms, related repos. It is flexible and evolves frequently.
 
-Every ACM project gets both. Rules are created at project init (`.claude/rules/` directory) and are human-controlled. Context is maintained in `CLAUDE.md` and can be updated by agents within normal workflow.
+Every ADF project gets both. Rules are created at project init (`.claude/rules/` directory) and are human-controlled. Context is maintained in `CLAUDE.md` and can be updated by agents within normal workflow.
 
 **Global rules** live at `~/.claude/CLAUDE.md` in the `<constraints>` block (Claude Code's native mechanism). Project rules in `.claude/rules/` extend these with project-specific policy.
 
@@ -370,7 +370,7 @@ Unified view of how external consumers and internal components interact with ACM
 
 | Interface | What | Scope | Spec |
 |---|---|---|---|
-| ACM MCP server | Read-only spec/prompt/capability/KB access | Consumer projects | acm-server/README.md |
+| ADF MCP server | Read-only spec/prompt/capability/KB access | Consumer projects | adf-server/README.md |
 | acm-env plugin | Environment management, health, hooks | All projects | ADF-ENV-PLUGIN-SPEC.md |
 | .claude/rules/ | Policy enforcement (human-controlled) | Per project | ADF-RULES-SPEC.md |
 | CLAUDE.md | Context and orientation (agent-writable) | Per project | ADF-CONTEXT-ARTIFACT-SPEC.md |
@@ -389,7 +389,7 @@ Unified view of how external consumers and internal components interact with ACM
 │   │       └── constraints.md    # Non-negotiable rules
 │   ├── ADF-*-SPEC.md             # Process specs (orchestration contracts)
 │   ├── ADF-ARCHITECTURE-SPEC.md   # This spec (master framework spec)
-│   ├── acm-server/               # ACM MCP server (read-only tool interface)
+│   ├── adf-server/               # ADF MCP server (read-only tool interface)
 │   ├── skills/                   # ADF-process skills (review automation, workflow)
 │   ├── prompts/                  # Stage prompts
 │   ├── kb/                       # Knowledge base (curated learnings)
@@ -412,7 +412,7 @@ Unified view of how external consumers and internal components interact with ACM
     └── MEMORY-SPEC.md            # How memory works
 ```
 
-**ADF-process skills** (`acm/skills/`) are tightly coupled to ACM orchestration — review automation, workflow tools, stage transitions. They live inside ACM because they implement ACM's own process. General-purpose capabilities (frontend-design, pdf, etc.) live in the capabilities-registry.
+**ADF-process skills** (`acm/skills/`) are tightly coupled to ADF orchestration — review automation, workflow tools, stage transitions. They live inside ADF because they implement ADF's own process. General-purpose capabilities (frontend-design, pdf, etc.) live in the capabilities-registry.
 
 **Maintenance** and **Validation** are distributed — each component owns its own maintenance scripts and validation skills. They don't have separate repos.
 
@@ -435,7 +435,7 @@ maintenance (scripts) ──lives in──→ each component
 **Coupling rules:**
 - ACM references registry and memory but doesn't manage them
 - Registry and memory don't know about each other
-- Registry doesn't depend on ACM — it's consumed, not coupled (ecosystem-aware via CLAUDE.md context, but no functional dependency)
+- Registry doesn't depend on ADF — it's consumed, not coupled (ecosystem-aware via CLAUDE.md context, but no functional dependency)
 - Each component is self-contained and self-maintaining
 - Components point to each other but don't own each other
 
@@ -443,14 +443,14 @@ maintenance (scripts) ──lives in──→ each component
 
 ## MCP Server Interface Layer
 
-The ACM MCP server (`acm/acm-server/`) is the **read-only interface** between the environment layer and consumer projects. It exposes four of the six primitives as tools that any agent can call without the ACM repo being open:
+The ADF MCP server (`acm/adf-server/`) is the **read-only interface** between the environment layer and consumer projects. It exposes four of the six primitives as tools that any agent can call without the ADF repo being open:
 
 ```
 ┌─────────────────────────────────┐
 │  Consumer Project               │
 │  (e.g., link-triage-pipeline)   │
 │                                 │         ┌──────────────────────┐
-│  Claude Code ──stdio──► ACM     │         │  ~/code/_shared/acm/ │
+│  Claude Code ──stdio──► ACM     │         │  ~/code/_shared/adf/ │
 │  Agent                  MCP  ───┼── reads ─► specs, prompts,    │
 │                         Server  │         │  stubs, kb/          │
 │                                 │         ├──────────────────────┤
@@ -466,7 +466,7 @@ The ACM MCP server (`acm/acm-server/`) is the **read-only interface** between th
 | **Orchestration** | `get_stage`, `get_review_prompt`, `get_transition_prompt` | Stage specs, review prompts, transition guidance with validation |
 | **Capabilities** | `query_capabilities`, `get_capability_detail` | Registry search and capability details |
 | **Knowledge** | `query_knowledge` | KB article search by topic |
-| **Validation** | `check_project_structure`, `check_project_health` | Structural and health checks against ACM spec |
+| **Validation** | `check_project_structure`, `check_project_health` | Structural and health checks against ADF spec |
 | **Memory** | — | Not yet built (future: memory layer) |
 | **Maintenance** | — | Handled by acm-env plugin, not the MCP server |
 
@@ -512,7 +512,7 @@ This loop is the mechanism by which the system gets better over time. It is not 
 
 ## Spec Index
 
-Complete table of all ACM specifications:
+Complete table of all ADF specifications:
 
 | Spec | Version | Governs | Primitive |
 |---|---|---|---|
@@ -555,7 +555,7 @@ Complete table of all ACM specifications:
 |---|---|---|
 | 1.0.0 | 2026-01-29 | Initial — six primitives, two-layer model |
 | 1.1.0 | 2026-01-30 | Physical layout, governance model |
-| 1.2.0 | 2026-01-31 | Skills/ and acm-server/ in physical layout |
+| 1.2.0 | 2026-01-31 | Skills/ and adf-server/ in physical layout |
 | 1.3.0 | 2026-01-31 | MCP server interface layer section |
 | 2.0.0 | 2026-02-01 | Elevated to master framework spec — added spec map, framework diagram, stages overview, artifact flow, interface map, spec index |
 | 2.0.1 | 2026-02-01 | Review pass — marked memory as planned (B18-B19), clarified artifact flow is consumer-project scoped, corrected spec index primitive assignments (STATUS→Orchestration, README→Orchestration), clarified registry coupling, added self-improvement loop implementation status |
@@ -568,6 +568,6 @@ Complete table of all ACM specifications:
 - ADF-RULES-SPEC.md (enforcement layer — rules governance model)
 - ADF-ENV-PLUGIN-SPEC.md (acm-env plugin — environment management)
 - ADF-TAXONOMY.md (terminology)
-- acm-server/README.md (MCP server — installation, tools, consumer wiring)
+- adf-server/README.md (MCP server — installation, tools, consumer wiring)
 - skills/acm-workflow/skill.md (companion skill — workflow instructions)
 - docs/design.md (MCP server design spec — full tool schemas and architecture)

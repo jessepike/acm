@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines acm-env — the agentic development environment manager plugin"
 version: "1.0.0"
 updated: "2026-01-29"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-ENV-PLUGIN-SPEC.md"
+location: "adf/ADF-ENV-PLUGIN-SPEC.md"
 ---
 
-# ACM Environment Specification (acm-env)
+# ADF Environment Specification (acm-env)
 
 ## Summary
 
@@ -121,7 +121,7 @@ The `/acm-env:audit` command validates:
 - Token-efficient — every artifact earns its context cost
 - Graceful degradation — never silently fail
 
-## Relationship to ACM Environment Layer
+## Relationship to ADF Environment Layer
 
 acm-env is the **management layer for the environment layer itself**. It ensures skills, tools, rules, and context artifacts are properly configured, available, current, and not stale.
 
@@ -132,7 +132,7 @@ The source of truth for available capabilities is the **capabilities registry** 
 ### What acm-env manages in v1
 - Capabilities (installed, configured, not stale — validated against capabilities-registry)
 - Configuration (matches baseline)
-- Context (structure/quality per ACM specs)
+- Context (structure/quality per ADF specs)
 - Artifact structure validation (frontmatter, lifecycle, progressive disclosure)
 - Context pruning (CLAUDE.md dynamic sections, ephemeral artifacts)
 

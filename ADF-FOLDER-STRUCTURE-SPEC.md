@@ -1,18 +1,18 @@
 ---
 type: "specification"
-description: "Defines minimal folder structure for ACM projects"
+description: "Defines minimal folder structure for ADF projects"
 version: "1.2.0"
 updated: "2026-02-01"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-FOLDER-STRUCTURE-SPEC.md"
+location: "adf/ADF-FOLDER-STRUCTURE-SPEC.md"
 ---
 
-# ACM Folder Structure Specification
+# ADF Folder Structure Specification
 
 ## Summary
 
-Defines the minimal folder structure for all ACM projects. `docs/` is the main folder for markdown, context, and reference files. Includes lifecycle-aware folders: `inbox/` for triage, `_archive/` for inactive artifacts.
+Defines the minimal folder structure for all ADF projects. `docs/` is the main folder for markdown, context, and reference files. Includes lifecycle-aware folders: `inbox/` for triage, `_archive/` for inactive artifacts.
 
 ---
 
@@ -47,10 +47,10 @@ project-root/
 
 **Core folders:** 7 items. This is the irreducible minimum.
 
-**`docs/acm/` contents (created during Develop, populated per stage):**
+**`docs/adf/` contents (created during Develop, populated per stage):**
 
 ```
-docs/acm/
+docs/adf/
 ├── plan.md            # Implementation plan (Develop)
 ├── tasks.md           # Task tracking (Develop)
 ├── manifest.md        # Dependencies (Develop)
@@ -169,8 +169,8 @@ project-root/
 | `.claude/rules/` | Hard constraints (policy) | Reference (protected) | Human only |
 | `docs/` | Main context/reference folder | Reference | Human + Agent |
 | `docs/inbox/` | Triage zone | Ephemeral | Human + Agent |
-| `docs/acm/` | Stage planning artifacts, agent workspace | Ephemeral → Archive after stage | Agent |
-| `docs/acm/archive/` | Completed planning artifacts | Archived | Agent |
+| `docs/adf/` | Stage planning artifacts, agent workspace | Ephemeral → Archive after stage | Agent |
+| `docs/adf/archive/` | Completed planning artifacts | Archived | Agent |
 | `docs/intent.md` | North Star | Reference (protected) | Human |
 | `docs/brief.md` | Scope and criteria | Reference | Human + Agent |
 | `_archive/` | Inactive artifacts | Archived | Human + Agent |
@@ -196,7 +196,7 @@ These emerge during Design/Develop, not at Project Init:
 
 ```bash
 # Project Init creates:
-mkdir -p .claude/rules docs/inbox docs/acm/archive _archive
+mkdir -p .claude/rules docs/inbox docs/adf/archive _archive
 touch .claude/CLAUDE.md
 touch docs/intent.md docs/brief.md
 touch README.md
@@ -216,7 +216,7 @@ touch README.md
 | Trigger | Action |
 |---------|--------|
 | Stage transition | Clear `docs/inbox/`, review ephemeral |
-| Stage completion | Archive planning artifacts from `docs/acm/` to `docs/acm/archive/` |
+| Stage completion | Archive planning artifacts from `docs/adf/` to `docs/adf/archive/` |
 | Project milestone | Review `docs/`, archive obsolete |
 | Context bloat | Audit all folders, prune aggressively |
 
@@ -235,7 +235,7 @@ Before exiting Project Init:
 - [ ] `docs/intent.md` exists (can be stub)
 - [ ] `docs/brief.md` exists (can be stub)
 - [ ] `docs/inbox/` exists
-- [ ] `docs/acm/archive/` exists
+- [ ] `docs/adf/archive/` exists
 - [ ] `_archive/` exists
 - [ ] `README.md` exists (can be minimal)
 - [ ] Type-specific folders created

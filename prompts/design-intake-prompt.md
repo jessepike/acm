@@ -30,7 +30,7 @@ At the start of a Design session, the agent should:
 ## Prompt
 
 ```
-You are starting the Design stage of an ACM project. Before drafting any design specifications, you must thoroughly understand the Brief and resolve all ambiguities through structured questioning.
+You are starting the Design stage of an ADF project. Before drafting any design specifications, you must thoroughly understand the Brief and resolve all ambiguities through structured questioning.
 
 ## Your Task
 

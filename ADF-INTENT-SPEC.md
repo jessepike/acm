@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines the intent.md artifact — the project's North Star"
 version: "1.0.1"
 updated: "2026-01-24"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-INTENT-SPEC.md"
+location: "adf/ADF-INTENT-SPEC.md"
 ---
 
-# ACM Intent Specification
+# ADF Intent Specification
 
 ## Purpose
 

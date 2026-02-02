@@ -3,16 +3,16 @@ type: "specification"
 description: "Detailed specification for the Deliver stage workflow"
 version: "1.0.0"
 updated: "2026-02-02"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-DELIVER-SPEC.md"
+location: "adf/ADF-DELIVER-SPEC.md"
 ---
 
-# ACM Deliver Stage Specification
+# ADF Deliver Stage Specification
 
 ## Purpose
 
-Define the Deliver stage — the fourth stage in the ACM workflow where a completed deliverable becomes accessible and usable in its target environment.
+Define the Deliver stage — the fourth stage in the ADF workflow where a completed deliverable becomes accessible and usable in its target environment.
 
 ---
 
@@ -162,7 +162,7 @@ What enters the Deliver stage:
 | `discover-brief.md` | Discover | Contract — referenced for success criteria |
 | `intent.md` | Discover | North Star — referenced throughout |
 | Project classification | Brief | Type + modifiers determine delivery approach |
-| ACM specs | Environment layer | Deliver spec, Project Types spec |
+| ADF specs | Environment layer | Deliver spec, Project Types spec |
 
 ---
 
@@ -172,13 +172,13 @@ What Deliver produces:
 
 | Output | Description | Location |
 |--------|-------------|----------|
-| `manifest.md` | Deployment dependencies (hosting, DNS, CI/CD tools) | `docs/acm/manifest.md` |
-| `capabilities.md` | Skills, tools for deployment/testing | `docs/acm/capabilities.md` |
-| `plan.md` | Deployment plan — phases, testing strategy, rollout | `docs/acm/plan.md` |
-| `tasks.md` | Atomic delivery task list with status tracking | `docs/acm/tasks.md` |
+| `manifest.md` | Deployment dependencies (hosting, DNS, CI/CD tools) | `docs/adf/manifest.md` |
+| `capabilities.md` | Skills, tools for deployment/testing | `docs/adf/capabilities.md` |
+| `plan.md` | Deployment plan — phases, testing strategy, rollout | `docs/adf/plan.md` |
+| `tasks.md` | Atomic delivery task list with status tracking | `docs/adf/tasks.md` |
 | Deployed artifact | Live, accessible deliverable in target environment | Target-specific |
 | Access documentation | URLs, credentials, access instructions | README or docs/ACCESS.md |
-| Test results | Validation evidence (automated, browser, manual) | docs/acm/test-results.md |
+| Test results | Validation evidence (automated, browser, manual) | docs/adf/test-results.md |
 
 ---
 
@@ -398,7 +398,7 @@ current_phase: "Phase 5: Infrastructure Setup"
 
 #### Step 1: Review Loop
 
-Invoke review per ADF-REVIEW-SPEC.md. Use `get_review_prompt('deliver', phase)` from ACM MCP server.
+Invoke review per ADF-REVIEW-SPEC.md. Use `get_review_prompt('deliver', phase)` from ADF MCP server.
 
 **What gets reviewed:**
 - manifest.md
@@ -643,7 +643,7 @@ Quick sanity checks run throughout validation:
 
 ### Documentation of Test Results
 
-Create `docs/acm/test-results.md` with:
+Create `docs/adf/test-results.md` with:
 - Tier 1 results (test framework output)
 - Tier 2 results (browser test scenarios + outcomes)
 - Tier 3 results (manual validation notes)
@@ -689,7 +689,7 @@ Update README or create `docs/ACCESS.md` with:
 #### 8.4 Artifact Lifecycle
 
 - Keep in `docs/`: intent.md, discover-brief.md, design.md (cross-stage reference)
-- Archive to `docs/acm/archive/`: plan.md, tasks.md, manifest.md, capabilities.md, test-results.md
+- Archive to `docs/adf/archive/`: plan.md, tasks.md, manifest.md, capabilities.md, test-results.md
 - Keep in project: deliverable, tests, documentation, deployment configs
 
 #### 8.5 Commit Verification
@@ -844,8 +844,8 @@ Per ADF-STAGES-SPEC.md:
 | intent.md | Always | North Star |
 | discover-brief.md | Deliver stage | Success criteria reference |
 | design.md | Deliver stage (validation) | Technical specification |
-| docs/acm/plan.md | Deliver stage (after created) | Deployment guide |
-| docs/acm/tasks.md | Deliver stage (after created) | Task tracking |
+| docs/adf/plan.md | Deliver stage (after created) | Deployment guide |
+| docs/adf/tasks.md | Deliver stage (after created) | Task tracking |
 | ADF-DELIVER-SPEC.md | Deliver stage (reference) | Stage workflow |
 ```
 
@@ -992,5 +992,5 @@ Deliver may use sub-agents for parallelization, though less common than in Devel
 - ADF-BRIEF-SPEC.md (Success criteria reference)
 - ADF-INTENT-SPEC.md (North Star reference)
 - ADF-PROJECT-TYPES-SPEC.md (Deliverable shape and delivery approach)
-- ADF-FOLDER-STRUCTURE-SPEC.md (docs/acm/ convention)
+- ADF-FOLDER-STRUCTURE-SPEC.md (docs/adf/ convention)
 - ADF-TAXONOMY.md (Terminology)

@@ -11,7 +11,7 @@ usage: "Use when planning artifacts need restructuring before proceeding to exec
 
 ## Purpose
 
-Correct planning artifacts (capabilities.md, tasks.md) to meet ACM spec requirements before proceeding to implementation.
+Correct planning artifacts (capabilities.md, tasks.md) to meet ADF spec requirements before proceeding to implementation.
 
 ---
 

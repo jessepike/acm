@@ -4,7 +4,7 @@ description: "Ralph Loop prompt for Phase 1 internal review in Design stage"
 version: "3.0.0"
 updated: "2026-01-30"
 scope: "design"
-mechanism_ref: "~/code/_shared/acm/ADF-REVIEW-SPEC.md"
+mechanism_ref: "~/code/_shared/adf/ADF-REVIEW-SPEC.md"
 usage: "Use with Ralph Loop plugin for automated design.md iteration"
 ---
 
@@ -13,7 +13,7 @@ usage: "Use with Ralph Loop plugin for automated design.md iteration"
 ## Usage
 
 ```bash
-/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/design-ralph-review-prompt.md)" --max-iterations 10 --completion-promise "DESIGN_INTERNAL_REVIEW_COMPLETE"
+/ralph-loop:ralph-loop "$(cat ~/code/_shared/adf/prompts/design-ralph-review-prompt.md)" --max-iterations 10 --completion-promise "DESIGN_INTERNAL_REVIEW_COMPLETE"
 ```
 
 Run from the project root directory. The agent reads project files relative to `$PWD`.
@@ -23,7 +23,7 @@ Run from the project root directory. The agent reads project files relative to `
 ## Prompt
 
 ```
-You are conducting Phase 1 (Internal) review of design.md as part of ACM's Design stage.
+You are conducting Phase 1 (Internal) review of design.md as part of ADF's Design stage.
 
 ## Mechanism
 

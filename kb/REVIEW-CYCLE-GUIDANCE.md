@@ -4,7 +4,7 @@ description: "Review cycle stop rules — severity-based scoring with diminishin
 version: "2.0.0"
 created: "2026-01-28"
 updated: "2026-01-29"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 tags: ["review", "discover", "design", "develop", "validation"]
 ---

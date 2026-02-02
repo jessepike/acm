@@ -45,9 +45,9 @@ Update `status.md`:
 ## Step 3: Load Context
 
 Read and internalize:
-- `~/code/_shared/acm/ADF-DISCOVER-SPEC.md` — Stage workflow and requirements
-- `~/code/_shared/acm/ADF-BRIEF-SPEC.md` — What the Brief will contain
-- `~/code/_shared/acm/ADF-INTENT-SPEC.md` — What Intent.md should capture
+- `~/code/_shared/adf/ADF-DISCOVER-SPEC.md` — Stage workflow and requirements
+- `~/code/_shared/adf/ADF-BRIEF-SPEC.md` — What the Brief will contain
+- `~/code/_shared/adf/ADF-INTENT-SPEC.md` — What Intent.md should capture
 - Any existing project notes or context the user has shared
 
 ## Step 4: Begin Exploration Phase

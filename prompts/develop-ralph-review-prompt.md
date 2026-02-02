@@ -4,7 +4,7 @@ description: "Ralph Loop prompt for Phase 1 internal review in Develop stage"
 version: "3.1.0"
 updated: "2026-02-01"
 scope: "develop"
-mechanism_ref: "~/code/_shared/acm/ADF-REVIEW-SPEC.md"
+mechanism_ref: "~/code/_shared/adf/ADF-REVIEW-SPEC.md"
 usage: "Use with Ralph Loop plugin for automated plan review"
 ---
 
@@ -13,7 +13,7 @@ usage: "Use with Ralph Loop plugin for automated plan review"
 ## Usage
 
 ```bash
-/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/develop-ralph-review-prompt.md)" --max-iterations 10 --completion-promise "DEVELOP_INTERNAL_REVIEW_COMPLETE"
+/ralph-loop:ralph-loop "$(cat ~/code/_shared/adf/prompts/develop-ralph-review-prompt.md)" --max-iterations 10 --completion-promise "DEVELOP_INTERNAL_REVIEW_COMPLETE"
 ```
 
 Run from the project root directory. The agent reads project files relative to `$PWD`.
@@ -23,7 +23,7 @@ Run from the project root directory. The agent reads project files relative to `
 ## Prompt
 
 ```
-You are conducting Phase 1 (Internal) review of the implementation plan as part of ACM's Develop stage.
+You are conducting Phase 1 (Internal) review of the implementation plan as part of ADF's Develop stage.
 
 ## Mechanism
 
@@ -44,10 +44,10 @@ This is Phase 1 of the two-phase review process:
 
 ## Files
 
-- Plan: docs/acm/plan.md
-- Tasks: docs/acm/tasks.md
-- Manifest: docs/acm/manifest.md
-- Capabilities: docs/acm/capabilities.md
+- Plan: docs/adf/plan.md
+- Tasks: docs/adf/tasks.md
+- Manifest: docs/adf/manifest.md
+- Capabilities: docs/adf/capabilities.md
 - Design: docs/design.md (cross-stage, stays in docs/)
 
 ## Your Task

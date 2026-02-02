@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines status.md — lightweight session state tracking across all stages"
 version: "1.1.0"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-STATUS-SPEC.md"
+location: "adf/ADF-STATUS-SPEC.md"
 ---
 
-# ACM Status Specification
+# ADF Status Specification
 
 ## Purpose
 
@@ -208,7 +208,7 @@ Typical trigger: Entering Develop stage with a non-trivial build.
 Rationale:
 - Human-readable without parsing
 - Easy to edit manually
-- Consistent with other ACM artifacts
+- Consistent with other ADF artifacts
 - YAML would be overkill for ~20 lines of state
 
 ---

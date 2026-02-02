@@ -4,7 +4,7 @@ description: "Research findings on optimal document length for LLM processing an
 version: "1.0.0"
 created: "2026-01-27"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 tags: ["context-management", "document-structure", "llm-optimization"]
 ---
@@ -129,7 +129,7 @@ design.md (100-200 lines)
 
 ---
 
-## ACM Usage
+## ADF Usage
 
 This threshold applies to:
 - `design.md` and child specs

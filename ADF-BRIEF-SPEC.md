@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines brief.md — the detailed project contract produced in Discover"
 version: "2.1.0"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-BRIEF-SPEC.md"
+location: "adf/ADF-BRIEF-SPEC.md"
 ---
 
-# ACM Brief Specification
+# ADF Brief Specification
 
 ## Purpose
 

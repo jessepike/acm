@@ -14,7 +14,7 @@ phase: "capability-assessment"
 - **Registry consulted:** ~/code/_shared/capabilities-registry/INVENTORY.md
 - **Total available:** 39 capabilities (19 plugins, 16 skills, 4 tools)
 - **Matched:** 2 capabilities directly used (ralph-loop skill, acm-env plugin for reference)
-- **Gaps:** 1 MCP server (acm-server — part of ACM repo, not yet in registry)
+- **Gaps:** 1 MCP server (acm-server — part of ADF repo, not yet in registry)
 - **Sub-agents:** 3 new agents to be created (orchestrator, task-executor, phase-validator)
 
 **Analysis:** The skill primarily orchestrates existing Claude Code built-in tools (Task, TaskCreate, TaskUpdate, TaskList, Bash, Read, Write, Edit) and relies on one external skill (ralph-loop) and one MCP server (acm-server). Most capability needs are met by Claude Code's native infrastructure.
@@ -25,12 +25,12 @@ phase: "capability-assessment"
 
 | Server | Purpose | Source | Install Vector |
 |--------|---------|--------|----------------|
-| acm-server | Stage details (`get_stage`), review prompts (`get_review_prompt`), project health checks (`check_project_health`) | ACM repo (`acm-server/`) | Local (bundled with ACM) |
+| acm-server | Stage details (`get_stage`), review prompts (`get_review_prompt`), project health checks (`check_project_health`) | ADF repo (`adf-server/`) | Local (bundled with ACM) |
 
 **Notes:**
-- acm-server is part of the ACM project at `~/code/_shared/acm/acm-server/`
-- Already configured in ACM project's `.mcp.json`
-- Provides orchestration-layer metadata about ACM stages, prompts, and validation
+- acm-server is part of the ADF project at `~/code/_shared/adf/adf-server/`
+- Already configured in ADF project's `.mcp.json`
+- Provides orchestration-layer metadata about ADF stages, prompts, and validation
 
 ---
 
@@ -133,12 +133,12 @@ All core orchestration uses Claude Code's native tool suite:
 
 ## Capability Gaps & Mitigation
 
-### Gap 1: ACM MCP Server Not in Registry
+### Gap 1: ADF MCP Server Not in Registry
 
-**Status:** ACM MCP server (`acm-server`) exists but not yet registered in capabilities-registry
+**Status:** ADF MCP server (`acm-server`) exists but not yet registered in capabilities-registry
 
 **Mitigation:**
-- Server is part of ACM repo, already configured in `.mcp.json`
+- Server is part of ADF repo, already configured in `.mcp.json`
 - Functional and tested (58/59 tests passing)
 - Will register post-implementation (separate task)
 
@@ -186,7 +186,7 @@ execute-plan skill
 ```
 
 **Critical path:**
-1. ACM MCP server must be available (✓ already configured)
+1. ADF MCP server must be available (✓ already configured)
 2. Ralph-loop plugin must be installed (✓ already installed)
 3. Git must be available (✓ system tool)
 4. All three agents created during this session
@@ -198,7 +198,7 @@ execute-plan skill
 Before starting implementation (Phase 5: Environment Setup), verify:
 
 ```bash
-# 1. ACM MCP server responds
+# 1. ADF MCP server responds
 # (Will test via actual tool call in Phase 5)
 
 # 2. Ralph-loop plugin installed
@@ -212,7 +212,7 @@ git --version
 ```
 
 Expected results:
-- ACM MCP server: Responds to `mcp__acm__get_stage("develop")`
+- ADF MCP server: Responds to `mcp__acm__get_stage("develop")`
 - Ralph-loop: Entry in installed_plugins.json
 - Git: v2.x or later
 - Claude Code tools: Always available (native)

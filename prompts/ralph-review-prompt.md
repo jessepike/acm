@@ -4,7 +4,7 @@ description: "Ralph Loop prompt for Phase 1 internal review in Discover stage"
 version: "4.0.0"
 updated: "2026-01-30"
 scope: "discover"
-mechanism_ref: "~/code/_shared/acm/ADF-REVIEW-SPEC.md"
+mechanism_ref: "~/code/_shared/adf/ADF-REVIEW-SPEC.md"
 usage: "Use with Ralph Loop plugin for automated Brief iteration"
 ---
 
@@ -13,7 +13,7 @@ usage: "Use with Ralph Loop plugin for automated Brief iteration"
 ## Usage
 
 ```bash
-/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/ralph-review-prompt.md)" --max-iterations 10 --completion-promise "INTERNAL_REVIEW_COMPLETE"
+/ralph-loop:ralph-loop "$(cat ~/code/_shared/adf/prompts/ralph-review-prompt.md)" --max-iterations 10 --completion-promise "INTERNAL_REVIEW_COMPLETE"
 ```
 
 Run from the project root directory. The prompt references files relative to `$PWD` (project) and `~/code/_shared/acm` (ACM).
@@ -23,7 +23,7 @@ Run from the project root directory. The prompt references files relative to `$P
 ## Prompt
 
 ```
-You are conducting Phase 1 (Internal) review of a project Brief as part of ACM's Discover stage.
+You are conducting Phase 1 (Internal) review of a project Brief as part of ADF's Discover stage.
 
 ## Mechanism
 
@@ -48,7 +48,7 @@ Your job is to be a rigorous, critical reviewer. Find real issues, not cosmetic 
 
 - Brief: docs/discover-brief.md (in project root)
 - Intent: docs/intent.md (in project root)
-- Brief Spec (reference): ~/code/_shared/acm/ADF-BRIEF-SPEC.md
+- Brief Spec (reference): ~/code/_shared/adf/ADF-BRIEF-SPEC.md
 
 ## Your Task
 

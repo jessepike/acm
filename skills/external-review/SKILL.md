@@ -38,7 +38,7 @@ If invoked directly (not via Ralph Loop), resolve configuration:
 3. Resolve path relative to project root
 
 ### Prompt Resolution
-1. Try ACM MCP server: `acm-server.get_review_prompt(stage, "external")`
+1. Try ADF MCP server: `acm-server.get_review_prompt(stage, "external")`
 2. Fallback: read directly from `config.yaml` prompt path (relative to skill dir)
 
 ### Model Resolution

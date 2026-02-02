@@ -7,7 +7,7 @@ lifecycle: "reference"
 location: "prompts/architecture-visual-discover.md"
 ---
 
-# Prompt: ACM Discover Stage Architecture Diagram
+# Prompt: ADF Discover Stage Architecture Diagram
 
 Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the Discover stage.
 
@@ -162,7 +162,7 @@ Agent Context:
 ├── status.md (session state)
 ├── intent.md (North Star)
 ├── discover-brief.md (working doc)
-└── ACM specs (reference)
+└── ADF specs (reference)
 ```
 
 ---

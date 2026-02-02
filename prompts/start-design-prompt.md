@@ -45,7 +45,7 @@ Update `status.md`:
 
 Read and internalize:
 - `discover-brief.md` — Your primary input (the "what")
-- `~/code/_shared/acm/ADF-DESIGN-SPEC.md` — Stage workflow and requirements
+- `~/code/_shared/adf/ADF-DESIGN-SPEC.md` — Stage workflow and requirements
 - Note the project classification (type + modifiers) from Brief
 
 Based on project type, identify required Design outputs:

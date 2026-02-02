@@ -1,4 +1,4 @@
-# ACM MCP Server — Tool Guide
+# ADF MCP Server — Tool Guide
 
 Per-tool usage reference. All tools are read-only and return text content.
 
@@ -48,7 +48,7 @@ Get guidance for transitioning between stages.
 
 ### get_artifact_spec
 
-Get the ACM specification for an artifact type.
+Get the ADF specification for an artifact type.
 
 | Parameter | Type | Required | Values |
 |-----------|------|----------|--------|
@@ -84,7 +84,7 @@ Get guidance for a project type classification.
 
 ### check_project_structure
 
-Validate folder structure against ACM spec.
+Validate folder structure against ADF spec.
 
 | Parameter | Type | Required |
 |-----------|------|----------|
@@ -111,7 +111,7 @@ Run structural health checks on a project.
 
 ### get_rules_spec
 
-Get the ACM rules governance specification. No parameters.
+Get the ADF rules governance specification. No parameters.
 
 **Use when:** Setting up or auditing `.claude/rules/` — covers categories, file organization, lifecycle.
 

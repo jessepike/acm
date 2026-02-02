@@ -10,7 +10,7 @@ location: "prompts/architecture-visual-develop.md"
 
 # Prompt: Develop Stage Architecture Diagram
 
-Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the ACM Develop stage.
+Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the ADF Develop stage.
 
 ---
 
@@ -200,7 +200,7 @@ Box labeled "Outputs" containing:
 - **The deliverable** — "Code, artifact, or workflow (working + tested)"
 - **Documentation** — "README, API docs, usage guides"
 - **Test results** — "95%+ automated tests passing"
-- **Archived planning artifacts** — "plan.md, tasks.md, manifest.md, capabilities.md → docs/acm/archive/"
+- **Archived planning artifacts** — "plan.md, tasks.md, manifest.md, capabilities.md → docs/adf/archive/"
 
 Arrow shows flow to "Deliver Stage" (off diagram to right).
 

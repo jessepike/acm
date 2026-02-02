@@ -169,7 +169,7 @@ Only after human confirms understanding:
 4. Present capability assessment for approval
 5. Then proceed to Delivery Planning phase (plan.md + tasks.md)
 
-All planning artifacts go in `docs/acm/` per ADF-FOLDER-STRUCTURE-SPEC.md.
+All planning artifacts go in `docs/adf/` per ADF-FOLDER-STRUCTURE-SPEC.md.
 
 ## Step 6: Proceed to Review & Approval (Phase 4)
 
@@ -221,7 +221,7 @@ Execution phases:
 - **Tier 1: Automated** — API tests, integration tests, E2E tests in production. Run first. 95%+ pass rate required.
 - **Tier 2: Browser/Agent** — Interactive testing via Claude in Chrome, MCP Inspector. Run after Tier 1 passes.
 - **Tier 3: Manual** — User acceptance testing. Run after Tier 2 passes. See `kb/MANUAL-TESTING-GUIDE.md`.
-- Document results in `docs/acm/test-results.md`.
+- Document results in `docs/adf/test-results.md`.
 
 **Progressive testing:** Tier 1 must pass before Tier 2 begins. Tier 2 must pass before Tier 3 begins. Issues found in later tiers require re-testing from Tier 1.
 

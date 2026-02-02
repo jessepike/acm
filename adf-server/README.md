@@ -1,6 +1,6 @@
-# ACM MCP Server
+# ADF MCP Server
 
-MCP server providing read-only access to ACM framework data — stage specs, review prompts, artifact templates, project health checks, capabilities registry, and knowledge base.
+MCP server providing read-only access to ADF framework data — stage specs, review prompts, artifact templates, project health checks, capabilities registry, and knowledge base.
 
 ## Installation
 
@@ -21,7 +21,7 @@ Add to your project's `.mcp.json`:
   "mcpServers": {
     "acm": {
       "command": "node",
-      "args": ["/path/to/acm/acm-server/build/index.js"],
+      "args": ["/path/to/acm/adf-server/build/index.js"],
       "env": {}
     }
   }
@@ -31,15 +31,15 @@ Add to your project's `.mcp.json`:
 Optionally reference the companion skill in your `.claude/CLAUDE.md`:
 
 ```markdown
-## ACM Integration
-See: ~/code/_shared/acm/skills/acm-workflow/skill.md
+## ADF Integration
+See: ~/code/_shared/adf/skills/acm-workflow/skill.md
 ```
 
 ## Environment Variables
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `ACM_ROOT` | `~/code/_shared/acm` | Path to ACM framework root |
+| `ACM_ROOT` | `~/code/_shared/acm` | Path to ADF framework root |
 | `CAPABILITIES_REGISTRY_ROOT` | `~/code/_shared/capabilities-registry` | Path to capabilities registry |
 
 ## Tools (13)

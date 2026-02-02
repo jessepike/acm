@@ -4,7 +4,7 @@ description: "External model prompt for Phase 2 review in Design stage"
 version: "4.0.0"
 updated: "2026-02-01"
 scope: "design"
-mechanism_ref: "~/code/_shared/acm/ADF-REVIEW-SPEC.md"
+mechanism_ref: "~/code/_shared/adf/ADF-REVIEW-SPEC.md"
 usage: "Sent to external models via external-review MCP server alongside artifact content"
 ---
 
@@ -21,7 +21,7 @@ This prompt is sent to external LLM models via the `external-review` MCP server.
 ```bash
 sed \
   -e '/\[ARTIFACT CONTENT INJECTED BY MCP SERVER\]/{r docs/design.md' -e 'd;}' \
-  ~/code/_shared/acm/prompts/design-external-review-prompt.md | pbcopy
+  ~/code/_shared/adf/prompts/design-external-review-prompt.md | pbcopy
 ```
 
 ---

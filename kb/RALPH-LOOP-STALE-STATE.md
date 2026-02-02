@@ -2,7 +2,7 @@
 type: "knowledge"
 description: "Diagnosing and fixing stale ralph-loop state files that block session stops"
 updated: "2026-01-31"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 tags: ["ralph-loop", "hooks", "troubleshooting", "stop-hook"]
 ---

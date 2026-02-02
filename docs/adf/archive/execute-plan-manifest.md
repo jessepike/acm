@@ -48,7 +48,7 @@ The skill uses Claude Code's native tool suite:
 
 | Server | Purpose | Required | Installation |
 |--------|---------|----------|--------------|
-| ACM MCP | get_stage, get_review_prompt, check_project_health | Yes | Already installed |
+| ADF MCP | get_stage, get_review_prompt, check_project_health | Yes | Already installed |
 
 ### External Services
 
@@ -58,7 +58,7 @@ The skill uses Claude Code's native tool suite:
 
 ## Installation Instructions
 
-**No installation required.** The skill is self-contained within the ACM repo at:
+**No installation required.** The skill is self-contained within the ADF repo at:
 
 ```
 acm/skills/execute-plan/
@@ -81,7 +81,7 @@ acm/skills/execute-plan/
 |-------------|---------------|-----------------|
 | Git installed | `git --version` | git version 2.x+ |
 | Claude Code CLI | `claude --version` | v2.1.3+ |
-| ACM MCP server | Query via MCP tools | Responds to get_stage |
+| ADF MCP server | Query via MCP tools | Responds to get_stage |
 | Ralph Loop plugin | Check installed_plugins.json | ralph-loop present |
 
 ---
@@ -97,7 +97,7 @@ git --version
 # Check Claude Code version
 claude --version
 
-# Check ACM MCP server
+# Check ADF MCP server
 # (Will be tested via actual tool calls during build)
 
 # Check ralph-loop plugin

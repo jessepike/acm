@@ -1,18 +1,18 @@
 ---
 type: "specification"
-description: "Defines the two-phase review mechanism used across all ACM stages"
+description: "Defines the two-phase review mechanism used across all ADF stages"
 version: "1.2.0"
 updated: "2026-01-31"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-REVIEW-SPEC.md"
+location: "adf/ADF-REVIEW-SPEC.md"
 ---
 
-# ACM Review Specification
+# ADF Review Specification
 
 ## Purpose
 
-Define the review mechanism that applies across all ACM stages. This spec owns the **how** of reviews — cycle rules, severity definitions, stop conditions, issue logging, and tool requirements. Stage-specific prompts own the **what** — review dimensions, files to read, and artifact-specific criteria.
+Define the review mechanism that applies across all ADF stages. This spec owns the **how** of reviews — cycle rules, severity definitions, stop conditions, issue logging, and tool requirements. Stage-specific prompts own the **what** — review dimensions, files to read, and artifact-specific criteria.
 
 ---
 
@@ -35,7 +35,7 @@ An automated iterative review. The reviewing agent reads the artifact, finds iss
 
 **Invocation pattern:**
 ```bash
-/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/{stage-prompt}.md)" --max-iterations 10 --completion-promise "{STAGE_PROMISE}"
+/ralph-loop:ralph-loop "$(cat ~/code/_shared/adf/prompts/{stage-prompt}.md)" --max-iterations 10 --completion-promise "{STAGE_PROMISE}"
 ```
 
 ### Phase 2: External Review

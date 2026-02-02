@@ -10,7 +10,7 @@ location: "prompts/architecture-visual-design-stage.md"
 
 # Prompt: Design Stage Architecture Diagram
 
-Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the ACM Design stage.
+Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the ADF Design stage.
 
 ---
 

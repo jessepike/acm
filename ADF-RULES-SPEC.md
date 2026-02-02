@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines the .claude/rules/ enforcement layer — hard constraints that govern agent behavior"
 version: "1.0.0"
 updated: "2026-01-30"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-RULES-SPEC.md"
+location: "adf/ADF-RULES-SPEC.md"
 ---
 
-# ACM Rules Specification
+# ADF Rules Specification
 
 ## Summary
 
@@ -18,7 +18,7 @@ Defines `.claude/rules/` — the enforcement layer for non-negotiable constraint
 
 ## Two-Layer Governance Model
 
-ACM separates **policy** from **guidance**:
+ADF separates **policy** from **guidance**:
 
 | Layer | Location | Purpose | Who Controls | Precedence |
 |-------|----------|---------|--------------|------------|

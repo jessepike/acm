@@ -3,16 +3,16 @@ type: "specification"
 description: "Detailed specification for the Design stage workflow"
 version: "1.1.0"
 updated: "2026-02-01"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-DESIGN-SPEC.md"
+location: "adf/ADF-DESIGN-SPEC.md"
 ---
 
-# ACM Design Stage Specification
+# ADF Design Stage Specification
 
 ## Purpose
 
-Define the Design stage — the second stage in the ACM workflow where a validated Brief becomes technical specifications ready for development.
+Define the Design stage — the second stage in the ADF workflow where a validated Brief becomes technical specifications ready for development.
 
 ---
 
@@ -53,7 +53,7 @@ What enters the Design stage:
 | `intent.md` | Discover | North Star — loaded for alignment |
 | `discover-brief.md` | Discover | Detailed contract — primary input, fully consumed |
 | Project classification | Brief | Type + modifiers determine required outputs |
-| ACM specs | Environment layer | Design spec, Project Types spec |
+| ADF specs | Environment layer | Design spec, Project Types spec |
 | Current state | `status.md` | Where we left off (if resuming) |
 
 ---
@@ -541,7 +541,7 @@ New session workflow:
 
 ## Planning Artifacts Convention
 
-When Design produces working artifacts beyond design.md (e.g., architecture explorations, decision analysis), place them in `docs/acm/` per ADF-FOLDER-STRUCTURE-SPEC.md. These are stage-scoped and archived at stage completion.
+When Design produces working artifacts beyond design.md (e.g., architecture explorations, decision analysis), place them in `docs/adf/` per ADF-FOLDER-STRUCTURE-SPEC.md. These are stage-scoped and archived at stage completion.
 
 ---
 
@@ -552,5 +552,5 @@ When Design produces working artifacts beyond design.md (e.g., architecture expl
 - ADF-INTENT-SPEC.md (Intent is North Star)
 - ADF-PROJECT-TYPES-SPEC.md (Determines required outputs)
 - ADF-DISCOVER-SPEC.md (Discover stage outputs Brief)
-- ADF-FOLDER-STRUCTURE-SPEC.md (docs/acm/ convention)
+- ADF-FOLDER-STRUCTURE-SPEC.md (docs/adf/ convention)
 - ADF-TAXONOMY.md (Terminology definitions)

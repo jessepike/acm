@@ -1,6 +1,6 @@
 # External Review MCP Server
 
-MCP server that sends artifacts + review prompts to external LLMs (Gemini, GPT, Kimi) in parallel and returns aggregated responses. Used for Phase 2 external reviews in ACM.
+MCP server that sends artifacts + review prompts to external LLMs (Gemini, GPT, Kimi) in parallel and returns aggregated responses. Used for Phase 2 external reviews in ADF.
 
 ## Setup
 

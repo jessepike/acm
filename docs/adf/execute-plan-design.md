@@ -848,7 +848,7 @@ Log levels: INIT, PHASE, SPAWN, COMPLETE, BLOCKED, RALPH, VALIDATE, FIX, ERROR
 
 ## Integration Points
 
-### ACM MCP Server
+### ADF MCP Server
 
 **Tools used:**
 ```python

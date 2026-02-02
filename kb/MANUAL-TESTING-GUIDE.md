@@ -2,7 +2,7 @@
 type: "knowledge"
 description: "Guide for conducting Tier 3 manual testing and user acceptance validation"
 updated: "2026-02-02"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 tags: ["testing", "manual-testing", "validation", "user-acceptance"]
 ---
@@ -139,7 +139,7 @@ Record findings in a structured format (template below).
 
 ## Test Results Template
 
-Document your Tier 3 results in `docs/acm/test-results.md` (or append to existing results):
+Document your Tier 3 results in `docs/adf/test-results.md` (or append to existing results):
 
 ```markdown
 ### Tier 3: Manual Validation
@@ -235,7 +235,7 @@ Do NOT skip earlier tiers when re-testing. Fixes can introduce regressions.
 
 ## Example: MCP Server Manual Test
 
-**Project:** ACM MCP Server
+**Project:** ADF MCP Server
 **Tester:** Jesse Pike
 **Date:** 2026-02-02
 **Environment:** Development (connected to Claude Code)

@@ -1,4 +1,4 @@
-# ACM Global Context
+# ADF Global Context
 
 <constraints>
 - Never commit secrets, credentials, or API keys
@@ -19,7 +19,7 @@
 - Flag blockers immediately
 - State assumptions explicitly
 
-## ACM Resources
+## ADF Resources
 
 - **ACM MCP server** — query for stage details, artifact specs, review prompts, project health
 - **acm-env plugin** — environment management (`/acm-env:status`, `/acm-env:audit`)

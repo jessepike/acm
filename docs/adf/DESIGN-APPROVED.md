@@ -109,7 +109,7 @@
 
 ---
 
-## ACM Workflow Compliance ✅
+## ADF Workflow Compliance ✅
 
 **Followed proper process:**
 - ✅ Mandatory internal review (Ralph Loop)
@@ -120,7 +120,7 @@
 
 **Next ACM steps:**
 1. Update status.md with session log
-2. Commit design document to ACM repo
+2. Commit design document to ADF repo
 3. Transition to Develop Build phase
 4. Begin Phase 1 implementation
 

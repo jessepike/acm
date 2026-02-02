@@ -1,6 +1,6 @@
 # Review Process Rules
 
-These are non-negotiable rules for conducting reviews in ACM projects.
+These are non-negotiable rules for conducting reviews in ADF projects.
 
 ## Mandatory Process
 

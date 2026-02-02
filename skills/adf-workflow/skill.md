@@ -1,17 +1,17 @@
-# ACM Workflow Skill
+# ADF Workflow Skill
 
-This skill teaches agents how to use ACM MCP server tools within the context of ACM stage workflows (Discover, Design, Develop, Deliver).
+This skill teaches agents how to use ADF MCP server tools within the context of ADF stage workflows (Discover, Design, Develop, Deliver).
 
 ## When to Use
 
-- Starting or scaffolding a new ACM project
+- Starting or scaffolding a new ADF project
 - Navigating stage transitions
 - Preparing for or running reviews
 - Auditing project structure or health
-- Looking up ACM specs, stubs, or governance rules
+- Looking up ADF specs, stubs, or governance rules
 - Searching capabilities or knowledge base
 
-## ACM Stage Workflow
+## ADF Stage Workflow
 
 | Stage | Purpose | Key Activities |
 |-------|---------|----------------|

@@ -4,7 +4,7 @@ Autonomous development orchestration skill that executes an approved `plan.md` +
 
 ## Purpose
 
-Automate the execution of ACM Develop stage plans. Given an approved plan and task breakdown, this skill:
+Automate the execution of ADF Develop stage plans. Given an approved plan and task breakdown, this skill:
 - Spawns parallel task workers
 - Enforces TDD workflow
 - Runs quality gates (ralph-loop) at phase boundaries
@@ -459,7 +459,7 @@ skills/execute-plan/
 
 ## Notes
 
-- This is a **narrow skill** for ACM Develop stage automation, not a general-purpose orchestrator
+- This is a **narrow skill** for ADF Develop stage automation, not a general-purpose orchestrator
 - Zero external dependencies — pure markdown agent prompts
 - Designed for MVP/commercial full-scope projects (apps, workflows, artifacts)
 - Future enhancement: ML-based natural language criterion parsing for phase-validator

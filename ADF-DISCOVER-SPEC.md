@@ -3,16 +3,16 @@ type: "specification"
 description: "Detailed specification for the Discover stage workflow"
 version: "1.3.0"
 updated: "2026-02-01"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-DISCOVER-SPEC.md"
+location: "adf/ADF-DISCOVER-SPEC.md"
 ---
 
-# ACM Discover Stage Specification
+# ADF Discover Stage Specification
 
 ## Purpose
 
-Define the Discover stage — the first stage in the ACM workflow where raw ideas become a clear, validated Brief ready for Design.
+Define the Discover stage — the first stage in the ADF workflow where raw ideas become a clear, validated Brief ready for Design.
 
 ---
 
@@ -48,7 +48,7 @@ What enters the Discover stage:
 | Raw idea | Human | Initial concept — may be vague, incomplete, or ambitious |
 | Project type guess | Human | Initial classification (Artifact, App, Workflow) |
 | Domain context | Human/Research | Relevant background, constraints, prior art |
-| ACM specs | Environment layer | Brief spec, Intent spec, Project Types spec |
+| ADF specs | Environment layer | Brief spec, Intent spec, Project Types spec |
 
 ---
 
@@ -441,7 +441,7 @@ The Discover stage diagram shows:
 
 ## Planning Artifacts Convention
 
-When Discover produces working artifacts beyond intent.md and discover-brief.md (e.g., research notes, exploration logs), place them in `docs/acm/` per ADF-FOLDER-STRUCTURE-SPEC.md. These are stage-scoped and archived at stage completion.
+When Discover produces working artifacts beyond intent.md and discover-brief.md (e.g., research notes, exploration logs), place them in `docs/adf/` per ADF-FOLDER-STRUCTURE-SPEC.md. These are stage-scoped and archived at stage completion.
 
 ---
 
@@ -451,6 +451,6 @@ When Discover produces working artifacts beyond intent.md and discover-brief.md 
 - ADF-BRIEF-SPEC.md (Brief structure and requirements)
 - ADF-INTENT-SPEC.md (Intent structure and requirements)
 - ADF-PROJECT-TYPES-SPEC.md (Classification system)
-- ADF-FOLDER-STRUCTURE-SPEC.md (docs/acm/ convention)
+- ADF-FOLDER-STRUCTURE-SPEC.md (docs/adf/ convention)
 - ADF-TAXONOMY.md (Terminology definitions)
 - prompts/architecture-visual-discover.md (Diagram prompt)

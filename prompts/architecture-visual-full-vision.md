@@ -200,7 +200,7 @@ project/
 
 6. **Four stages:** Must show Discover → Design → Develop → Deliver. All four are part of the core pipeline.
 
-7. **Interface layer:** ACM MCP Server, acm-env plugin, rules/, CLAUDE.md are distinct interface mechanisms. Show them separately, not as one "interface" blob.
+7. **Interface layer:** ADF MCP Server, acm-env plugin, rules/, CLAUDE.md are distinct interface mechanisms. Show them separately, not as one "interface" blob.
 
 8. **Memory status:** Mark Memory as "planned" (dashed box or grayed) to distinguish from the five operational primitives.
 

@@ -201,7 +201,7 @@
 │  • Phase number + name                                      │
 │  • All completed task IDs                                   │
 │  • Changed files (git diff)                                 │
-│  • Review prompt from ACM MCP                               │
+│  • Review prompt from ADF MCP                               │
 │                                                             │
 │  Task Debug Context:                                        │
 │  • Task ID + description                                    │

@@ -3,16 +3,16 @@ type: "specification"
 description: "Detailed specification for the Develop stage workflow"
 version: "2.1.0"
 updated: "2026-02-02"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-DEVELOP-SPEC.md"
+location: "adf/ADF-DEVELOP-SPEC.md"
 ---
 
-# ACM Develop Stage Specification
+# ADF Develop Stage Specification
 
 ## Purpose
 
-Define the Develop stage — the third stage in the ACM workflow where a validated design becomes a working implementation.
+Define the Develop stage — the third stage in the ADF workflow where a validated design becomes a working implementation.
 
 ---
 
@@ -160,7 +160,7 @@ What enters the Develop stage:
 | `intent.md` | Discover | North Star — referenced throughout |
 | `discover-brief.md` | Discover | Contract — referenced for success criteria |
 | Project classification | Brief | Type + modifiers determine deliverable shape |
-| ACM specs | Environment layer | Develop spec, testing requirements |
+| ADF specs | Environment layer | Develop spec, testing requirements |
 
 ---
 
@@ -170,10 +170,10 @@ What Develop produces:
 
 | Output | Description | Location |
 |--------|-------------|----------|
-| `manifest.md` | Software dependencies, libraries, packages | `docs/acm/manifest.md` |
-| `capabilities.md` | Skills, tools, sub-agents, MCP servers | `docs/acm/capabilities.md` |
-| `plan.md` | Implementation plan — phases, milestones, approach | `docs/acm/plan.md` |
-| `tasks.md` | Atomic task list with status tracking | `docs/acm/tasks.md` |
+| `manifest.md` | Software dependencies, libraries, packages | `docs/adf/manifest.md` |
+| `capabilities.md` | Skills, tools, sub-agents, MCP servers | `docs/adf/capabilities.md` |
+| `plan.md` | Implementation plan — phases, milestones, approach | `docs/adf/plan.md` |
+| `tasks.md` | Atomic task list with status tracking | `docs/adf/tasks.md` |
 | Updated design docs | If gaps found during validation | `docs/design*.md` |
 | The deliverable | Code, artifact, or workflow | Type-specific location |
 | Documentation | README, API docs, usage guides | Project root + type-specific |
@@ -389,7 +389,7 @@ current_phase: "Phase 1: Core Structure"
 
 #### Step 1: Review Loop
 
-Invoke review per ADF-REVIEW-SPEC.md. Use `get_review_prompt('develop', phase)` from ACM MCP server.
+Invoke review per ADF-REVIEW-SPEC.md. Use `get_review_prompt('develop', phase)` from ADF MCP server.
 
 **What gets reviewed:**
 - manifest.md
@@ -585,7 +585,7 @@ Not a full audit. A structured sanity check: "did we build what we designed?"
 #### 8.3 Artifact Lifecycle
 
 - Keep in `docs/`: intent.md, brief.md, design.md (cross-stage reference)
-- Archive to `docs/acm/archive/`: plan.md, tasks.md, manifest.md, capabilities.md
+- Archive to `docs/adf/archive/`: plan.md, tasks.md, manifest.md, capabilities.md
 - Keep in project: deliverable, tests, documentation
 
 #### 8.4 Commit Verification
@@ -739,8 +739,8 @@ Per ADF-STAGES-SPEC.md:
 |------|-----------|---------|
 | intent.md | Always | North Star |
 | design.md | Develop stage | Primary input |
-| docs/acm/plan.md | Develop stage (after created) | Implementation guide |
-| docs/acm/tasks.md | Develop stage (after created) | Task tracking |
+| docs/adf/plan.md | Develop stage (after created) | Implementation guide |
+| docs/adf/tasks.md | Develop stage (after created) | Task tracking |
 | ADF-DEVELOP-SPEC.md | Develop stage (reference) | Stage workflow |
 ```
 
@@ -891,5 +891,5 @@ Develop makes heavy use of sub-agents for parallelization.
 - ADF-BRIEF-SPEC.md (Success criteria reference)
 - ADF-INTENT-SPEC.md (North Star reference)
 - ADF-PROJECT-TYPES-SPEC.md (Deliverable shape)
-- ADF-FOLDER-STRUCTURE-SPEC.md (docs/acm/ convention)
+- ADF-FOLDER-STRUCTURE-SPEC.md (docs/adf/ convention)
 - ADF-TAXONOMY.md (Terminology)

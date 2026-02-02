@@ -2,7 +2,7 @@
 type: "knowledge"
 description: "How to manually test MCP servers using the MCP Inspector and Claude in Chrome browser automation"
 updated: "2026-01-31"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 tags: ["mcp", "testing", "inspector", "browser-automation"]
 ---

@@ -402,7 +402,7 @@ Execute sequentially: 2.1 → 2.2 → 2.3 → 2.4 (dependency chain).
 
 ## Integration Points
 
-### ACM MCP Server
+### ADF MCP Server
 
 Used for:
 - `get_stage("develop")` — validate we're in Develop stage

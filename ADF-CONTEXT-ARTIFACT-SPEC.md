@@ -3,16 +3,16 @@ type: "specification"
 description: "Defines artifact structure, frontmatter schema, progressive disclosure, and lifecycle"
 version: "1.0.0"
 updated: "2026-01-24"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-CONTEXT-ARTIFACT-SPEC.md"
+location: "adf/ADF-CONTEXT-ARTIFACT-SPEC.md"
 ---
 
-# ACM Context Artifact Specification
+# ADF Context Artifact Specification
 
 ## Purpose
 
-Define the standard structure for all ACM artifacts: frontmatter schema, progressive disclosure, artifact classes, and lifecycle management.
+Define the standard structure for all ADF artifacts: frontmatter schema, progressive disclosure, artifact classes, and lifecycle management.
 
 ---
 

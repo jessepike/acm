@@ -1,15 +1,15 @@
 ---
 type: "documentation"
-description: "ACM scripts documentation"
+description: "ADF scripts documentation"
 version: "1.0.0"
 updated: "2026-01-24"
 lifecycle: "reference"
 location: "scripts/README.md"
 ---
 
-# ACM Scripts
+# ADF Scripts
 
-Automation scripts for ACM project management.
+Automation scripts for ADF project management.
 
 ---
 
@@ -26,7 +26,7 @@ Initializes a new project with ACM scaffolding.
 ### What It Does
 
 1. **Checks Global CLAUDE.md** (`~/.claude/CLAUDE.md`)
-   - If missing: Creates from ACM template
+   - If missing: Creates from ADF template
    - If exists: Shows current contents, prompts to backup + overwrite (default: yes)
    - Serves as reminder to review global context
 
@@ -66,7 +66,7 @@ Recommended: Backup and overwrite with ACM template.
 
 Backup and overwrite? (Y/n): y
 Backed up to: /Users/you/.claude/CLAUDE.md.backup.20260124153022
-Updated global CLAUDE.md from ACM template.
+Updated global CLAUDE.md from ADF template.
 
 Step 2: Project Type
 ----------------------------------------

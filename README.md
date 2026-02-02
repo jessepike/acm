@@ -1,13 +1,13 @@
 ---
 type: "documentation"
-description: "ACM package overview and quick start"
+description: "ADF package overview and quick start"
 version: "2.0.0"
 updated: "2026-01-27"
 lifecycle: "reference"
-location: "acm/README.md"
+location: "adf/README.md"
 ---
 
-# ACM — Agentic Development Framework
+# ADF — Agentic Development Framework
 
 Minimal primitives for managed agentic workflows. A lightweight scaffolding system that applies to any project type: apps, artifacts, or workflows.
 

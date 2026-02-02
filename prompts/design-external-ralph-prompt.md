@@ -4,7 +4,7 @@ description: "Ralph Loop orchestrator prompt for Phase 2 external review in Desi
 version: "1.0.0"
 updated: "2026-02-01"
 scope: "design"
-mechanism_ref: "~/code/_shared/acm/ADF-REVIEW-SPEC.md"
+mechanism_ref: "~/code/_shared/adf/ADF-REVIEW-SPEC.md"
 usage: "Use with Ralph Loop plugin — instructs Claude to call external-review MCP each cycle"
 ---
 
@@ -13,7 +13,7 @@ usage: "Use with Ralph Loop plugin — instructs Claude to call external-review 
 ## Usage
 
 ```bash
-/ralph-loop:ralph-loop "$(cat ~/code/_shared/acm/prompts/design-external-ralph-prompt.md)" --max-iterations 10 --completion-promise "EXTERNAL_REVIEW_COMPLETE"
+/ralph-loop:ralph-loop "$(cat ~/code/_shared/adf/prompts/design-external-ralph-prompt.md)" --max-iterations 10 --completion-promise "EXTERNAL_REVIEW_COMPLETE"
 ```
 
 ---
@@ -21,7 +21,7 @@ usage: "Use with Ralph Loop plugin — instructs Claude to call external-review 
 ## Prompt
 
 ```
-You are conducting Phase 2 (External) review of design.md as part of ACM's Design stage.
+You are conducting Phase 2 (External) review of design.md as part of ADF's Design stage.
 
 ## Mechanism
 
@@ -40,7 +40,7 @@ This review follows ADF-REVIEW-SPEC.md. Key rules:
 
 ### 1. Call External Models
 
-Read the external review prompt content from `~/code/_shared/acm/prompts/design-external-review-prompt.md`.
+Read the external review prompt content from `~/code/_shared/adf/prompts/design-external-review-prompt.md`.
 
 Then call the MCP tool with all configured models in parallel:
 

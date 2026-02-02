@@ -2,7 +2,7 @@
 type: "knowledge"
 description: "Patterns and lessons learned from building Claude Code plugins — delegation, command prompts, hooks, and common mistakes"
 updated: "2026-01-30"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 ---
 

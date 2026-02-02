@@ -127,7 +127,7 @@ Initially validated on **link-triage-pipeline** (66 tasks, 5 phases).
 
 ## Notes
 
-- Designed for ACM Develop stage automation
+- Designed for ADF Develop stage automation
 - Progressive phases: Core → Quality → Speed → Process → Observability → Production
 - YAGNI: Only implements what's needed for plan execution
 - Manual validation approach (no unit tests initially)

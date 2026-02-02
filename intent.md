@@ -1,12 +1,12 @@
 ---
 type: "intent"
-description: "North Star for the ACM framework"
+description: "North Star for the ADF framework"
 version: "1.0.0"
 updated: "2026-01-29"
 lifecycle: "reference"
 ---
 
-# ACM Intent
+# ADF Intent
 
 ## Problem
 

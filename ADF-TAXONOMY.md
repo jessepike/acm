@@ -1,18 +1,18 @@
 ---
 type: "reference"
-description: "ACM classification system, terminology, and design decisions"
+description: "ADF classification system, terminology, and design decisions"
 version: "1.4.0"
 updated: "2026-01-29"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-TAXONOMY.md"
+location: "adf/ADF-TAXONOMY.md"
 ---
 
-# ACM Taxonomy
+# ADF Taxonomy
 
 ## Purpose
 
-Define the classification system, terminology, and design decisions for ACM. Ensures consistency and prevents revisiting resolved discussions.
+Define the classification system, terminology, and design decisions for ADF. Ensures consistency and prevents revisiting resolved discussions.
 
 ---
 
@@ -34,7 +34,7 @@ Define the classification system, terminology, and design decisions for ACM. Ens
 | Term | Definition | Use When |
 |------|------------|----------|
 | **Spec** | Rules, structure, requirements. Explains what and why. Agents generate artifacts from specs. | Defining artifact structures. Providing requirements. |
-| **Template** | Scaffold with placeholders. Fill-in-the-blank document. Copy and populate. | Avoided in ACM. Agents generate fresh from specs. |
+| **Template** | Scaffold with placeholders. Fill-in-the-blank document. Copy and populate. | Avoided in ADF. Agents generate fresh from specs. |
 
 **Decision:** ACM uses specs, not templates. Specs include format examples for reference, but agents generate artifacts based on spec requirements rather than copying scaffolds.
 

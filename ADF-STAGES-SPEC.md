@@ -1,14 +1,14 @@
 ---
 type: "specification"
-description: "Defines the ACM stage workflow model and environment layer"
+description: "Defines the ADF stage workflow model and environment layer"
 version: "1.2.0"
 updated: "2026-02-01"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-STAGES-SPEC.md"
+location: "adf/ADF-STAGES-SPEC.md"
 ---
 
-# ACM Stages Specification
+# ADF Stages Specification
 
 ## Purpose
 
@@ -57,7 +57,7 @@ Some artifacts persist across all stages:
 | `intent.md` | North Star — why we're doing this | Created in Discover, stable thereafter |
 | `status.md` | Session state — where we left off | Updated every session, all stages |
 | `CLAUDE.md` | Context manifest — what to load | Evolves with project, references status.md |
-| `docs/acm/` | Stage planning workspace | Created in Develop, archived at stage completion |
+| `docs/adf/` | Stage planning workspace | Created in Develop, archived at stage completion |
 
 **Agent Session Protocol:**
 1. Session start: Read CLAUDE.md → Read status.md → Understand state

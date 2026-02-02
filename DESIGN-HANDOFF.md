@@ -3,16 +3,16 @@ type: "handoff"
 description: "Design stage handoff — summarizes Discover outputs for Design intake"
 version: "1.0.0"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/DESIGN-HANDOFF.md"
+location: "adf/DESIGN-HANDOFF.md"
 ---
 
 # Design Stage Handoff
 
 ## Context
 
-The ACM Discover stage is complete and validated. This document summarizes what's ready and what the Design stage needs to define.
+The ADF Discover stage is complete and validated. This document summarizes what's ready and what the Design stage needs to define.
 
 ---
 

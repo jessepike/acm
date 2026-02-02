@@ -249,11 +249,11 @@ cd ~/code/_shared/link-triage-pipeline
 
 ### 1. Where to Store the Skill?
 
-**Option A: ACM repo** (`acm/skills/execute-plan/`)
-- ✅ Centralized, part of ACM framework
+**Option A: ADF repo** (`acm/skills/execute-plan/`)
+- ✅ Centralized, part of ADF framework
 - ✅ Easy to iterate and version with ACM
 - ✅ Natural integration with ACM MCP
-- ❌ Not reusable outside ACM projects
+- ❌ Not reusable outside ADF projects
 
 **Option B: Plugin** (`~/.claude/plugins/acm-orchestrator/`)
 - ✅ Installable, reusable across projects
@@ -369,7 +369,7 @@ output/runs/{date}-{uuid}.log
 
 ## Integration Points
 
-### ACM MCP Server
+### ADF MCP Server
 
 **Tools Used:**
 - `get_stage("develop")` - Validate current stage

@@ -1,6 +1,6 @@
 ---
 type: "prompt"
-description: "Prompt for generating architecture diagrams from individual ACM artifact specs"
+description: "Prompt for generating architecture diagrams from individual ADF artifact specs"
 version: "1.0.0"
 updated: "2026-01-25"
 lifecycle: "reference"
@@ -9,7 +9,7 @@ location: "prompts/architecture-visual-artifact-spec.md"
 
 # Prompt: Artifact Specification Architecture Diagram
 
-Use this prompt with an image generation tool to create an architectural visualization from any ACM artifact specification.
+Use this prompt with an image generation tool to create an architectural visualization from any ADF artifact specification.
 
 ---
 

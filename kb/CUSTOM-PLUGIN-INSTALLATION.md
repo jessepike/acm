@@ -2,7 +2,7 @@
 type: "knowledge"
 description: "How to create, validate, and install custom Claude Code plugins via a local marketplace"
 updated: "2026-01-30"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 ---
 

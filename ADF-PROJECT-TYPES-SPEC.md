@@ -1,14 +1,14 @@
 ---
 type: "specification"
-description: "Defines project types and modifiers at the ACM level"
+description: "Defines project types and modifiers at the ADF level"
 version: "2.0.0"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-PROJECT-TYPES-SPEC.md"
+location: "adf/ADF-PROJECT-TYPES-SPEC.md"
 ---
 
-# ACM Project Types Specification
+# ADF Project Types Specification
 
 ## Purpose
 

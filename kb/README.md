@@ -4,11 +4,11 @@ description: "Knowledge base index — research findings and learnings for reuse
 version: "1.0.0"
 created: "2026-01-27"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 ---
 
-# ACM Knowledge Base
+# ADF Knowledge Base
 
 Research findings, validated learnings, and reusable knowledge captured during ACM development.
 
@@ -17,7 +17,7 @@ Research findings, validated learnings, and reusable knowledge captured during A
 ## Purpose
 
 Capture research and learnings so they can be:
-- Referenced by agents working on ACM projects
+- Referenced by agents working on ADF projects
 - Reused across different contexts
 - Evolved as new findings emerge
 
@@ -43,7 +43,7 @@ description: "[Brief description]"
 version: "1.0.0"
 created: "YYYY-MM-DD"
 updated: "YYYY-MM-DD"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
 tags: ["relevant", "tags"]
 ---

@@ -1,4 +1,4 @@
-# ACM Stubs
+# ADF Stubs
 
 Minimal starter files for `init-project.sh`. These are NOT templates — they're bare scaffolds that agents flesh out per specs.
 

@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines content and purpose of Project-level CLAUDE.md"
 version: "1.1.0"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-PROJECT-CLAUDE-MD-SPEC.md"
+location: "adf/ADF-PROJECT-CLAUDE-MD-SPEC.md"
 ---
 
-# ACM Project CLAUDE.md Specification
+# ADF Project CLAUDE.md Specification
 
 ## Purpose
 

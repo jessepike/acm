@@ -3,12 +3,12 @@ type: "specification"
 description: "Defines content and purpose of Global CLAUDE.md"
 version: "1.1.0"
 updated: "2026-02-01"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-GLOBAL-CLAUDE-MD-SPEC.md"
+location: "adf/ADF-GLOBAL-CLAUDE-MD-SPEC.md"
 ---
 
-# ACM Global CLAUDE.md Specification
+# ADF Global CLAUDE.md Specification
 
 ## Purpose
 
@@ -68,7 +68,7 @@ Cross-project resources agents should know about. Keep to a brief list — not d
 
 | Resource | Rationale |
 |----------|-----------|
-| MCP servers (e.g., ACM MCP server) | Agents need to know what tools are available for on-demand queries |
+| MCP servers (e.g., ADF MCP server) | Agents need to know what tools are available for on-demand queries |
 | Plugins (e.g., acm-env) | Agents need to know what environment management is available |
 | Shared repos (e.g., capabilities registry) | Agents need to know where to look up capabilities |
 

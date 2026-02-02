@@ -352,7 +352,7 @@ link-triage-pipeline Phase 1 (13 tasks) for MVP validation, full 5-phase plan (6
 ## Decision Log
 
 ### D1: Storage Location
-**Decision:** ACM repo skill (`acm/skills/execute-plan/`), not a plugin
+**Decision:** ADF repo skill (`acm/skills/execute-plan/`), not a plugin
 
 **Rationale:** Faster iteration during development, can migrate to plugin later if broadly useful
 

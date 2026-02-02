@@ -1,14 +1,14 @@
 ---
 type: "specification"
-description: "Defines README requirements for ACM package and projects"
+description: "Defines README requirements for ADF package and projects"
 version: "1.0.0"
 updated: "2026-01-27"
-scope: "acm"
+scope: "adf"
 lifecycle: "reference"
-location: "acm/ADF-README-SPEC.md"
+location: "adf/ADF-README-SPEC.md"
 ---
 
-# ACM README Specification
+# ADF README Specification
 
 ## Purpose
 
@@ -25,7 +25,7 @@ Define what README files must contain and when they must be updated. READMEs are
 
 ---
 
-## ACM README Requirements
+## ADF README Requirements
 
 The ACM package README (`/acm/README.md`) must contain:
 
@@ -94,12 +94,12 @@ Each project's README (`{project}/README.md`) must contain:
 
 ## Format
 
-### ACM README Format
+### ADF README Format
 
 ```markdown
 ---
 type: "documentation"
-description: "ACM package overview and quick start"
+description: "ADF package overview and quick start"
 version: "X.Y.Z"
 updated: "YYYY-MM-DD"
 ---

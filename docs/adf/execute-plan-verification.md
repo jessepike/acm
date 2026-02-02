@@ -13,7 +13,7 @@ Phase 8.2 (Success Criteria Gate) - mapping design requirements to implementatio
 
 ## Design Success Criteria
 
-Source: `docs/acm/execute-plan-design.md` (v0.2, lines 1105-1126)
+Source: `docs/adf/execute-plan-design.md` (v0.2, lines 1105-1126)
 
 ### MVP Criteria (Iteration 1-2)
 
@@ -142,11 +142,11 @@ skills/execute-plan/
 
 ### Planning Artifacts (5 files)
 
-- `docs/acm/execute-plan-design.md` (v0.2, 970 lines, HARD GATE approved)
-- `docs/acm/execute-plan-plan.md` (v1.1.0, internal review complete)
-- `docs/acm/execute-plan-tasks.md` (48 tasks)
-- `docs/acm/execute-plan-manifest.md` (zero dependencies)
-- `docs/acm/execute-plan-capabilities.md` (registry consulted, 2 capabilities matched)
+- `docs/adf/execute-plan-design.md` (v0.2, 970 lines, HARD GATE approved)
+- `docs/adf/execute-plan-plan.md` (v1.1.0, internal review complete)
+- `docs/adf/execute-plan-tasks.md` (48 tasks)
+- `docs/adf/execute-plan-manifest.md` (zero dependencies)
+- `docs/adf/execute-plan-capabilities.md` (registry consulted, 2 capabilities matched)
 
 ---
 

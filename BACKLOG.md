@@ -25,8 +25,6 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B36 | ACM MCP server — maintenance primitive not addressed in tool surface | Enhancement | acm-server | P3 | S | — | Pending |
 | B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | — | Pending |
 | B58 | Add revision history section to all stage specs (DISCOVER, DESIGN, STAGES, ARCHITECTURE) for consistency with DEVELOP | Enhancement | ACM | P3 | S | — | Pending |
-| B60 | Create start-discover-prompt.md — entry-point prompt for Discover stage, parallel to Design/Develop | Enhancement | Prompts | P3 | S | — | Pending |
-| B61 | Reorder Develop HARD GATE — move after Review Loop (Phase 4). Current: Plan → HARD GATE → Review → Execution. Correct: Plan → Review → HARD GATE → Execution. Rationale: Don't waste human time on unreviewed work. Impact: ACM-DEVELOP-SPEC phases 3-4, start-develop-prompt | Enhancement | ACM | P2 | S | — | Pending |
 | B20 | Evaluate extracting Knowledge (kb/) from ACM into own repo | Architecture | ACM/kb | P3 | M | — | Pending |
 | B21 | Automated self-improvement loop (capture → distill → apply) | Architecture | memory + kb | P3 | L | — | Pending |
 | B22 | Community knowledge ingestion pipeline | Architecture | kb | P3 | L | — | Pending |
@@ -37,6 +35,8 @@ spec: "ACM-BACKLOG-SPEC.md"
 
 | ID | Item | Completed | Notes |
 |----|------|-----------|-------|
+| B60 | Create start-discover-prompt.md | 2026-02-02 | Created entry-point prompt for Discover stage v1.0.0. Parallel to start-design/develop/deliver prompts. Covers project setup validation, state update, context loading, and exploration phase initiation. |
+| B61 | Reorder Develop HARD GATE | 2026-02-02 | Fixed HARD GATE placement in ACM-DEVELOP-SPEC.md v2.1.0. Moved from after Phase 3 to after Phase 4 (Review Loop). Phase 4 now "Review Loop & Approval" combining internal/external review + human approval. Correct pattern: Plan → Review → HARD GATE → Execution (matches Deliver spec). Updated start-develop-prompt.md to v2.2.0. |
 | B39 | Add deliver enum support to ACM MCP server | 2026-02-02 | Added "deliver" to get_stage, get_review_prompt, get_transition_prompt enums. Updated STAGE_FILES, PROMPT_MAP, TRANSITION_FILES mappings. Added develop_to_deliver transition validation. Rebuilt MCP server, 58/59 tests passing. |
 | B51 | Update ACM MCP server get_stage enum to include deliver | 2026-02-02 | Completed with B39 — same changeset. get_stage now accepts "deliver" and serves ACM-DELIVER-SPEC.md. |
 | B15 | Deliver stage spec | 2026-02-02 | ACM-DELIVER-SPEC.md v1.0.0 — 8 phases with Review → HARD GATE → Execution pattern (corrected from Develop), 3-tier testing model (automated, browser, manual), project-type specific guidance, deployment focus. Created 3 prompts: start-deliver-prompt.md, deliver-ralph-review-prompt.md, deliver-external-review-prompt.md. Also added B61 (fix Develop HARD GATE placement). Unblocks B39 + B51 (ACM MCP server deliver enum support). |

@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Detailed specification for the Develop stage workflow"
-version: "2.0.0"
-updated: "2026-02-01"
+version: "2.1.0"
+updated: "2026-02-02"
 scope: "acm"
 lifecycle: "reference"
 location: "acm/ACM-DEVELOP-SPEC.md"
@@ -39,21 +39,24 @@ Develop transforms a validated design into a working deliverable. This stage han
 
 ## Phase Model
 
-**PLANNING PHASES (1-3):** Produce artifacts, stop for human review after Phase 3.
+**PLANNING PHASES (1-3):** Produce artifacts, proceed to review.
 
 | Phase | Description | Exit Gate | Artifacts |
 |-------|-------------|-----------|-----------|
 | **1. Intake & Validation** | Ensure understanding, close loose ends | Human confirms understanding | — |
 | **2. Capability Assessment** | Identify dependencies and capabilities needed | Human approves manifest + capabilities | manifest.md, capabilities.md |
-| **3. Planning** | Create implementation plan and task breakdown | Human approves plan + tasks | plan.md, tasks.md |
+| **3. Planning** | Create implementation plan and task breakdown | Agent approves plan + tasks | plan.md, tasks.md |
 
-**HARD GATE:** After Phase 3, STOP. Present all planning artifacts for human review before execution.
-
-**EXECUTION PHASES (4-8):** Require approved plan.
+**REVIEW + HARD GATE (Phase 4):** Validate plan, then get human approval.
 
 | Phase | Description | Exit Gate | Artifacts |
 |-------|-------------|-----------|-----------|
-| **4. Review Loop** | Validate plan via internal/external review | No Critical/High issues | Updated plan artifacts |
+| **4. Review Loop & Approval** | Internal/external review, then human sign-off | No Critical/High issues + human approval | Updated planning artifacts |
+
+**EXECUTION PHASES (5-8):** Require approved plan.
+
+| Phase | Description | Exit Gate | Artifacts |
+|-------|-------------|-----------|-----------|
 | **5. Environment Setup** | Install dependencies, configure capabilities | Environment verified | — |
 | **6. Build** | Implementation with testing + build-to-design verification | 95%+ tests pass, verification complete | The deliverable |
 | **7. Documentation** | README, API docs, usage guides | Docs exist and accurate | Documentation |
@@ -67,15 +70,14 @@ Develop transforms a validated design into a working deliverable. This stage han
 |-------|------------------------------|-----------------|
 | **1. Intake & Validation** | Nothing — ask questions, clarify design | Human confirms understanding to proceed |
 | **2. Capability Assessment** | Nothing — document what's needed in manifest.md + capabilities.md | Human approves capability list to proceed |
-| **3. Planning** | Nothing — create plan.md + tasks.md | Not yet (wait for HARD GATE) |
-| **HARD GATE** | Nothing — present all 4 planning artifacts for review | **Human approves ALL planning artifacts** |
-| **4. Review Loop** | Nothing — review plan via Ralph Loop + external reviewers | Auto-proceed when no Critical/High issues |
+| **3. Planning** | Nothing — create plan.md + tasks.md | Not yet (wait for Review + HARD GATE) |
+| **4. Review Loop & Approval** | Review plan via Ralph Loop + external reviewers | **Human approves ALL planning artifacts after review** |
 | **5. Environment Setup** | ✅ Install Python packages (pip install)<br>✅ Activate plugins<br>✅ Create venv, config files | Already approved at HARD GATE |
 | **6. Build** | ✅ Write code<br>✅ Run tests<br>✅ Create deliverable<br>✅ Build-to-design verification | Already approved at HARD GATE |
 | **7. Documentation** | ✅ Write/update README, API docs, guides | Already approved at HARD GATE |
 | **8. Closeout** | ✅ Cleanup, archive, status seal | Already approved at HARD GATE |
 
-**Key insight:** Approving capability assessment ≠ installing anything. It means "yes, this list makes sense, proceed to planning." Actual installations only happen in Phase 5 after HARD GATE approval.
+**Key insight:** Phase 4 is the combined review + approval gate. Agents review the plan thoroughly, THEN present polished artifacts to human for approval.
 
 ---
 
@@ -379,9 +381,13 @@ current_phase: "Phase 1: Core Structure"
 
 ---
 
-### 4. Review Loop
+### 4. Review Loop & Approval
 
-**Purpose:** Validate the plan and capability assessment before environment setup.
+**Purpose:** Validate the plan and capability assessment through thorough review, THEN get human approval.
+
+**Two-step process:**
+
+#### Step 1: Review Loop
 
 Invoke review per ACM-REVIEW-SPEC.md. Use `get_review_prompt('develop', phase)` from ACM MCP server.
 
@@ -401,7 +407,33 @@ All artifacts reviewed together — they must align.
 - Are there parallelization opportunities not captured?
 - Any risks not addressed?
 
-**Exit signal:** No Critical/High issues. Plan is executable.
+**Review phases:**
+
+| Phase | Reviewer | Mechanism | Value |
+|-------|----------|-----------|-------|
+| **Phase 1: Internal** | Primary agent (Claude) | Ralph Loop — automated iteration | Fast iteration, gets plan to solid baseline |
+| **Phase 2: External** | Other models (GPT, Gemini) | Manual submission (user-driven) | Diverse perspectives, catches blind spots |
+
+**Exit condition (Step 1):** No Critical/High issues. Plan is executable.
+
+#### Step 2: HARD GATE — Human Approval
+
+After review completes, present all planning artifacts to human for approval.
+
+**Agent presents:**
+- manifest.md (dependencies)
+- capabilities.md (skills/tools needed)
+- plan.md (implementation approach + testing strategy)
+- tasks.md (atomic task breakdown)
+- Review summary (issues resolved, reviewer feedback)
+
+**Human evaluates:**
+- Does this make sense for our context?
+- Are the dependencies correct?
+- Is the testing strategy appropriate?
+- Any concerns or changes needed?
+
+**Exit condition (Step 2):** Human approves: "Proceed with execution."
 
 **Design updates:** If review surfaces gaps in design, update design artifacts (document and move on — no re-review of design).
 
@@ -836,6 +868,7 @@ Develop makes heavy use of sub-agents for parallelization.
 | 1.2.0 | 2026-01-29 | Added phase boundary protocol with context clearing |
 | 1.3.0 | 2026-01-31 | Added handoff block in tasks.md, registry summary enforcement |
 | 2.0.0 | 2026-02-01 | Major revision: 8 phases (added Documentation + Closeout), two-tier testing model, progressive disclosure in tasks.md, build-to-design verification, commit cadence, universal + type-specific exit criteria, removed registration from Develop |
+| 2.1.0 | 2026-02-02 | Fixed HARD GATE placement (B61): Moved from after Phase 3 to after Phase 4 (Review Loop). Correct pattern: Plan → Review → HARD GATE → Execution. Phase 4 now "Review Loop & Approval" combining internal/external review + human approval. Matches Deliver spec pattern. Updated start-develop-prompt.md to v2.2.0. |
 
 ---
 

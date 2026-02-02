@@ -1,8 +1,8 @@
 ---
 type: "prompt"
 description: "Stage transition prompt — validates Design completion and initiates Develop stage"
-version: "2.1.0"
-updated: "2026-02-01"
+version: "2.2.0"
+updated: "2026-02-02"
 scope: "develop"
 usage: "Run at start of Develop stage to transition from Design"
 ---
@@ -138,13 +138,25 @@ Only after human confirms understanding:
 
 All planning artifacts go in `docs/acm/` per ACM-FOLDER-STRUCTURE-SPEC.md.
 
-**After Phase 3 (Planning), STOP. This is a HARD GATE.**
+## Step 6: Proceed to Review & Approval (Phase 4)
 
-Present all planning artifacts to the human:
-- manifest.md
-- capabilities.md
-- plan.md
-- tasks.md
+**After Phase 3 (Planning), proceed to Review Loop.**
+
+Unlike the old pattern, Develop now uses the correct gate ordering:
+1. Complete planning (manifest, capabilities, plan, tasks)
+2. Run internal review (Ralph Loop) on planning artifacts
+3. Run external review (user-driven, optional)
+4. **THEN present reviewed artifacts to human for approval**
+
+**Phase 4 sequence:**
+1. Run internal review via Ralph Loop (see develop-ralph-review-prompt.md)
+2. Optionally run external review (user decides)
+3. Present all planning artifacts to human:
+   - manifest.md
+   - capabilities.md
+   - plan.md
+   - tasks.md
+   - Review summary (issues resolved, reviewer feedback)
 
 **⛔ DO NOT proceed to execution phases. DO NOT start environment setup. DO NOT start building.**
 
@@ -152,9 +164,9 @@ Wait for explicit human approval: "Approved" or equivalent.
 
 If the human has feedback, iterate on planning artifacts. Do not move forward until they approve.
 
-## Step 6: Proceed to Execution Phases (4-8)
+## Step 7: Proceed to Execution Phases (5-8)
 
-**PREREQUISITE: Human has explicitly approved all planning artifacts from Step 5.**
+**PREREQUISITE: Human has explicitly approved all planning artifacts from Step 6.**
 
 If you do not have explicit human approval, STOP and ask for it.
 
@@ -167,11 +179,10 @@ If you do not have explicit human approval, STOP and ask for it.
 6. Confirm: "Phase N complete. Starting Phase N+1. Here's what I see: [summary from handoff]"
 
 Execution phases:
-1. Review Loop — Run internal review (Ralph Loop) on plan, then external review
-2. Environment Setup — Install dependencies, configure capabilities
-3. Build — Implement per tasks.md with TDD, then verify build matches design
-4. Documentation — README, API docs, usage guides as appropriate
-5. Closeout — Artifact lifecycle, commit verification, status.md update (THE SEAL)
+1. Environment Setup — Install dependencies, configure capabilities
+2. Build — Implement per tasks.md with TDD, then verify build matches design
+3. Documentation — README, API docs, usage guides as appropriate
+4. Closeout — Artifact lifecycle, commit verification, status.md update (THE SEAL)
 
 **Testing model (two-tier):**
 - **Tier 1: Automated** — Unit, integration, E2E via test frameworks. Run during build.
@@ -184,17 +195,18 @@ Execution phases:
 
 ## Phase Sequence (For Reference)
 
-**PLANNING PHASES (1-3)** — Produce artifacts, stop for human review:
+**PLANNING PHASES (1-3)** — Produce artifacts:
 1. **Intake & Validation** ← YOU ARE HERE (requires human confirmation to exit)
 2. Capability Assessment (produces manifest.md + capabilities.md)
 3. Planning (produces plan.md + tasks.md)
 
-**⛔ HARD GATE: After Phase 3, STOP. Present all planning artifacts for human review.**
-**DO NOT proceed to execution until human explicitly approves.**
-**This gate exists because agents historically skip it. DO NOT skip it.**
+**REVIEW & APPROVAL (Phase 4)** — Review artifacts, then human approval:
+4. Review Loop & Approval (internal review → external review → human approval)
 
-**EXECUTION PHASES (4-8)** — Require explicit human approval of planning artifacts:
-4. Review Loop (internal + external review of plan)
+**✅ HARD GATE: After Phase 4 review, STOP. Present reviewed planning artifacts for human approval.**
+**DO NOT proceed to execution until human explicitly approves.**
+
+**EXECUTION PHASES (5-8)** — Require explicit human approval of reviewed planning artifacts:
 5. Environment Setup
 6. Build (includes build-to-design verification)
 7. Documentation (README, API docs, usage guides)

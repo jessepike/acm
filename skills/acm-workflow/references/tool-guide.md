@@ -23,7 +23,7 @@ Get the review prompt for a stage and review phase.
 
 | Parameter | Type | Required | Values |
 |-----------|------|----------|--------|
-| `stage` | string | yes | `discover`, `design`, `develop` |
+| `stage` | string | yes | `discover`, `design`, `develop`, `deliver` |
 | `phase` | string | yes | `internal`, `external` |
 
 **Use when:** Preparing to run a Ralph Loop (internal) or external review.
@@ -35,7 +35,7 @@ Get guidance for transitioning between stages.
 
 | Parameter | Type | Required | Values |
 |-----------|------|----------|--------|
-| `transition` | string | yes | `start-design`, `start-develop`, `start-deliver` |
+| `transition` | string | yes | `discover_to_design`, `design_to_develop`, `develop_to_deliver` |
 | `validate` | boolean | no | `true` to check prerequisites against project state |
 | `project_path` | string | when validate=true | Path to the project root |
 

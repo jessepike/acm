@@ -131,7 +131,7 @@ The project layer is a four-stage pipeline. Each stage produces artifacts that p
 | Discover | intent.md, brief.md | ACM-DISCOVER-SPEC.md |
 | Design | design.md | ACM-DESIGN-SPEC.md |
 | Develop | deliverable, docs, planning artifacts | ACM-DEVELOP-SPEC.md |
-| Deliver | deployed/distributed deliverable | (B15 — pending) |
+| Deliver | deployed/distributed deliverable | ACM-DELIVER-SPEC.md |
 
 - Universal exit criteria exist for each stage — see ACM-STAGES-SPEC.md
 - Stage boundary handoff protocol: verify exit criteria → update status.md → commit → clear context

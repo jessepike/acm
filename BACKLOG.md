@@ -20,10 +20,8 @@ spec: "ACM-BACKLOG-SPEC.md"
 | B45 | Stage transition cleanup process — when a sub-project completes a stage or the docs/ workspace shifts to a new sub-project, archive previous stage artifacts to `_archive/{project-name}/`. Define convention in ACM-STAGES-SPEC or ACM-FOLDER-STRUCTURE-SPEC. | Enhancement | ACM | P2 | S | — | Pending |
 | B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | — | Pending |
 | B19 | Scaffold memory repo at `~/code/_shared/memory/` | Setup | memory | P2 | S | — | Pending |
-| B39 | Add `deliver` enum support to ACM MCP server once ACM-DELIVER-SPEC.md is created | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
 | B41 | Move ACM-*-SPEC.md + ACM-TAXONOMY.md into docs/specs/ — update all 40+ file references | Refactor | ACM | P2 | M | — | Pending |
 | B48 | Create hooks for phase boundary commit + tasks.md enforcement | Enhancement | acm-env | P2 | M | — | Pending |
-| B51 | Update ACM MCP server get_stage enum to include 'deliver' once spec exists | Enhancement | acm-server | P2 | S | — | Blocked by B15 |
 | B36 | ACM MCP server — maintenance primitive not addressed in tool surface | Enhancement | acm-server | P3 | S | — | Pending |
 | B38 | Connect self-improvement loop to MCP server brief — document which steps are covered vs deferred to memory/KB | Docs | ACM | P3 | S | — | Pending |
 | B58 | Add revision history section to all stage specs (DISCOVER, DESIGN, STAGES, ARCHITECTURE) for consistency with DEVELOP | Enhancement | ACM | P3 | S | — | Pending |
@@ -39,6 +37,8 @@ spec: "ACM-BACKLOG-SPEC.md"
 
 | ID | Item | Completed | Notes |
 |----|------|-----------|-------|
+| B39 | Add deliver enum support to ACM MCP server | 2026-02-02 | Added "deliver" to get_stage, get_review_prompt, get_transition_prompt enums. Updated STAGE_FILES, PROMPT_MAP, TRANSITION_FILES mappings. Added develop_to_deliver transition validation. Rebuilt MCP server, 58/59 tests passing. |
+| B51 | Update ACM MCP server get_stage enum to include deliver | 2026-02-02 | Completed with B39 — same changeset. get_stage now accepts "deliver" and serves ACM-DELIVER-SPEC.md. |
 | B15 | Deliver stage spec | 2026-02-02 | ACM-DELIVER-SPEC.md v1.0.0 — 8 phases with Review → HARD GATE → Execution pattern (corrected from Develop), 3-tier testing model (automated, browser, manual), project-type specific guidance, deployment focus. Created 3 prompts: start-deliver-prompt.md, deliver-ralph-review-prompt.md, deliver-external-review-prompt.md. Also added B61 (fix Develop HARD GATE placement). Unblocks B39 + B51 (ACM MCP server deliver enum support). |
 | B55 | Universal exit criteria + stage boundary handoff in DISCOVER-SPEC | 2026-02-01 | v1.3.0 — structured exit criteria (universal + discover-specific), handoff protocol, docs/acm/ convention, updated references. |
 | B56 | Universal exit criteria + stage boundary handoff in DESIGN-SPEC | 2026-02-01 | v1.1.0 — structured exit criteria (universal + design-specific + type-specific), handoff protocol, docs/acm/ convention, updated references. |

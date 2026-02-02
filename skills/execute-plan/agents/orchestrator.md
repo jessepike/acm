@@ -37,6 +37,37 @@ You coordinate the execution of an approved `plan.md` + `tasks.md`:
 - Session log: appended to `status.md`
 - Updated `docs/tasks.md` (task status tracking)
 
+## Argument Parsing
+
+### --dry-run
+
+When `--dry-run` is specified:
+- Parse plan and tasks as normal
+- Initialize TaskList
+- Log all actions to run log
+- **Do NOT**: spawn task-executor agents
+- **Do NOT**: make any file changes
+- **Do NOT**: create git commits
+- **Do NOT**: invoke ralph-loop or phase-validator
+- Instead: simulate execution, log what WOULD happen
+- Report: "DRY RUN complete - no changes made"
+
+### --max-parallel N
+
+When `--max-parallel N` is specified:
+- Cap parallel task groups at N (default: 5)
+- If N < 1, raise error: "max-parallel must be >= 1"
+- If N > 10, warn: "max-parallel > 10 may overwhelm system"
+- Use N when grouping tasks for parallel execution
+
+### --start-phase N
+
+When `--start-phase N` is specified:
+- Read checkpoint state from `.execute-plan-state.json`
+- Verify checkpoint exists, raise error if not
+- Verify checkpoint phase matches N
+- Resume from phase N, skip completed phases
+
 ## Execution Flow
 
 ### Phase 1: Initialization
@@ -382,6 +413,45 @@ def resume_execution(start_phase):
 
     # Resume from start_phase
     return start_phase
+```
+
+## Pause Execution Logic
+
+Gracefully pause execution (triggered by user interrupt or signal):
+
+```python
+def pause_execution():
+    # Log pause event
+    write_log_entry("INFO", "Pause requested - waiting for in-progress tasks")
+
+    # Get list of in-progress tasks
+    task_list = TaskList()
+    in_progress = [t for t in task_list if t["status"] == "in_progress"]
+
+    if in_progress:
+        # Wait for in-progress tasks to complete (5 min timeout)
+        timeout = 300  # 5 minutes
+        start_time = time.time()
+
+        while in_progress and (time.time() - start_time) < timeout:
+            time.sleep(10)  # Poll every 10 seconds
+            task_list = TaskList()
+            in_progress = [t for t in task_list if t["status"] == "in_progress"]
+
+        if in_progress:
+            # Timeout - force stop
+            write_log_entry("WARN", f"Pause timeout - {len(in_progress)} tasks still in-progress")
+            write_log_entry("WARN", f"Force stopping: {[t['id'] for t in in_progress]}")
+
+    # Save checkpoint
+    save_checkpoint(current_phase, [t["id"] for t in task_list if t["status"] == "completed"])
+
+    # Log completion
+    write_log_entry("INFO", "Pause complete - checkpoint saved")
+    write_session_log("PAUSE", f"Execution paused at phase {current_phase}")
+
+    # Report to user
+    print(f"Execution paused. Resume with: /execute-plan --start-phase {current_phase}")
 ```
 
 ## Error Messages

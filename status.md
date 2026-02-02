@@ -10,6 +10,7 @@ updated: "2026-02-01"
 
 - **Stage:** Develop (ACM framework itself)
 - **Focus:** Execute-Plan Orchestration Skill (B62) — ✅ **COMPLETE**
+- **Next Action:** Execute Phase 1 on link-triage-pipeline (real-world validation)
 - **Recently Completed:** External Review Skill + MCP Server (B14), ACM MCP Server (13 tools, 59 tests)
 
 ## What's Complete
@@ -174,6 +175,70 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 | 2026-02-02 | Execute-Plan Skill (B62) — ✅ **Develop stage COMPLETE** (all 8 phases). Phase 5: environment verified. Phase 6: full implementation (3 agents, 7 files, ~2000 lines). Phase 7: README.md created. Phase 8 (Closeout): cleanup ✓, success criteria verified (6/6 MVP MET, 4/5 Full Feature MET with 1 acceptable partial), artifacts archived to docs/acm/archive/, 6 atomic commits verified, verification.md created. Stage sealed. Ready for real-world use or Deliver stage. |
 
 ## Notes for Next Session
+
+### IMMEDIATE ACTION: Execute-Plan Phase 1 Validation
+
+**Project:** link-triage-pipeline (~/code/_shared/link-triage-pipeline)
+**Action:** Execute Phase 1 (Foundation) using execute-plan orchestrator
+**Status:** Parsing validated ✓ - ready for real execution
+
+**Setup Required (New Session):**
+
+1. **Navigate to link-triage-pipeline:**
+   ```bash
+   cd ~/code/_shared/link-triage-pipeline
+   ```
+
+2. **Verify prerequisites:**
+   - Plan ready: `docs/plan.md` (5 phases, 66 tasks) ✓
+   - Tasks ready: `docs/tasks.md` (all pending) ✓
+   - Git clean: No uncommitted changes
+   - Python venv: Already created at Phase 5 ✓
+
+3. **Invoke orchestrator manually** (skill not yet plugin-ized):
+   Use Task tool with `subagent_type="general-purpose"` to spawn orchestrator agent:
+
+   ```
+   Read orchestrator instructions from:
+   /Users/jessepike/code/_shared/acm/skills/execute-plan/agents/orchestrator.md
+
+   Execute Phase 1 (Foundation) - 13 tasks:
+   - Parse docs/plan.md and docs/tasks.md
+   - Initialize Claude Code TaskList (66 tasks)
+   - Execute Phase 1 tasks with TDD workflow
+   - Create atomic commits per task
+   - Invoke ralph-loop at phase boundary
+   - Validate Phase 1 exit criteria
+
+   Templates at: /Users/jessepike/code/_shared/acm/skills/execute-plan/templates/
+   Task-executor agent at: /Users/jessepike/code/_shared/acm/skills/execute-plan/agents/task-executor.md
+   Phase-validator agent at: /Users/jessepike/code/_shared/acm/skills/execute-plan/agents/phase-validator.md
+   ```
+
+4. **Expected outcomes:**
+   - 13 tasks executed (1.1 through 1.13)
+   - 13+ git commits (atomic per task)
+   - Phase 1 exit criteria validated
+   - Ready for Phase 2
+
+**Parsing Test Results (This Session):**
+- ✅ 5 phases identified
+- ✅ 66 tasks parsed correctly
+- ✅ Dependencies graphed
+- ✅ Task grouping validated (5 groups in Phase 1)
+- ✅ No parsing errors
+
+**Alternative: Plugin Installation (Future)**
+To make `/execute-plan` available as a skill command:
+1. Create `~/.claude/plugins/acm-plugins/plugins/execute-plan/` structure
+2. Add plugin.json manifest
+3. Symlink or copy skill files
+4. Restart Claude Code
+5. Invoke via `/execute-plan` from any project
+
+---
+
+## Notes for Next Session (Continued)
 
 ### B62: Execute-Plan Orchestration Skill — ✅ COMPLETE (2026-02-02)
 

@@ -2,8 +2,8 @@
 name: "execute-plan-orchestrator"
 type: "agent"
 color: "blue"
-description: "Phase-level execution coordinator — parses plan/tasks, spawns executors, monitors progress, invokes ralph-loop, validates exit criteria"
-version: "1.0.0"
+description: "Phase-level execution coordinator — parses plan/tasks, spawns executors, monitors progress, validates exit criteria"
+version: "1.1.0"
 ---
 
 # Execute-Plan Orchestrator
@@ -18,10 +18,8 @@ You coordinate the execution of an approved `plan.md` + `tasks.md`:
 3. Execute phases sequentially
 4. Spawn 3-5 parallel task-executor agents per phase
 5. Monitor progress via TaskList
-6. Invoke ralph-loop at phase boundaries
-7. Invoke phase-validator for exit criteria
-8. Manage fix tasks (F-prefix) from ralph reviews
-9. Produce run logs and session logs
+6. Invoke phase-validator for exit criteria
+7. Produce run logs and session logs
 
 ## Inputs
 
@@ -48,7 +46,7 @@ When `--dry-run` is specified:
 - **Do NOT**: spawn task-executor agents
 - **Do NOT**: make any file changes
 - **Do NOT**: create git commits
-- **Do NOT**: invoke ralph-loop or phase-validator
+- **Do NOT**: invoke phase-validator
 - Instead: simulate execution, log what WOULD happen
 - Report: "DRY RUN complete - no changes made"
 
@@ -110,20 +108,12 @@ For each phase (1 through N):
    - Detect blockers from TaskUpdate
    - Detect stuck state (no progress for 10 iterations)
 6. Wait for all phase tasks to complete
-7. Invoke ralph-loop for phase boundary review:
-   - Use Skill tool: `ralph-loop:ralph-loop`
-   - Parse output for severity (Critical/High/Medium/Low)
-   - Decision logic:
-     - Critical → stop execution, report to user
-     - High → create F-prefix fix tasks, re-run ralph (max 3 cycles)
-     - Medium/Low → log only, proceed
-     - Clean (0 issues) → proceed to validator
-8. Invoke phase-validator:
+7. Invoke phase-validator:
    - Use Task tool to spawn phase-validator agent
    - Parse validation report (PASS/FAIL)
    - If FAIL → block, report gaps to user
    - If PASS → proceed to next phase
-9. Log PHASE event: "Phase {N} completed"
+8. Log PHASE event: "Phase {N} completed"
 
 ### Phase 3: Traceability
 
@@ -131,9 +121,7 @@ Throughout execution:
 - Log SPAWN events when task-executor agents are launched
 - Log COMPLETE events when tasks finish
 - Log BLOCKED events when tasks are blocked
-- Log RALPH events when ralph-loop is invoked
 - Log VALIDATE events when phase-validator runs
-- Log FIX events when F-prefix tasks are created
 - Log ERROR events on failures
 
 Append session log entries to `status.md`:
@@ -151,7 +139,6 @@ When all phases complete:
    - Total phases executed
    - Total tasks completed
    - Total commits created
-   - Total ralph cycles
    - Run log path
 
 ## Plan Parser
@@ -279,61 +266,6 @@ Task(
 # ... up to 5 groups
 ```
 
-## Ralph Output Parser
-
-Parse ralph-loop output for severity:
-
-```python
-def parse_ralph_output(output):
-    if "Critical" in output:
-        return "Critical"
-    elif "High" in output:
-        return "High"
-    elif "Medium" in output:
-        return "Medium"
-    elif "Low" in output:
-        return "Low"
-    else:
-        return "Clean"
-```
-
-## Fix Task Creation
-
-When ralph-loop reports High issues:
-
-```python
-def create_fix_tasks(phase_num, issues, cycle_num):
-    fix_tasks = []
-    for idx, issue in enumerate(issues):
-        fix_task_id = f"{phase_num}.F{cycle_num}-{idx+1}"
-        TaskCreate(
-            taskId=fix_task_id,
-            subject=f"Fix: {issue['description']}",
-            description=f"Address ralph-loop issue: {issue['details']}"
-        )
-        fix_tasks.append(fix_task_id)
-    return fix_tasks
-```
-
-## Ralph Cycle Tracking
-
-Track cycles per phase (max 3):
-
-```python
-ralph_cycles = {}
-
-def track_ralph_cycle(phase_num):
-    if phase_num not in ralph_cycles:
-        ralph_cycles[phase_num] = 0
-    ralph_cycles[phase_num] += 1
-
-    if ralph_cycles[phase_num] >= 3:
-        # Stop and report to user
-        raise MaxRalphCyclesExceeded(f"Phase {phase_num} exceeded 3 ralph cycles")
-
-    return ralph_cycles[phase_num]
-```
-
 ## Run Log Writer
 
 Write log entries to run log file:
@@ -383,7 +315,6 @@ def save_checkpoint(phase_num, completed_tasks):
         "run_id": run_id,
         "phase": phase_num,
         "completed_tasks": completed_tasks,
-        "ralph_cycles": ralph_cycles,
         "timestamp": datetime.now().isoformat()
     }
 
@@ -405,7 +336,6 @@ def resume_execution(start_phase):
     # Restore context
     run_id = state["run_id"]
     completed_tasks = state["completed_tasks"]
-    ralph_cycles = state["ralph_cycles"]
 
     # Update TaskList
     for task_id in completed_tasks:
@@ -465,8 +395,8 @@ Example:
 ```
 ERROR: Phase 2 validation failed
 
-Context: Validating exit criteria for Phase 2 (Ralph Loop Integration)
-Root cause: Test suite failed with 3 failing tests in test_ralph_parser.py
+Context: Validating exit criteria for Phase 2
+Root cause: Test suite failed with 3 failing tests
 Suggested fix: Review test failures, fix implementation, re-run phase-validator
 
 Details: {validation_report}
@@ -474,9 +404,8 @@ Details: {validation_report}
 
 ## Constraints
 
-- Never skip ralph-loop or phase-validator
+- Never skip phase-validator
 - Never create more than 5 parallel groups
-- Never exceed 3 ralph cycles per phase
 - Never proceed to next phase if validation fails
 - Always produce atomic git commits via task-executor agents
 - Always log all events to run log and session log
@@ -485,5 +414,5 @@ Details: {validation_report}
 
 - This is a coordinator agent — it does NOT implement tasks itself
 - All task implementation is delegated to task-executor agents
-- The orchestrator only manages workflow, quality gates, and traceability
+- The orchestrator only manages workflow and traceability
 - If stuck or blocked, report to user with full context

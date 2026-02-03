@@ -1,13 +1,12 @@
 # Execute-Plan Orchestration Skill
 
-Autonomous development orchestration skill that executes an approved `plan.md` + `tasks.md` with parallel task execution, quality gates, and complete traceability.
+Autonomous development orchestration skill that executes an approved `plan.md` + `tasks.md` with parallel task execution and complete traceability.
 
 ## Purpose
 
 Automate the execution of ADF Develop stage plans. Given an approved plan and task breakdown, this skill:
 - Spawns parallel task workers
 - Enforces TDD workflow
-- Runs quality gates (ralph-loop) at phase boundaries
 - Validates exit criteria before proceeding
 - Produces complete audit trail (git commits, run logs, session logs)
 
@@ -33,8 +32,6 @@ orchestrator (Phase Coordinator)
   │   ├─→ Spawns 3-5 task-executor agents in parallel
   │   │   └─→ Each executor: tests first → implement → validate → commit
   │   ├─→ Waits for phase completion
-  │   ├─→ Invokes ralph-loop for internal review
-  │   │   └─→ If High issues: creates F-prefix fix tasks, re-runs
   │   └─→ Invokes phase-validator for exit criteria
   │       └─→ If FAIL: blocks, reports gaps
   └─→ Proceeds to next phase
@@ -107,14 +104,15 @@ Before invoking `/execute-plan`, ensure:
 One commit per task with full traceability:
 
 ```
-feat(phase-2): Implement ralph output parser
+feat(phase-2): Implement config loader
 
 Acceptance:
-- Extracts severity (Critical/High/Medium/Low) via regex
-- Handles errors gracefully
+- Loads YAML config from file
+- Handles missing files gracefully
+- Validates required fields
 
 Task: 2.2
-Tests: tests/test_ralph_parser.py
+Tests: tests/test_config_loader.py
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
@@ -134,11 +132,9 @@ Located at `output/runs/{date}-{uuid}.log`:
 [2026-02-02T10:35:20] COMPLETE: task-executor-1 (4 tasks done, 4 commits)
 [2026-02-02T10:36:45] COMPLETE: task-executor-2 (4 tasks done, 4 commits)
 [2026-02-02T10:38:10] COMPLETE: task-executor-3 (4 tasks done, 4 commits)
-[2026-02-02T10:38:15] RALPH: Invoking ralph-loop for Phase 1 review
-[2026-02-02T10:42:30] RALPH: Review complete - 0 Critical, 0 High, 2 Low
-[2026-02-02T10:42:35] VALIDATE: Invoking phase-validator for Phase 1
-[2026-02-02T10:43:00] VALIDATE: Phase 1 PASS (all criteria met)
-[2026-02-02T10:43:01] PHASE: Phase 1 complete (14 tasks, 14 commits, 1 ralph cycle)
+[2026-02-02T10:38:15] VALIDATE: Invoking phase-validator for Phase 1
+[2026-02-02T10:38:45] VALIDATE: Phase 1 PASS (all criteria met)
+[2026-02-02T10:38:46] PHASE: Phase 1 complete (14 tasks, 14 commits)
 ```
 
 ### Session Log
@@ -147,45 +143,16 @@ Appended to `status.md`:
 
 ```markdown
 **2026-02-02 10:30** — EXECUTE: Started execute-plan orchestration (5 phases, 66 tasks)
-**2026-02-02 10:43** — PHASE: Phase 1 complete (14 tasks, 14 commits, ralph clean)
-**2026-02-02 11:15** — PHASE: Phase 2 complete (6 tasks, 8 commits including 2 fixes, 2 ralph cycles)
+**2026-02-02 10:38** — PHASE: Phase 1 complete (14 tasks, 14 commits)
+**2026-02-02 11:15** — PHASE: Phase 2 complete (12 tasks, 12 commits)
 **2026-02-02 12:00** — PAUSE: Execution paused at phase 3
 ```
 
-## Quality Gates
-
-### Ralph Loop (Phase Boundaries)
-
-After each phase completes, the orchestrator invokes ralph-loop for internal review:
-
-**Severity Handling**:
-- **Critical**: Stop execution, report to user, require manual intervention
-- **High**: Create F-prefix fix tasks (e.g., 1.F1, 1.F2), re-run ralph (max 3 cycles)
-- **Medium/Low**: Log only, proceed to next phase
-- **Clean**: Proceed to phase validator
-
-**F-Prefix Fix Tasks**:
-
-When ralph-loop finds High issues, the orchestrator creates fix tasks:
-
-```
-Task ID: 1.F1 (Phase 1, Fix cycle 1, issue #1)
-Description: Fix High issue - Missing error handling in parser
-Acceptance: Error handling added, ralph review passes
-```
-
-Fix tasks are executed before proceeding, then ralph-loop re-runs.
-
-**Max Cycles**:
-
-Each phase allows up to 3 ralph cycles. If cycle 3 still has Critical/High issues:
-- Stop execution
-- Report to user with full context
-- Require manual intervention
+## Phase Validation
 
 ### Phase Validator (Exit Criteria)
 
-After ralph-loop passes (0 Critical/High), the phase-validator checks exit criteria from `plan.md`:
+After all tasks in a phase complete, the phase-validator checks exit criteria from `plan.md`:
 
 **Validation Types**:
 
@@ -257,7 +224,7 @@ Starting in Phase 5 (TDD Enforcement), task-executor agents follow a strict test
 | Trail | Location | Purpose |
 |-------|----------|---------|
 | Git commits | Git history | One commit per task with full acceptance criteria |
-| Run log | `output/runs/{uuid}.log` | All execution events (INIT, PHASE, SPAWN, RALPH, VALIDATE, etc.) |
+| Run log | `output/runs/{uuid}.log` | All execution events (INIT, PHASE, SPAWN, VALIDATE, etc.) |
 | Session log | `status.md` | High-level orchestrator decisions and phase summaries |
 
 ### Troubleshooting from Logs
@@ -278,7 +245,7 @@ To diagnose issues:
    ```
    ## Session Log
    **2026-02-02 11:15** — BLOCKED: Task 2.5 blocked on unmet dependency 2.3
-   **2026-02-02 11:20** — DECISION: Created fix task 2.F1 for ralph High issue
+   **2026-02-02 11:20** — DECISION: Task 2.3 completed, unblocking 2.5
    ```
 
 ## Parallelization
@@ -347,15 +314,6 @@ This skill was initially developed and validated against **link-triage-pipeline*
 
 **Fix**: Review task dependencies in `tasks.md`, ensure all referenced task IDs exist.
 
-### "Ralph loop exceeded max cycles"
-
-**Cause**: Phase still has Critical/High issues after 3 ralph cycles
-
-**Fix**:
-- Review ralph-loop output in run log
-- Manually address the blocking issues
-- Re-run from paused phase after fixes
-
 ### "Phase validation failed"
 
 **Cause**: Exit criteria not met (tests failing, files missing, commands failing)
@@ -377,18 +335,6 @@ cd ~/code/my-project
 # Execution proceeds through all phases
 # Produces: 66 commits, 1 run log, session log entries
 # Output: "Execution complete - all 5 phases done"
-```
-
-### With Ralph Fixes
-
-```bash
-/execute-plan
-
-# Phase 2 ralph-loop finds 2 High issues
-# Orchestrator creates: 2.F1, 2.F2
-# Executes fix tasks
-# Re-runs ralph-loop → clean
-# Proceeds to phase-validator
 ```
 
 ### Pause & Resume
@@ -415,7 +361,7 @@ cd ~/code/my-project
 
 # Parses plan.md and tasks.md
 # Logs: "Would spawn task-executor-1 with tasks 1.1-1.4"
-# Logs: "Would invoke ralph-loop for Phase 1"
+# Logs: "Would invoke phase-validator for Phase 1"
 # Output: "DRY RUN complete - no changes made"
 ```
 
@@ -438,8 +384,7 @@ skills/execute-plan/
 ## Capabilities Used
 
 - **Claude Code tools**: Task, TaskCreate, TaskUpdate, TaskList, Bash, Read, Write, Edit
-- **Skills**: ralph-loop:ralph-loop (phase boundary review)
-- **MCP**: acm-server (stage details, review prompts)
+- **MCP**: adf-server (stage details, review prompts)
 - **Git**: Atomic commits, traceability
 
 ## Design Decisions
@@ -450,12 +395,10 @@ skills/execute-plan/
 | D2 | DAG-based dependency resolution (Airflow/Bazel pattern) | "Ready check" at phase start — supports dependencies across phases |
 | D3 | Phase-level checkpointing (Temporal.io pattern) | Not task-level — reduces checkpoint frequency, simpler resume logic |
 | D4 | 3-5 parallel groups max | Balances speed vs system load — prevents context overflow |
-| D5 | F-prefix for fix tasks | Avoids ID collisions — 1.F1 vs 1.4 keeps numbering clean |
-| D6 | Max 3 ralph cycles per phase | Prevents infinite loops — forces human intervention if persistent issues |
-| D7 | TDD enforced in Phase 5+ | Progressive implementation — lets core foundation stabilize first |
-| D8 | Three specialized agents | Single-responsibility — orchestrator coordinates, executors implement, validator checks |
-| D9 | Atomic commits per task | Full traceability — git log shows complete audit trail |
-| D10 | Three audit trails (git/run/session) | Observability layers — git=what, run=how, session=why |
+| D5 | TDD enforced in Phase 5+ | Progressive implementation — lets core foundation stabilize first |
+| D6 | Three specialized agents | Single-responsibility — orchestrator coordinates, executors implement, validator checks |
+| D7 | Atomic commits per task | Full traceability — git log shows complete audit trail |
+| D8 | Three audit trails (git/run/session) | Observability layers — git=what, run=how, session=why |
 
 ## Notes
 

@@ -226,6 +226,44 @@ The next stage agent starts by reading `CLAUDE.md` → `status.md` (which contai
 
 ---
 
+## Stage Handoff Template
+
+When updating status.md at stage transition, use this structure for the handoff block:
+
+```markdown
+## Stage Handoff: {Stage Name} → {Next Stage Name}
+
+**Date:** YYYY-MM-DD
+
+### Deliverables Produced
+- [Artifact name with path] — [Brief description]
+- [Artifact name with path] — [Brief description]
+
+### Archived Artifacts
+- [Artifact name] → `.archive/YYYY-MM-DD-{name}.md` — [Why archived]
+- [Artifact name] → `.archive/YYYY-MM-DD-{name}.md` — [Why archived]
+
+### Success Criteria Status
+[Reference brief.md criteria and note completion/deferrals]
+- [Criterion 1]: ✅ Complete / ⏸️ Deferred / ❌ Not met
+- [Criterion 2]: ✅ Complete / ⏸️ Deferred / ❌ Not met
+
+### Known Limitations
+- [Technical constraints identified]
+- [Deferred features or scope]
+- [Open questions for next stage]
+
+### Read Order for Next Stage
+1. `intent.md` — North Star reference
+2. [Primary deliverable] — [Why read this]
+3. [Secondary artifact] — [Why read this]
+4. `status.md` — Current state and context
+```
+
+**Usage:** All stages use this template. Stage-specific transition prompts provide guidance on what to include per stage.
+
+---
+
 ## Design Principles
 
 **Inclusive, not prescriptive:** Stages apply to any project type, not just software.

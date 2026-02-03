@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Detailed specification for the Design stage workflow"
-version: "1.1.0"
-updated: "2026-02-01"
+version: "1.2.0"
+updated: "2026-02-03"
 scope: "adf"
 lifecycle: "reference"
 location: "adf/ADF-DESIGN-SPEC.md"
@@ -376,6 +376,39 @@ Per ADF-STAGES-SPEC.md:
 - [ ] Decision log captures key choices with rationale
 - [ ] Open Questions empty or explicitly deferred to Develop
 - [ ] **Develop Handoff section complete** — summarizes design, decisions, open questions, success criteria, implementation guidance
+
+### HARD GATE Requirements (Before Develop)
+
+**These requirements must be met before approving Design → Develop transition.**
+
+**Problem Validation:**
+- [ ] Problem statement exists and is specific (not generic or assumed)
+- [ ] Problem is validated through evidence (measurements, user feedback, observation)
+- [ ] Current state is measured and understood (baseline metrics captured)
+- [ ] Solution doesn't duplicate existing framework capability
+
+**Design Quality:**
+- [ ] All requirements have clear, measurable acceptance criteria
+- [ ] All assumptions are either validated OR have validation plans WITH commitments
+- [ ] Success criteria are measurable BEFORE implementation starts
+- [ ] "How do we know this works?" has a concrete answer (not "we'll find out later")
+
+**Risk Assessment:**
+- [ ] Technical feasibility confirmed (not theoretical)
+- [ ] Resource estimate provided (time/cost/dependencies)
+- [ ] "What if we don't build this?" question answered explicitly
+- [ ] Alternative approaches considered and documented
+
+**Decision Forcing:**
+- [ ] No success criteria marked "partial" or "deferred to validation later"
+- [ ] No assumptions marked "to be validated during implementation"
+- [ ] No critical dependencies on unproven technology or unvalidated claims
+
+**Example failures that should block HARD GATE approval:**
+- ❌ "Will save 40-50% time through parallelization" (unvalidated claim)
+- ❌ "Ralph-loop quality gates at phase boundaries" (underspecified - what does it review?)
+- ❌ "Automates existing spec" (duplicates existing capability without proving manual is painful)
+- ❌ "Validation deferred to first real-world use" (can't measure success without baseline)
 
 ### Type-Specific Criteria
 

@@ -1,18 +1,18 @@
 # Archive Directory Rules
 
-These are non-negotiable rules for the `_archive/` directory.
+These are non-negotiable rules for the `.archive/` directory.
 
 ## Purpose
 
-The `_archive/` directory at project root stores historical artifacts that are no longer active in the project context.
+The `.archive/` directory at project root stores historical artifacts that are no longer active in the project context.
 
 ## Non-Negotiable Rules
 
-- **Write-only for agents**: Agents may move artifacts TO `_archive/` during stage transitions or cleanup
-- **No reads without explicit instruction**: Agents MUST NOT read from, search in, reference, or pull context from `_archive/` unless the user explicitly instructs "pull from archive" or "look in archive"
+- **Write-only for agents**: Agents may move artifacts TO `.archive/` during stage transitions or cleanup
+- **No reads without explicit instruction**: Agents MUST NOT read from, search in, reference, or pull context from `.archive/` unless the user explicitly instructs "pull from archive" or "look in archive"
 - **Do not assume**: Even if information might be in archive, do not assume the user wants you to access it — wait for explicit instruction
 - **Not for active context**: Archived artifacts are not part of current project state
-- **Naming convention**: `_archive/YYYY-MM-DD-<artifact-name>.md`
+- **Naming convention**: `.archive/YYYY-MM-DD-<artifact-name>.md`
 
 ## When to Archive
 

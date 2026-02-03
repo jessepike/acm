@@ -87,7 +87,7 @@ Each stage produces artifacts that fall into three categories:
 | Category | Definition | Behavior at Stage Transition |
 |----------|------------|------------------------------|
 | **Deliverable** | Final outputs that carry forward | Remain active in project context |
-| **Working** | Ephemeral artifacts created during exploration/iteration | Archive to `_archive/` |
+| **Working** | Ephemeral artifacts created during exploration/iteration | Archive to `.archive/` |
 | **Reference** | Supporting materials that remain useful | Remain active in `docs/` |
 
 ### Artifact Lifecycle by Stage
@@ -104,7 +104,7 @@ Each stage produces artifacts that fall into three categories:
 When transitioning between stages:
 
 1. **Identify deliverables** — verify these artifacts are final and complete
-2. **Archive working artifacts** — move to `_archive/` with naming: `_archive/YYYY-MM-DD-<artifact-name>.md`
+2. **Archive working artifacts** — move to `.archive/` with naming: `.archive/YYYY-MM-DD-<artifact-name>.md`
 3. **Verify active context** — only deliverable and reference artifacts remain accessible
 4. **Update status.md** — document what was archived and why
 
@@ -211,7 +211,7 @@ When transitioning between stages, the completing agent:
 
 1. Completes all stage-specific exit criteria
 2. **Executes Stage Transition Cleanup Protocol** (see Artifact Lifecycle above)
-   - Archive working artifacts to `_archive/`
+   - Archive working artifacts to `.archive/`
    - Verify only deliverables and reference artifacts remain active
 3. Updates status.md with structured stage handoff:
    - **What was produced** — deliverable summary + key files

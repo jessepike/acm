@@ -102,7 +102,7 @@ The Discover stage was validated with a real project (portfolio website):
 
 ## Files Archived
 
-Moved to `_archive/`:
+Moved to `.archive/`:
 - `AGENT-INSTRUCTIONS.md` — Content absorbed into CLAUDE.md pattern
 - `discover-review-prompt.md` — Superseded by two new prompts
 

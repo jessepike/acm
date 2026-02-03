@@ -138,7 +138,7 @@ project/
 │   ├── intent.md          # North Star
 │   ├── discover-brief.md  # Project contract
 │   └── status.md          # Session state
-├── _archive/              # Inactive artifacts
+├── .archive/              # Inactive artifacts
 └── README.md              # Project overview
 ```
 

@@ -12,7 +12,7 @@ location: "adf/ADF-FOLDER-STRUCTURE-SPEC.md"
 
 ## Summary
 
-Defines the minimal folder structure for all ADF projects. `docs/` is the main folder for markdown, context, and reference files. Includes lifecycle-aware folders: `inbox/` for triage, `_archive/` for inactive artifacts.
+Defines the minimal folder structure for all ADF projects. `docs/` is the main folder for markdown, context, and reference files. Includes lifecycle-aware folders: `inbox/` for triage, `.archive/` for inactive artifacts.
 
 ---
 
@@ -41,7 +41,7 @@ project-root/
 │   ├── acm/                   # Stage planning artifacts (workspace)
 │   │   └── archive/           # Completed planning artifacts
 │   └── inbox/                 # Triage zone (new/unprocessed items)
-├── _archive/                  # Inactive artifacts (not deleted, not active)
+├── .archive/                  # Inactive artifacts (not deleted, not active)
 └── README.md                  # What this is, how to use it
 ```
 
@@ -66,7 +66,7 @@ docs/adf/
 |--------|---------|-----------------|
 | `docs/` | Context and reference files | Reference |
 | `docs/inbox/` | New items awaiting triage | Ephemeral → Reference or delete |
-| `_archive/` | Inactive but preserved (NOT FOR AGENT READS) | Archived (out of context) |
+| `.archive/` | Inactive but preserved (NOT FOR AGENT READS) | Archived (out of context) |
 
 ### Inbox Flow
 
@@ -77,17 +77,17 @@ New context arrives → docs/inbox/ → [Process] → docs/ or delete
 ### Archive Flow
 
 ```
-Artifact no longer active → Still valuable? → _archive/ or delete
+Artifact no longer active → Still valuable? → .archive/ or delete
 ```
 
-**Note:** `_archive/` uses underscore prefix to sort distinctly and signal "not current."
+**Note:** `.archive/` uses dot prefix for consistency with `.claude/` and to signal "not current."
 
 ### Archive Access Rules
 
-**CRITICAL:** The `_archive/` directory is write-only for agents unless explicitly instructed otherwise.
+**CRITICAL:** The `.archive/` directory is write-only for agents unless explicitly instructed otherwise.
 
-- ✅ Agents MAY move files TO `_archive/` during cleanup
-- ❌ Agents MUST NOT read from, search in, or pull context from `_archive/` without explicit user instruction ("pull from archive", "look in archive")
+- ✅ Agents MAY move files TO `.archive/` during cleanup
+- ❌ Agents MUST NOT read from, search in, or pull context from `.archive/` without explicit user instruction ("pull from archive", "look in archive")
 - ❌ Do not assume the user wants archived content accessed — wait for explicit instruction
 
 See `.claude/rules/archive.md` for complete rules. This prevents stale/outdated context from polluting active work.
@@ -110,7 +110,7 @@ project-root/
 ├── tests/                     # Test files (deliverable)
 ├── config/                    # Configuration files
 ├── scripts/                   # Build/deploy scripts
-├── _archive/
+├── .archive/
 ├── README.md
 └── Makefile                   # Standard commands
 ```
@@ -137,7 +137,7 @@ project-root/
 │   └── research/              # Source materials, notes
 ├── assets/                    # Images, data files
 ├── output/                    # Generated artifacts (deliverable)
-├── _archive/
+├── .archive/
 └── README.md
 ```
 
@@ -160,7 +160,7 @@ project-root/
 │   └── runbooks/              # Operational procedures
 ├── workflows/                 # Workflow definitions (deliverable)
 ├── scripts/                   # Supporting automation
-├── _archive/
+├── .archive/
 └── README.md
 ```
 
@@ -183,7 +183,7 @@ project-root/
 | `docs/adf/archive/` | Completed planning artifacts | Archived | Agent |
 | `docs/intent.md` | North Star | Reference (protected) | Human |
 | `docs/brief.md` | Scope and criteria | Reference | Human + Agent |
-| `_archive/` | Inactive artifacts (write-only for agents) | Archived | Agent (write), Human (read/write) |
+| `.archive/` | Inactive artifacts (write-only for agents) | Archived | Agent (write), Human (read/write) |
 | `src/` | Source code (Software) | Deliverable | Agent |
 | `tests/` | Test code (Software) | Deliverable | Agent |
 | `output/` | Generated output (Artifact) | Deliverable | Agent |
@@ -206,7 +206,7 @@ These emerge during Design/Develop, not at Project Init:
 
 ```bash
 # Project Init creates:
-mkdir -p .claude/rules docs/inbox docs/adf/archive _archive
+mkdir -p .claude/rules docs/inbox docs/adf/archive .archive
 touch .claude/CLAUDE.md
 touch docs/intent.md docs/brief.md
 touch README.md
@@ -246,7 +246,7 @@ Before exiting Project Init:
 - [ ] `docs/brief.md` exists (can be stub)
 - [ ] `docs/inbox/` exists
 - [ ] `docs/adf/archive/` exists
-- [ ] `_archive/` exists
+- [ ] `.archive/` exists
 - [ ] `README.md` exists (can be minimal)
 - [ ] Type-specific folders created
 

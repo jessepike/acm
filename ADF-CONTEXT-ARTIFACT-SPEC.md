@@ -155,7 +155,7 @@ Every artifact belongs to one of three classes:
 
 **Location:** `docs/inbox/` (pre-processing) or created ad-hoc
 
-**Prune rule:** Delete after use, or move to `_archive/` if uncertain
+**Prune rule:** Delete after use, or move to `.archive/` if uncertain
 
 ---
 
@@ -202,7 +202,7 @@ Artifact no longer active
         ↓
     ┌───┴───┐
     ↓       ↓
-_archive/  delete
+.archive/  delete
 ```
 
 ### Prune Triggers
@@ -228,7 +228,7 @@ _archive/  delete
 | Decisions/ADRs | `docs/decisions/` |
 | Research | `docs/research/` |
 | Inbox (triage) | `docs/inbox/` |
-| Archive | `_archive/` |
+| Archive | `.archive/` |
 
 ---
 

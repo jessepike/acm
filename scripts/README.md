@@ -41,7 +41,7 @@ Initializes a new project with ACM scaffolding.
    - Warns if directory exists
 
 4. **Creates Scaffolding**
-   - Base: `.claude/`, `docs/`, `_archive/`, README, intent.md, brief.md
+   - Base: `.claude/`, `docs/`, `.archive/`, README, intent.md, brief.md
    - Type-specific folders and CLAUDE.md template
 
 ### Example
@@ -91,7 +91,7 @@ Step 4: Creating Scaffolding
 
 Creating base structure...
   Created: src/, tests/, config/, scripts/, docs/decisions/, Makefile
-  Created: .claude/, docs/, _archive/, README.md, intent.md, brief.md
+  Created: .claude/, docs/, .archive/, README.md, intent.md, brief.md
 
 ==========================================
   Project Initialized!
@@ -123,7 +123,7 @@ project/
 ├── tests/
 ├── config/
 ├── scripts/
-├── _archive/
+├── .archive/
 ├── README.md
 └── Makefile
 ```
@@ -141,7 +141,7 @@ project/
 │   └── research/
 ├── assets/
 ├── output/
-├── _archive/
+├── .archive/
 └── README.md
 ```
 
@@ -158,7 +158,7 @@ project/
 │   └── runbooks/
 ├── workflows/
 ├── scripts/
-├── _archive/
+├── .archive/
 └── README.md
 ```
 

@@ -33,9 +33,9 @@ const PROMPT_MAP: Record<string, Record<string, string>> = {
 };
 
 const TRANSITION_FILES: Record<string, string> = {
-  discover_to_design: "prompts/start-design-prompt.md",
-  design_to_develop: "prompts/start-develop-prompt.md",
-  develop_to_deliver: "prompts/start-deliver-prompt.md",
+  discover_to_design: "prompts/discover-to-design-transition.md",
+  design_to_develop: "prompts/design-to-develop-transition.md",
+  develop_to_deliver: "prompts/develop-to-deliver-transition.md",
 };
 
 export function registerOrchestrationTools(server: McpServer): void {

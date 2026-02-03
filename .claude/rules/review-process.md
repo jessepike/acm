@@ -4,7 +4,7 @@ These are non-negotiable rules for conducting reviews in ADF projects.
 
 ## Mandatory Process
 
-- All stage reviews MUST use the `acm-review` plugin (`/acm-review:artifact`, `/acm-review:artifact-internal`, `/acm-review:artifact-external`)
+- All stage reviews MUST use the `adf-review` skill (triggers: "run review", "review this", "run ADF review")
 - Do NOT substitute ad-hoc agents, manual review loops, or custom prompts for the review mechanism
 - Do NOT skip reviews or claim they're unnecessary
 - Do NOT expand scope during reviews — find problems, not opportunities
@@ -20,10 +20,9 @@ When the user requests a review (e.g., "run it through ADF review", "review this
    - Internal review only
    - External review only
 
-2. **Execute the appropriate skill** based on user selection:
-   - Full review → `/acm-review:artifact` (runs internal, then external automatically)
-   - Internal only → `/acm-review:artifact-internal`
-   - External only → `/acm-review:artifact-external`
+2. **Trigger the adf-review skill** which will orchestrate the selected review type
+   - The skill handles execution of both internal (Ralph Loop) and external (multi-model) phases
+   - No need to invoke Ralph Loop or external-review MCP directly
 
 ## Review Phases
 
@@ -31,7 +30,7 @@ When the user requests a review (e.g., "run it through ADF review", "review this
 1. **Phase 1 (Internal):** Ralph Loop self-review - identifies structural issues, missing artifacts, inconsistencies
 2. **Phase 2 (External):** Multi-model review - independent perspectives from external models on design quality, approach, risks
 
-Both phases run automatically when using `/acm-review:artifact` (default).
+Both phases run automatically when full review is selected (default).
 
 ## When to Use Each Type
 
@@ -54,7 +53,8 @@ Both phases run automatically when using `/acm-review:artifact` (default).
 
 ## What Agents Must NOT Do
 
-- Do NOT manually invoke `/ralph-loop:ralph-loop` directly — use the acm-review plugin instead
+- Do NOT manually invoke `/ralph-loop:ralph-loop` directly — use the adf-review skill orchestrator
 - Do NOT assume user wants internal-only review by default
 - Do NOT skip asking the user for review type preference
-- Do NOT improvise review mechanisms that bypass the acm-review plugin
+- Do NOT improvise review mechanisms that bypass the adf-review skill
+- Do NOT call ADF MCP tools directly for reviews — let adf-review skill handle orchestration

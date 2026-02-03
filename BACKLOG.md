@@ -16,6 +16,7 @@ spec: "ADF-BACKLOG-SPEC.md"
 | ID | Item | Type | Component | Pri | Size | Stage | Status |
 |----|------|------|-----------|-----|------|-------|--------|
 | B59 | Review function tuning sprint — run 10-20 reviews, log observations in KB, tune prompts/config. Tracking: `kb/EXTERNAL-REVIEW-MODEL-RELIABILITY.md` | Enhancement | Review | P1 | M | Develop | In Progress |
+| B67 | Agent capabilities — blocked on capabilities-registry CR-1 (populate agents from 3 sources). ADF framework value depends on robust agent ecosystem. Tracking: `~/code/_shared/capabilities-registry/BACKLOG.md#CR-1` | Dependency | ACM | P1 | — | — | Blocked |
 | B44 | Standardize brief frontmatter `status` field to use stage-based values (`discover-complete`, `design-in-progress`, etc.) — let ADF MCP server surface pipeline position via `check_project_health` | Enhancement | ACM | P2 | M | — | Pending |
 | B45 | Stage transition cleanup process — when a sub-project completes a stage or the docs/ workspace shifts to a new sub-project, archive previous stage artifacts to `_archive/{project-name}/`. Define convention in ADF-STAGES-SPEC or ADF-FOLDER-STRUCTURE-SPEC. | Enhancement | ACM | P2 | S | — | Pending |
 | B18 | Design memory layer spec (MEMORY-SPEC.md) | New spec | memory | P2 | L | — | Pending |

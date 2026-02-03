@@ -66,7 +66,7 @@ docs/adf/
 |--------|---------|-----------------|
 | `docs/` | Context and reference files | Reference |
 | `docs/inbox/` | New items awaiting triage | Ephemeral → Reference or delete |
-| `_archive/` | Inactive but preserved | Archived (out of context) |
+| `_archive/` | Inactive but preserved (NOT FOR AGENT READS) | Archived (out of context) |
 
 ### Inbox Flow
 
@@ -81,6 +81,16 @@ Artifact no longer active → Still valuable? → _archive/ or delete
 ```
 
 **Note:** `_archive/` uses underscore prefix to sort distinctly and signal "not current."
+
+### Archive Access Rules
+
+**CRITICAL:** The `_archive/` directory is write-only for agents unless explicitly instructed otherwise.
+
+- ✅ Agents MAY move files TO `_archive/` during cleanup
+- ❌ Agents MUST NOT read from, search in, or pull context from `_archive/` without explicit user instruction ("pull from archive", "look in archive")
+- ❌ Do not assume the user wants archived content accessed — wait for explicit instruction
+
+See `.claude/rules/archive.md` for complete rules. This prevents stale/outdated context from polluting active work.
 
 ---
 
@@ -173,7 +183,7 @@ project-root/
 | `docs/adf/archive/` | Completed planning artifacts | Archived | Agent |
 | `docs/intent.md` | North Star | Reference (protected) | Human |
 | `docs/brief.md` | Scope and criteria | Reference | Human + Agent |
-| `_archive/` | Inactive artifacts | Archived | Human + Agent |
+| `_archive/` | Inactive artifacts (write-only for agents) | Archived | Agent (write), Human (read/write) |
 | `src/` | Source code (Software) | Deliverable | Agent |
 | `tests/` | Test code (Software) | Deliverable | Agent |
 | `output/` | Generated output (Artifact) | Deliverable | Agent |

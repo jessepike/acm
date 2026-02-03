@@ -80,6 +80,38 @@ Happens once at project inception, before Discover begins.
 
 ---
 
+## Artifact Lifecycle
+
+Each stage produces artifacts that fall into three categories:
+
+| Category | Definition | Behavior at Stage Transition |
+|----------|------------|------------------------------|
+| **Deliverable** | Final outputs that carry forward | Remain active in project context |
+| **Working** | Ephemeral artifacts created during exploration/iteration | Archive to `_archive/` |
+| **Reference** | Supporting materials that remain useful | Remain active in `docs/` |
+
+### Artifact Lifecycle by Stage
+
+| Stage | Deliverables (Keep Active) | Working Artifacts (Archive) |
+|-------|---------------------------|----------------------------|
+| **Discover** | `intent.md`, `brief.md` | Concept briefs, discovery briefs, research spikes |
+| **Design** | `design.md`, `BACKLOG.md`, decision records | Draft designs, spike reports, exploration notes |
+| **Develop** | Implementation (code/artifacts), tests | Planning documents from `docs/adf/` |
+| **Deliver** | Deployment artifacts, handoff docs | Deployment notes, validation reports |
+
+### Stage Transition Cleanup Protocol
+
+When transitioning between stages:
+
+1. **Identify deliverables** — verify these artifacts are final and complete
+2. **Archive working artifacts** — move to `_archive/` with naming: `_archive/YYYY-MM-DD-<artifact-name>.md`
+3. **Verify active context** — only deliverable and reference artifacts remain accessible
+4. **Update status.md** — document what was archived and why
+
+See `.claude/rules/archive.md` for archive access rules.
+
+---
+
 ## Stages
 
 ### DISCOVER
@@ -178,13 +210,17 @@ Every stage must satisfy these before transitioning. Stage-specific exit criteri
 When transitioning between stages, the completing agent:
 
 1. Completes all stage-specific exit criteria
-2. Updates status.md with structured stage handoff:
+2. **Executes Stage Transition Cleanup Protocol** (see Artifact Lifecycle above)
+   - Archive working artifacts to `_archive/`
+   - Verify only deliverables and reference artifacts remain active
+3. Updates status.md with structured stage handoff:
    - **What was produced** — deliverable summary + key files
+   - **What was archived** — list of archived artifacts and rationale
    - **Success criteria status** — from brief.md
    - **Known limitations / deferred items**
    - **Read order for next stage agent**
-3. Commits with `chore({stage}): stage complete — {summary}`
-4. Runs `/clear`
+4. Commits with `chore({stage}): stage complete — {summary}`
+5. Runs `/clear`
 
 The next stage agent starts by reading `CLAUDE.md` → `status.md` (which contains the handoff).
 

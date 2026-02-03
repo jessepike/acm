@@ -1,7 +1,7 @@
 ---
 project: "ADF (Agentic Development Framework)"
 stage: "Develop"
-updated: "2026-02-02"
+updated: "2026-02-03"
 ---
 
 # Status
@@ -9,9 +9,9 @@ updated: "2026-02-02"
 ## Current State
 
 - **Stage:** Develop (ADF framework itself)
-- **Focus:** Project initialization automation
+- **Focus:** Framework quality and governance improvements
 - **Next Action:** Test `/adf-env:init` on real projects (pike-ace, others)
-- **Recently Completed:** External Review Skill + MCP Server (B14), ADF MCP Server (13 tools, 59 tests), ACM → ADF framework rename (infrastructure + content + plugins + GitHub)
+- **Recently Completed:** HARD GATE requirements added to Design spec (v1.2.0), Execute-plan orchestrator removed (failed validation), External Review Skill + MCP Server (B14), ADF MCP Server (13 tools, 59 tests)
 
 ## What's Complete
 
@@ -123,6 +123,7 @@ See `BACKLOG.md` for full backlog. Immediate priorities:
 
 | Date | Summary |
 |------|---------|
+| 2026-02-03 | Process improvement session. Removed execute-plan orchestrator (B62) — failed validation: skipped Discover stage, unvalidated time savings claim (40-50% theoretical, never measured), ralph-loop quality gates underspecified (no prompt/criteria defined), duplicated ADF-DEVELOP-SPEC.md functionality without proving manual process was painful. Deleted skills/execute-plan/ (7 files, ~2000 lines), 11 design docs (~8000 lines), all status/backlog references. Zero functional loss — agents following develop spec already do same work. Added HARD GATE requirements to ADF-DESIGN-SPEC.md v1.2.0 — mandatory checklist for Design → Develop approval: problem validation (specific, measured baseline, doesn't duplicate), design quality (measurable criteria, no unvalidated assumptions), risk assessment (feasibility confirmed, "what if we don't build?" answered), decision forcing (no "deferred validation" or "partial" success criteria). Would have caught execute-plan at HARD GATE. Key learning: Discovered we built automation without validating the problem existed — new gate prevents this. |
 | 2026-01-27 | Discover stage complete. Two-phase review validated. YAGNI integrated. Ready for Design stage spec. |
 | 2026-01-28 | Design and Develop stage specs complete. Supporting specs updated. |
 | 2026-01-29 | Brainstormed and implemented acm-env plugin. Created ADF-ENV-PLUGIN-SPEC.md. Built full plugin scaffold with 4 commands, SessionStart hook, env-auditor skill, baseline.yaml, and dependency checker. Updated ADF-TAXONOMY.md (environment terms + 8 design decisions), ADF-CONTEXT-ARTIFACT-SPEC.md (replaced deferred acm-validate/acm-prune with acm-env reference), ADF-STAGES-SPEC.md (added acm-env as meta layer manager). |

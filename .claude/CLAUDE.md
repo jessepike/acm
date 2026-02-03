@@ -31,7 +31,7 @@ Stages: Discover → Design → Develop → Deliver
 Each stage follows: **Work → Review → Update → Validate → Close out → Transition**
 
 - Query `get_stage()` from ADF MCP for phase details at each stage
-- Review is an orchestration-layer service — invoke the review skill when needed
+- Review is an orchestration-layer service — use acm-review plugin (default: full review)
 - At phase boundaries: update handoff block in tasks.md, commit, `/clear`
 - At stage boundaries: verify exit criteria via `check_project_health()`, update status.md
 
@@ -41,8 +41,7 @@ Each stage follows: **Work → Review → Update → Validate → Close out → 
 |----------|------|---------|
 | ADF MCP server | MCP | Stage details, artifact specs, review prompts, project health |
 | acm-env plugin | Plugin | Environment management, status, audit |
-| external-review | Skill | Phase 2 external model review |
-| ralph-loop | Skill | Phase 1 internal review |
+| acm-review plugin | Plugin | Artifact review (default: full review with internal + external phases) |
 | capabilities-registry | Repo | `~/code/_shared/capabilities-registry/INVENTORY.md` |
 
 ## Related Repos

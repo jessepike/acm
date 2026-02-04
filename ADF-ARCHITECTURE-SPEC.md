@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Master framework specification — defines ADF's architecture, stage pipeline, artifact flow, six environment primitives, interface map, and spec index. The single entry point for understanding ADF."
-version: "2.0.1"
-updated: "2026-02-01"
+version: "2.1.0"
+updated: "2026-02-04"
 scope: "adf"
 lifecycle: "reference"
 location: "adf/ADF-ARCHITECTURE-SPEC.md"
@@ -18,7 +18,7 @@ All other ADF specs define narrower slices. This spec defines the whole.
 
 ---
 
-## How to Read ACM
+## How to Read ADF
 
 | Want to understand... | Read |
 |---|---|
@@ -85,7 +85,7 @@ How the full framework fits together — environment as outer boundary, primitiv
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                        ENVIRONMENT LAYER                                │
 │                                                                         │
-│  Orchestration ◄─── ACM Specs + Prompts                                │
+│  Orchestration ◄─── ADF Specs + Prompts                                │
 │  Capabilities  ◄─── capabilities-registry/                              │
 │  Knowledge     ◄─── adf/kb/                                            │
 │  Memory        ◄─── memory/                                             │
@@ -109,7 +109,7 @@ How the full framework fits together — environment as outer boundary, primitiv
 │                                                                         │
 │  ┌── INTERFACES ──────────────────────────────────────────────────┐     │
 │  │  ADF MCP server ─── read-only spec/prompt/capability/KB access │     │
-│  │  acm-env plugin ─── environment management, health, hooks      │     │
+│  │  adf-env plugin ─── environment management, health, hooks      │     │
 │  │  .claude/rules/ ─── policy enforcement (human-controlled)      │     │
 │  │  CLAUDE.md ──────── context and orientation (agent-writable)   │     │
 │  └────────────────────────────────────────────────────────────────┘     │
@@ -287,9 +287,9 @@ These are not sequential — they are ambient. They are always available, and th
 
 **Key behaviors:**
 - Registry: sync from upstream, check for stale capabilities
-- ACM: validate spec versions, check for outdated prompts
+- ADF: validate spec versions, check for outdated prompts
 - Memory: cleanup old sessions, enforce retention policies
-- Cross-component: environment health dashboard (acm-env plugin)
+- Cross-component: environment health dashboard (adf-env plugin)
 
 **Principle:** Each component self-maintains. No central maintenance service. Components may expose health endpoints that a dashboard aggregates.
 
@@ -307,7 +307,7 @@ These are not sequential — they are ambient. They are always available, and th
 - Project health checks: "Is this project aligned with its intent?"
 - Spec compliance: "Does this artifact match its spec requirements?"
 - Drift detection: "Has the project diverged from its design?"
-- Environment checks: "Is the environment baseline met?" (acm-env)
+- Environment checks: "Is the environment baseline met?" (adf-env)
 
 **MCP tools:** `check_project_structure`, `check_project_health`
 
@@ -366,15 +366,15 @@ Every ADF project gets both. Rules are created at project init (`.claude/rules/`
 
 ## Interface Map
 
-Unified view of how external consumers and internal components interact with ACM:
+Unified view of how external consumers and internal components interact with ADF:
 
 | Interface | What | Scope | Spec |
 |---|---|---|---|
 | ADF MCP server | Read-only spec/prompt/capability/KB access | Consumer projects | adf-server/README.md |
-| acm-env plugin | Environment management, health, hooks | All projects | ADF-ENV-PLUGIN-SPEC.md |
+| adf-env plugin | Environment management, health, hooks | All projects | ADF-ENV-PLUGIN-SPEC.md |
 | .claude/rules/ | Policy enforcement (human-controlled) | Per project | ADF-RULES-SPEC.md |
 | CLAUDE.md | Context and orientation (agent-writable) | Per project | ADF-CONTEXT-ARTIFACT-SPEC.md |
-| Companion skill | Workflow instructions for agents | Consumer projects | skills/acm-workflow/skill.md |
+| Companion skill | Workflow instructions for agents | Consumer projects | skills/adf-workflow/SKILL.md |
 
 ---
 
@@ -382,7 +382,7 @@ Unified view of how external consumers and internal components interact with ACM
 
 ```
 ~/code/_shared/
-├── acm/                          # Orchestration + Knowledge
+├── adf/                          # Orchestration + Knowledge
 │   ├── .claude/
 │   │   ├── CLAUDE.md             # Project context (agent-writable)
 │   │   └── rules/                # Hard constraints (human-controlled)
@@ -412,7 +412,7 @@ Unified view of how external consumers and internal components interact with ACM
     └── MEMORY-SPEC.md            # How memory works
 ```
 
-**ADF-process skills** (`acm/skills/`) are tightly coupled to ADF orchestration — review automation, workflow tools, stage transitions. They live inside ADF because they implement ADF's own process. General-purpose capabilities (frontend-design, pdf, etc.) live in the capabilities-registry.
+**ADF-process skills** (`adf/skills/`) are tightly coupled to ADF orchestration — review automation, workflow tools, stage transitions. They live inside ADF because they implement ADF's own process. General-purpose capabilities (frontend-design, pdf, etc.) live in the capabilities-registry.
 
 **Maintenance** and **Validation** are distributed — each component owns its own maintenance scripts and validation skills. They don't have separate repos.
 
@@ -421,19 +421,19 @@ Unified view of how external consumers and internal components interact with ACM
 ## Component Relationships
 
 ```
-acm (orchestration) ──references──→ capabilities-registry (capabilities)
-acm (orchestration) ──contains───→ kb/ (knowledge)
-acm (orchestration) ──references──→ memory (session state) [PLANNED]
+adf (orchestration) ──references──→ capabilities-registry (capabilities)
+adf (orchestration) ──contains───→ kb/ (knowledge)
+adf (orchestration) ──references──→ memory (session state) [PLANNED]
 
 capabilities-registry ──self-maintains──→ (sync, freshness)
 memory ──feeds──→ kb/ (distillation: raw memory → curated knowledge) [PLANNED]
 
-validation (skills) ──reads──→ acm specs (contracts to validate against)
+validation (skills) ──reads──→ adf specs (contracts to validate against)
 maintenance (scripts) ──lives in──→ each component
 ```
 
 **Coupling rules:**
-- ACM references registry and memory but doesn't manage them
+- ADF references registry and memory but doesn't manage them
 - Registry and memory don't know about each other
 - Registry doesn't depend on ADF — it's consumed, not coupled (ecosystem-aware via CLAUDE.md context, but no functional dependency)
 - Each component is self-contained and self-maintaining
@@ -443,19 +443,19 @@ maintenance (scripts) ──lives in──→ each component
 
 ## MCP Server Interface Layer
 
-The ADF MCP server (`acm/adf-server/`) is the **read-only interface** between the environment layer and consumer projects. It exposes four of the six primitives as tools that any agent can call without the ADF repo being open:
+The ADF MCP server (`adf/adf-server/`) is the **read-only interface** between the environment layer and consumer projects. It exposes four of the six primitives as tools that any agent can call without the ADF repo being open:
 
 ```
 ┌─────────────────────────────────┐
 │  Consumer Project               │
 │  (e.g., link-triage-pipeline)   │
 │                                 │         ┌──────────────────────┐
-│  Claude Code ──stdio──► ACM     │         │  ~/code/_shared/adf/ │
+│  Claude Code ──stdio──► ADF     │         │  ~/code/_shared/adf/ │
 │  Agent                  MCP  ───┼── reads ─► specs, prompts,    │
 │                         Server  │         │  stubs, kb/          │
 │                                 │         ├──────────────────────┤
 │  .mcp.json wires up server      │         │  capabilities-       │
-│  CLAUDE.md references ACM skill │         │  registry/           │
+│  CLAUDE.md references ADF skill │         │  registry/           │
 └─────────────────────────────────┘         └──────────────────────┘
 ```
 
@@ -468,7 +468,7 @@ The ADF MCP server (`acm/adf-server/`) is the **read-only interface** between th
 | **Knowledge** | `query_knowledge` | KB article search by topic |
 | **Validation** | `check_project_structure`, `check_project_health` | Structural and health checks against ADF spec |
 | **Memory** | — | Not yet built (future: memory layer) |
-| **Maintenance** | — | Handled by acm-env plugin, not the MCP server |
+| **Maintenance** | — | Handled by adf-env plugin, not the MCP server |
 
 ### Supporting Tools
 
@@ -482,7 +482,7 @@ The ADF MCP server (`acm/adf-server/`) is the **read-only interface** between th
 
 ### Companion Skill
 
-The ACM Workflow skill (`acm/skills/acm-workflow/`) teaches agents **when and how** to use the tools. The MCP server provides data access; the skill provides narrative workflow instructions. Consumer projects reference the skill in their CLAUDE.md.
+The ADF Workflow skill (`adf/skills/adf-workflow/`) teaches agents **when and how** to use the tools. The MCP server provides data access; the skill provides narrative workflow instructions. Consumer projects reference the skill in their CLAUDE.md.
 
 ### Consumer Wiring
 
@@ -533,8 +533,89 @@ Complete table of all ADF specifications:
 | ADF-FOLDER-STRUCTURE-SPEC.md | 1.2.0 | Folder conventions | Orchestration |
 | ADF-RULES-SPEC.md | 1.0.0 | Rules governance | Validation |
 | ADF-BACKLOG-SPEC.md | 1.0.0 | Backlog management | Orchestration |
-| ADF-ENV-PLUGIN-SPEC.md | 1.0.0 | acm-env plugin | Maintenance |
+| ADF-ENV-PLUGIN-SPEC.md | 1.0.0 | adf-env plugin | Maintenance |
 | ADF-TAXONOMY.md | 1.4.0 | Terminology | All |
+
+---
+
+## ADF Components and the Capabilities Registry
+
+ADF has **runtime components** (plugins, MCP server, skills) that implement the framework. These live in the ADF repo but are **registered** in the capabilities registry for discoverability.
+
+### The Relationship Model
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         ADF FRAMEWORK                               │
+│                         (adf/ repo)                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│  SPEC LAYER                    │  RUNTIME LAYER                     │
+│  (reference docs)              │  (implementations)                 │
+│                                │                                    │
+│  - ADF-*-SPEC.md               │  - adf-server/ (MCP server)       │
+│  - prompts/                    │  - skills/adf-review/             │
+│  - stubs/                      │  - skills/adf-workflow/           │
+│  - kb/                         │                                    │
+│                                │                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│  PLUGIN LAYER (adf-plugins/ marketplace)                            │
+│                                                                     │
+│  - adf-env (environment management)                                 │
+│  - adf-review (plugin wrapper for skill)                            │
+│                                                                     │
+│  → Installed via Claude Code plugin system                          │
+│  → Source at ~/.claude/plugins/adf-plugins/                         │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              │ registered in (metadata only)
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    CAPABILITIES REGISTRY                            │
+│                    (capabilities-registry/ repo)                    │
+│                                                                     │
+│  Catalog entries pointing back to ADF:                              │
+│  - adf-env (plugin) → source: adf-plugins marketplace               │
+│  - adf-server (tool) → source: adf/adf-server/                      │
+│  - adf-review (skill) → source: adf/skills/adf-review/              │
+│  - adf-workflow (skill) → source: adf/skills/adf-workflow/          │
+│                                                                     │
+│  Also contains: general capabilities NOT tied to ADF                │
+│  (frontend-design, pdf, playwright, etc.)                           │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Why This Structure
+
+| Question | Answer |
+|----------|--------|
+| Why do ADF components live in ADF repo? | They're tightly coupled to ADF specs — adf-server reads specs, adf-review uses review prompts |
+| Why register them in capabilities registry? | For discoverability — agents query the registry to find available capabilities |
+| Does the registry CONTAIN the code? | No — it contains METADATA that points to source locations |
+| Can ADF components exist without the registry? | Yes — the registry is for discovery, not dependency |
+
+### Component Lifecycle
+
+1. **Designed** in ADF repo (follows ADF stages like any project)
+2. **Built** in ADF repo (code lives alongside specs it implements)
+3. **Registered** in capabilities registry (metadata entry created)
+4. **Discovered** via registry queries or direct reference
+5. **Installed** via appropriate mechanism (plugins via Claude Code, MCP via .mcp.json)
+
+### ADF Components in Registry
+
+| Component | Type | Registry Entry | Source Location |
+|-----------|------|----------------|-----------------|
+| adf-env | plugin | `capabilities/plugins/adf-env/` | `~/.claude/plugins/adf-plugins/plugins/adf-env/` |
+| adf-review | plugin | `capabilities/plugins/adf-review/` | `~/.claude/plugins/adf-plugins/plugins/adf-review/` |
+| adf-server | tool | `capabilities/tools/adf-server/` | `~/code/_shared/adf/adf-server/` |
+| adf-review | skill | `capabilities/skills/adf-review/` | `~/code/_shared/adf/skills/adf-review/` |
+| adf-workflow | skill | `capabilities/skills/adf-workflow/` | `~/code/_shared/adf/skills/adf-workflow/` |
+
+### Key Principle
+
+**ADF owns the implementation. Registry owns the catalog.**
+
+The registry doesn't duplicate ADF content — it provides searchable metadata that helps agents discover what's available. An agent can query "what environment management tools exist?" and find adf-env, then follow the source location to learn more.
 
 ---
 
@@ -546,6 +627,7 @@ Complete table of all ADF specifications:
 - **Goldilocks complexity** — simple but effective; avoid over-engineering
 - **Progressive narrowing** — broad early, specific as projects gain clarity
 - **Specs as contracts** — every spec is implicitly a validation contract
+- **Source of truth separation** — ADF owns implementation, registry owns discovery
 
 ---
 
@@ -559,6 +641,7 @@ Complete table of all ADF specifications:
 | 1.3.0 | 2026-01-31 | MCP server interface layer section |
 | 2.0.0 | 2026-02-01 | Elevated to master framework spec — added spec map, framework diagram, stages overview, artifact flow, interface map, spec index |
 | 2.0.1 | 2026-02-01 | Review pass — marked memory as planned (B18-B19), clarified artifact flow is consumer-project scoped, corrected spec index primitive assignments (STATUS→Orchestration, README→Orchestration), clarified registry coupling, added self-improvement loop implementation status |
+| 2.1.0 | 2026-02-04 | Added "ADF Components and the Capabilities Registry" section — documents relationship between ADF runtime components (plugins, MCP server, skills) and the capabilities registry. Fixed remaining ACM→ADF terminology. Added design principle: source of truth separation. |
 
 ---
 
@@ -566,8 +649,8 @@ Complete table of all ADF specifications:
 
 - ADF-STAGES-SPEC.md (project layer — stage workflow model)
 - ADF-RULES-SPEC.md (enforcement layer — rules governance model)
-- ADF-ENV-PLUGIN-SPEC.md (acm-env plugin — environment management)
+- ADF-ENV-PLUGIN-SPEC.md (adf-env plugin — environment management)
 - ADF-TAXONOMY.md (terminology)
 - adf-server/README.md (MCP server — installation, tools, consumer wiring)
-- skills/acm-workflow/skill.md (companion skill — workflow instructions)
+- skills/adf-workflow/SKILL.md (companion skill — workflow instructions)
 - docs/design.md (MCP server design spec — full tool schemas and architecture)

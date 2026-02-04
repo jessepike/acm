@@ -1,7 +1,7 @@
 ---
 type: "context"
 description: "ADF project context — the agentic context management framework"
-version: "2.0.1"
+version: "2.1.0"
 updated: "2026-02-04"
 scope: "project"
 lifecycle: "reference"
@@ -24,11 +24,6 @@ ADF (Agentic Development Framework) is the framework that defines how agentic pr
 2. `status.md` — Current state, session log, next steps
 3. `BACKLOG.md` — All tracked work items
 
-## Agent Session Protocol
-
-1. **Session Start:** Read status.md first. Understand current state, last session, next steps.
-2. **Session End:** Update status.md before closing — log what was done, update next steps. Do not ask, just update.
-
 ## Stage Flow
 
 Stages: Discover → Design → Develop → Deliver
@@ -39,15 +34,6 @@ Each stage follows: **Work → Review → Update → Validate → Close out → 
 - Review is an orchestration-layer service — use adf-review skill (default: full review)
 - At phase boundaries: update handoff block in tasks.md, commit, `/clear`
 - At stage boundaries: verify exit criteria via `check_project_health()`, update status.md
-
-## Available Resources
-
-| Resource | Type | Use For |
-|----------|------|---------|
-| ADF MCP server | MCP | Stage details, artifact specs, review prompts, project health |
-| adf-env plugin | Plugin | Environment management, status, audit |
-| adf-review skill | Skill | Artifact review orchestration (default: full review with internal + external phases) |
-| capabilities-registry | Repo | `~/code/_shared/capabilities-registry/INVENTORY.md` |
 
 ## Related Repos
 

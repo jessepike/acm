@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Defines status.md — lightweight session state tracking across all stages"
-version: "1.1.0"
-updated: "2026-01-27"
+version: "1.2.0"
+updated: "2026-02-04"
 scope: "adf"
 lifecycle: "reference"
 location: "adf/ADF-STATUS-SPEC.md"
@@ -87,7 +87,7 @@ Status.md keeps a rolling history of recent sessions. To prevent unbounded growt
 
 **Keep:** Last 5 session entries in the Session Log section.
 
-**Prune:** When adding a 6th entry, remove the oldest. If historical context is important, archive to a separate `status-archive.md` or note in Brief's revision history.
+**Prune:** When adding a 6th entry, remove the oldest. Archive to `status-archive.md`.
 
 **Session Log format:**
 
@@ -102,6 +102,57 @@ Status.md keeps a rolling history of recent sessions. To prevent unbounded growt
 ```
 
 This replaces the single "Last Session" section when multiple sessions accumulate. Keep it concise — one line per session.
+
+---
+
+## Pruning Rules (Mandatory)
+
+Status.md must stay under 30 lines. Pruning is **agent responsibility** at session end.
+
+### What to Prune
+
+| Content | Action | Destination |
+|---------|--------|-------------|
+| Session log entries beyond 5 | Archive oldest | `status-archive.md` |
+| "What's Complete" lists | Archive at stage transition | `status-archive.md` |
+| Detailed notes older than 1 week | Archive or delete | `status-archive.md` or delete |
+| Decisions | Move to dedicated section | `status-archive.md` or `BACKLOG.md` |
+
+### When to Prune
+
+1. **Every session end:** Check line count. If >30 lines, prune before committing.
+2. **Stage transitions:** Archive all "completed" content for the closing stage.
+3. **When adf-env audit flags it:** Respond to WARN/FAIL by pruning.
+
+### How to Prune
+
+1. Create `status-archive.md` if it doesn't exist (same directory as status.md)
+2. Move content with a date header: `## Archived [DATE]`
+3. Keep status.md focused on: current state, next steps, blockers, last 5 sessions
+4. Commit both files together
+
+### Archive File Format
+
+```markdown
+# Status Archive
+
+Historical session logs and completed work archived from status.md.
+
+---
+
+## Archived 2026-02-04
+
+### What Was Complete
+- [x] Item 1
+- [x] Item 2
+
+### Session Log (older entries)
+| Date | Summary |
+|------|---------|
+| 2026-01-20 | ... |
+```
+
+**Principle:** Status.md is a **window**, not a **ledger**. It shows current state, not full history.
 
 ---
 
@@ -238,6 +289,16 @@ A well-formed status.md:
 - [ ] Has actionable "Next Steps" (not vague)
 - [ ] Under 30 lines
 - [ ] Updated at end of each session
+
+---
+
+## Revision History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2026-01-26 | Initial spec |
+| 1.1.0 | 2026-01-27 | Added session log format, pruning guidance |
+| 1.2.0 | 2026-02-04 | Added explicit "Pruning Rules (Mandatory)" section — defines what/when/how to prune, agent responsibility, archive file format |
 
 ---
 

@@ -155,7 +155,7 @@ After modifying plugin source files:
 
 ## Common Pitfalls
 
-These are mistakes we encountered building the acm-env plugin. Learn from them.
+These are mistakes we encountered building the adf-env plugin. Learn from them.
 
 ### plugin.json must be minimal
 

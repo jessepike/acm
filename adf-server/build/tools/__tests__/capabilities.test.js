@@ -21,7 +21,7 @@ describe("get_capability_detail", () => {
     it("returns detail for existing capability", async () => {
         // Use a known capability ID from the registry
         const result = await callTool("get_capability_detail", {
-            capability_id: "acm-env",
+            capability_id: "adf-env",
         });
         // May or may not exist; just check it doesn't crash
         expect(result.content[0].text.length).toBeGreaterThan(0);

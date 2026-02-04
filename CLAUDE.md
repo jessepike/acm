@@ -21,6 +21,6 @@
 
 ## ADF Resources
 
-- **ACM MCP server** — query for stage details, artifact specs, review prompts, project health
-- **acm-env plugin** — environment management (`/acm-env:status`, `/acm-env:audit`)
+- **ADF MCP server** — query for stage details, artifact specs, review prompts, project health
+- **adf-env plugin** — environment management (`/adf-env:status`, `/adf-env:audit`)
 - **Capabilities registry** — `~/code/_shared/capabilities-registry/INVENTORY.md`

@@ -45,8 +45,8 @@ The persistent, cross-cutting infrastructure that wraps around all stages. Stage
 
 ### Environment Layer Interfaces
 
-- **acm-env plugin** — Environment *management*: configuration, baseline validation, hooks, plugin/capability administration. See `ADF-ENV-PLUGIN-SPEC.md`.
-- **ACM MCP server** — Environment *knowledge*: queryable access to specs, prompts, stubs, project validation, capability queries. Consumed by agents in any project via `.mcp.json`.
+- **adf-env plugin** — Environment *management*: configuration, baseline validation, hooks, plugin/capability administration. See `ADF-ENV-PLUGIN-SPEC.md`.
+- **ADF MCP server** — Environment *knowledge*: queryable access to specs, prompts, stubs, project validation, capability queries. Consumed by agents in any project via `.mcp.json`.
 
 ### Cross-Stage Artifacts
 

@@ -136,7 +136,7 @@ User-level MCP servers in `~/.claude.json`:
 - **User MCPs** section (from `~/.claude.json` → `mcpServers`) ← should include your servers
 - **Built-in MCPs** section
 
-## Implications for acm-env Status
+## Implications for adf-env Status
 
 The status check should report:
 

@@ -88,7 +88,7 @@ Cross-project resources agents should know about. Keep to a brief list — not d
 | Resource | Rationale |
 |----------|-----------|
 | MCP servers (e.g., ADF MCP server) | Agents need to know what tools are available for on-demand queries |
-| Plugins (e.g., acm-env) | Agents need to know what environment management is available |
+| Plugins (e.g., adf-env) | Agents need to know what environment management is available |
 | Shared repos (e.g., capabilities registry) | Agents need to know where to look up capabilities |
 
 **Keep this lean.** List the resource and its purpose in one line. Detailed usage belongs in skills or documentation, not global context.

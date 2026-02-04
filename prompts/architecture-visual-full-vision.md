@@ -1,21 +1,21 @@
 ---
 type: "prompt"
-description: "Prompt for generating full ACM vision architecture diagram"
+description: "Prompt for generating full ADF vision architecture diagram"
 version: "2.0.0"
 updated: "2026-02-02"
 lifecycle: "reference"
 location: "prompts/architecture-visual-full-vision.md"
 ---
 
-# Prompt: ACM Full Vision Architecture Diagram
+# Prompt: ADF Full Vision Architecture Diagram
 
-Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the complete ACM vision.
+Use this prompt with an image generation tool or diagramming AI to create an architectural visualization of the complete ADF vision.
 
 ---
 
 ## Prompt
 
-Create a clean, modern software architecture diagram for "ACM — Agentic Development Framework" showing the complete system vision.
+Create a clean, modern software architecture diagram for "ADF — Agentic Development Framework" showing the complete system vision.
 
 **Layout:** Layered architecture, top-to-bottom
 
@@ -122,12 +122,12 @@ Show flow: Inbox → Reference or Delete (after triage)
 
 - Label: "Interface Layer"
 - Components shown as small boxes:
-  - **ACM MCP Server** — "Read-only spec/prompt/KB access"
-  - **acm-env plugin** — "Environment management, health"
+  - **ADF MCP Server** — "Read-only spec/prompt/KB access"
+  - **adf-env plugin** — "Environment management, health"
   - **.claude/rules/** — "Policy enforcement (human-controlled)"
   - **CLAUDE.md** — "Context and orientation (agent-writable)"
 - Connects to: Environment Layer and Stage Workflow
-- Note: "How consumers interact with ACM"
+- Note: "How consumers interact with ADF"
 
 ---
 
@@ -200,12 +200,12 @@ project/
 
 6. **Four stages:** Must show Discover → Design → Develop → Deliver. All four are part of the core pipeline.
 
-7. **Interface layer:** ADF MCP Server, acm-env plugin, rules/, CLAUDE.md are distinct interface mechanisms. Show them separately, not as one "interface" blob.
+7. **Interface layer:** ADF MCP Server, adf-env plugin, rules/, CLAUDE.md are distinct interface mechanisms. Show them separately, not as one "interface" blob.
 
 8. **Memory status:** Mark Memory as "planned" (dashed box or grayed) to distinguish from the five operational primitives.
 
 ---
 
-**Title:** "ACM — Agentic Development Framework: Full Architecture"
+**Title:** "ADF — Agentic Development Framework: Full Architecture"
 
 **Subtitle:** "Managed workflows for agentic software development"

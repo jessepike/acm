@@ -1,6 +1,6 @@
 ---
 type: "specification"
-description: "Defines acm-env — the agentic development environment manager plugin"
+description: "Defines adf-env — the agentic development environment manager plugin"
 version: "1.0.0"
 updated: "2026-01-29"
 scope: "adf"
@@ -8,22 +8,22 @@ lifecycle: "reference"
 location: "adf/ADF-ENV-PLUGIN-SPEC.md"
 ---
 
-# ADF Environment Specification (acm-env)
+# ADF Environment Specification (adf-env)
 
 ## Summary
 
-acm-env is a user-level Claude Code plugin that manages the development environment across user and project layers. It codifies baselines, detects drift, and provides setup/audit/maintenance skills. It wraps and delegates to Anthropic plugins for execution, with built-in fallbacks.
+adf-env is a user-level Claude Code plugin that manages the development environment across user and project layers. It codifies baselines, detects drift, and provides setup/audit/maintenance skills. It wraps and delegates to Anthropic plugins for execution, with built-in fallbacks.
 
 ## Taxonomy
 
-- **Environment** — umbrella term for everything acm-env manages
+- **Environment** — umbrella term for everything adf-env manages
   - **Capabilities** — plugins, MCP servers, hooks, skills, agents, tools
   - **Configuration** — settings.json, keybindings
   - **Context** — CLAUDE.md files, rules/
 
 ## Baselines
 
-acm-env defines expected state at two levels:
+adf-env defines expected state at two levels:
 
 ### User Level (`~/.claude/`)
 
@@ -46,12 +46,12 @@ acm-env defines expected state at two levels:
 
 | Skill | Purpose |
 |-------|---------|
-| `/acm-env:status` | Scope-aware health dashboard — `--scope project` (default) or `--scope user` |
-| `/acm-env:setup` | Smart setup — detects mode (first-time, new project, existing project) |
-| `/acm-env:audit` | Deep environment audit with plugin delegation |
-| `/acm-env:reset` | Interactive reset to baseline with diffs and approval |
+| `/adf-env:status` | Scope-aware health dashboard — `--scope project` (default) or `--scope user` |
+| `/adf-env:setup` | Smart setup — detects mode (first-time, new project, existing project) |
+| `/adf-env:audit` | Deep environment audit with plugin delegation |
+| `/adf-env:reset` | Interactive reset to baseline with diffs and approval |
 
-### Status Command (`/acm-env:status`)
+### Status Command (`/adf-env:status`)
 
 Supports `--scope` flag:
 - **`project`** (default) — user-level foundation + project-level specifics + capabilities (plugins, MCP servers)
@@ -62,7 +62,7 @@ Capabilities reporting checks:
 - **MCP servers**: standalone (`~/.claude.json` → `mcpServers`), plugin-bundled (`.mcp.json` in plugin dirs), project-level (`.mcp.json` + project overrides in `~/.claude.json`)
 - **Remove list**: flags configured servers/plugins that should be removed per baseline
 
-### Mode Detection (`/acm-env:setup`)
+### Mode Detection (`/adf-env:setup`)
 
 | Condition | Mode | Behavior |
 |-----------|------|----------|
@@ -73,12 +73,12 @@ Capabilities reporting checks:
 ## Dependencies
 
 ```
-acm-env (wrapper/orchestrator)
+adf-env (wrapper/orchestrator)
   ├── claude-md-management → CLAUDE.md quality audit + session learning capture
   └── claude-code-setup    → codebase analysis, automation recommendations
 ```
 
-- Dependencies are **expected** but acm-env **degrades gracefully** with clear warnings
+- Dependencies are **expected** but adf-env **degrades gracefully** with clear warnings
 - When a dependency is missing: surface explicit warning, run built-in fallback, suggest installation
 - Never silently fail — always inform the user
 
@@ -104,7 +104,7 @@ acm-env (wrapper/orchestrator)
 
 All user-level hooks must be declared in `baseline.yaml` under `user_level.checks.hooks.declared`. This prevents drift where a hook gets installed during one project and silently affects all future projects.
 
-The `/acm-env:audit` command validates:
+The `/adf-env:audit` command validates:
 - All declared hooks are present and functional
 - No undeclared hooks exist at user level
 - Each hook has a documented source and purpose
@@ -123,13 +123,13 @@ The `/acm-env:audit` command validates:
 
 ## Relationship to ADF Environment Layer
 
-acm-env is the **management layer for the environment layer itself**. It ensures skills, tools, rules, and context artifacts are properly configured, available, current, and not stale.
+adf-env is the **management layer for the environment layer itself**. It ensures skills, tools, rules, and context artifacts are properly configured, available, current, and not stale.
 
 ### Capabilities Registry
 
-The source of truth for available capabilities is the **capabilities registry** at `~/code/_shared/capabilities-registry/`. acm-env references the registry's `INVENTORY.md` to validate that expected capabilities are present and current. See `REGISTRY-SPEC.md` in that repo for the full specification.
+The source of truth for available capabilities is the **capabilities registry** at `~/code/_shared/capabilities-registry/`. adf-env references the registry's `INVENTORY.md` to validate that expected capabilities are present and current. See `REGISTRY-SPEC.md` in that repo for the full specification.
 
-### What acm-env manages in v1
+### What adf-env manages in v1
 - Capabilities (installed, configured, not stale — validated against capabilities-registry)
 - Configuration (matches baseline)
 - Context (structure/quality per ADF specs)

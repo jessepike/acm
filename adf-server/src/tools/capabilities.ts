@@ -88,7 +88,7 @@ export function registerCapabilitiesTools(server: McpServer): void {
       capability_id: z
         .string()
         .regex(/^[a-z0-9][a-z0-9-]*$/)
-        .describe("Capability ID (e.g., 'acm-env', 'claude-md-management'). Must match pattern: lowercase alphanumeric with hyphens."),
+        .describe("Capability ID (e.g., 'adf-env', 'claude-md-management'). Must match pattern: lowercase alphanumeric with hyphens."),
     },
     async ({ capability_id }) => {
       const capPath = path.join(REGISTRY_ROOT, "capabilities", capability_id, "capability.yaml");

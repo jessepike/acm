@@ -190,7 +190,7 @@ Define the classification system, terminology, and design decisions for ADF. Ens
 
 | Term | Definition |
 |------|------------|
-| **Environment** | Umbrella term for everything managed by acm-env — capabilities, configuration, and context |
+| **Environment** | Umbrella term for everything managed by adf-env — capabilities, configuration, and context |
 | **Capabilities** | Plugins, MCP servers, hooks, skills, agents, tools — the functional extensions |
 | **Configuration** | settings.json, keybindings — the behavioral settings |
 | **Context** | CLAUDE.md files — the knowledge artifacts that inform agent behavior |
@@ -288,15 +288,15 @@ Decisions made during ACM development that should not be revisited without expli
 | Primary agent owns status.md | Sub-agents complete tasks but don't update session state; prevents conflicts | 2026-01-28 |
 | Atomic tasks for single-agent execution | Tasks small enough to read-complete-verify in one agent session | 2026-01-28 |
 | Design updates in Develop: document and move on | No re-review needed for gaps discovered during implementation prep | 2026-01-28 |
-| acm-env as user-level plugin | Manages environment across all projects; sits at highest non-managed layer | 2026-01-29 |
+| adf-env as user-level plugin | Manages environment across all projects; sits at highest non-managed layer | 2026-01-29 |
 | Environment as umbrella term (capabilities + configuration + context) | Encompasses all configurable elements of Claude Code | 2026-01-29 |
 | Wrapper/delegation over internalization of Anthropic plugins | Leverage upstream improvements; YAGNI; ACM adds spec/orchestration layer | 2026-01-29 |
 | Graceful degradation with loud warnings (never silent failure) | User must always know what's missing or broken | 2026-01-29 |
-| Absorb deferred acm-validate and acm-prune into acm-env | Single plugin with multiple skills; modular growth | 2026-01-29 |
-| Smart mode detection over separate skills | One /acm-env:setup handles first-time, new project, existing project | 2026-01-29 |
+| Absorb deferred adf-validate and adf-prune into adf-env | Single plugin with multiple skills; modular growth | 2026-01-29 |
+| Smart mode detection over separate skills | One /adf-env:setup handles first-time, new project, existing project | 2026-01-29 |
 | Codified baseline spec (machine-parseable YAML) over prose guidelines | Enables automated drift detection and comparison | 2026-01-29 |
 | `.claude/rules/` for hard constraints, `CLAUDE.md` for context | Separates enforcement (policy) from guidance (norms); rules win on conflict; human-controlled | 2026-01-30 |
-| Rename consideration: "Agentic Development Environment" | Under consideration; deferred to validation after acm-env proves concept | 2026-01-29 |
+| Rename consideration: "Agentic Development Environment" | Under consideration; deferred to validation after adf-env proves concept | 2026-01-29 |
 
 ---
 

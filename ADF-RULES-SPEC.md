@@ -137,7 +137,7 @@ Examples:
 - Update `status.md` before ending a session — do not ask, just update
 - Use conventional commit format: `type(scope): description`
 
-**Enforcement:** The acm-env plugin's `Stop` hook checks for uncommitted changes and stale `status.md` before allowing session end.
+**Enforcement:** The adf-env plugin's `Stop` hook checks for uncommitted changes and stale `status.md` before allowing session end.
 
 ### Architectural Boundaries
 

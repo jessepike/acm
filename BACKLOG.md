@@ -1,8 +1,8 @@
 ---
 type: "tracking"
 description: "ADF backlog — prioritized queue of potential work items"
-version: "2.2.0"
-updated: "2026-02-04"
+version: "2.3.0"
+updated: "2026-02-07"
 scope: "adf"
 lifecycle: "reference"
 location: "adf/BACKLOG.md"
@@ -35,6 +35,7 @@ spec: "ADF-BACKLOG-SPEC.md"
 | B71 | User CLAUDE.md has stale "acm-env" reference — incomplete ACM→ADF rename | Bug | environment | P1 | XS | — | Pending |
 | B72 | Project CLAUDE.md 1 line over 55-line limit | Hygiene | environment | P2 | XS | — | Pending |
 | B73 | ADF-CONTEXT-ARTIFACT-SPEC references "acm-env" (line 250-251) — incomplete rename | Bug | specs | P1 | XS | — | Pending |
+| B74 | **Context harness alignment audit** — Create `/adf-env:harness-audit` command or skill that validates the full 9-layer support harness: checks CLAUDE.md (global + project) for duplication/staleness, verifies status.md freshness, validates rules/ alignment with design.md, checks MEMORY.md references (e.g., stale KB entry IDs), verifies BACKLOG.md ↔ status.md sync, flags conflicts across layers. Output: structured report with actionable fixes. See KB entries: `9631c0de` (harness map), `1b556a4e` (ADF + auto-memory integration). | New feature | environment | P2 | M | — | Pending |
 
 ---
 

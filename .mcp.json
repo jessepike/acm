@@ -11,6 +11,12 @@
       "command": "/Users/jessepike/code/_shared/adf/skills/external-review/server/venv/bin/python",
       "args": ["/Users/jessepike/code/_shared/adf/skills/external-review/server/external_review_server.py"],
       "env": {}
+    },
+    "knowledge-base": {
+      "command": "python",
+      "args": ["-m", "kb_core.access.mcp_server"],
+      "cwd": "/Users/jessepike/code/_shared/knowledge-base",
+      "env": {}
     }
   }
 }

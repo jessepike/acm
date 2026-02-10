@@ -1,7 +1,7 @@
 ---
 project: "ADF (Agentic Development Framework)"
 stage: "Develop"
-updated: "2026-02-07"
+updated: "2026-02-09"
 ---
 
 # Status
@@ -19,6 +19,7 @@ updated: "2026-02-07"
 
 | Date | Summary |
 |------|---------|
+| 2026-02-09 | **Agent skill ecosystem research.** Analyzed 3 sources: SkillsMP (25K+ skills, SKILL.md standard), VoltAgent/awesome-agent-skills (339+ curated skills from Anthropic/Trail of Bits/Sentry/Cloudflare/Microsoft), ClaudeCodePlugins (313 plugins, 1336 skills, 29 categories). Mapped relevance to ADF across 6 dimensions (orchestration, governance, quality, docs, testing, review). Key findings: SKILL.md is the universal open standard; Sprint plugin closest to ADF orchestration; no ecosystem offers ADF's stage-gated orchestration, artifact spec enforcement, multi-phase review, or intent protection — these are ADF's unique differentiators. |
 | 2026-02-07 | Removed redundant `skills/ecosystem-alignment/` from ADF repo (now in plugin). Registered ecosystem-alignment plugin + ecosystem-steward agent in capabilities-registry (48→50). Verified MCP discoverability via `query_capabilities`. |
 | 2026-02-07 | **Ecosystem steward plugin.** (1) Created `ecosystem-alignment` plugin with `ecosystem-steward` agent, `/ecosystem:audit` command, and skill. (2) Ran first full audit — 17 findings across 6 checks (1 aligned, 4 drift, 1 gap). (3) Filed B75-B80 from audit findings. (4) Saved report to `docs/reports/ecosystem-alignment-2026-02-07.md`. Key findings: status enum mismatch (High), Krypton↔Work OS observation gap, terminology collisions. |
 | 2026-02-07 | Ecosystem alignment skill: drafted `skills/ecosystem-alignment/SKILL.md` v0.1.0 — 6 checks (governing docs, interface contracts, dependency chain, terminology, intent alignment, open decisions). Audit-only, complements adf-env (per-project) and adf-review (per-artifact). Also drafted `docs/ecosystem-architecture.md` v0.1.0 — three-layer model (Process/Data/Intelligence), system map, integration points, dependency chain, current state. |

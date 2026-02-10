@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Detailed specification for the Develop stage workflow"
-version: "2.1.0"
-updated: "2026-02-02"
+version: "2.2.0"
+updated: "2026-02-09"
 scope: "adf"
 lifecycle: "reference"
 location: "adf/ADF-DEVELOP-SPEC.md"
@@ -257,6 +257,8 @@ Before documenting capabilities, query available resources:
 
 **Why mandatory:** Without the summary, the HARD GATE reviewer cannot verify the registry was consulted. A missing or empty Registry Summary section means Phase 2 is incomplete.
 
+**Gap Resolution (hard gate):** When gaps are identified, follow the capability gap resolution process in ADF-PLANNING-SPEC.md (Step 5c). Every gap requires explicit resolution with user sign-off. Agent must present options per gap (search for existing, build it, alternative approach, or accept risk). Plan CANNOT be approved until all gaps have a resolution path.
+
 Example capabilities.md structure:
 
 ```markdown
@@ -312,17 +314,17 @@ None required for this project.
 
 **Purpose:** Create a comprehensive implementation plan and atomic task breakdown.
 
+**Methodology:** Follow ADF-PLANNING-SPEC.md — the cross-cutting planning specification that defines the seven-step planning process (understand intent, decompose, organize phases, parallelization strategy, capability assessment, testing strategy, risk/contingency). Use the Decision Matrix in the planning spec to determine whether this project needs a lightweight or full plan.
+
 **Two outputs:**
 
 #### plan.md — Implementation Plan
 
-- **Overview:** What we're building, approach summary
-- **Phases:** Logical groupings of work (e.g., Phase 1: Core structure, Phase 2: Features, Phase 3: Polish)
-- **Milestones:** Key checkpoints with deliverables
-- **Approach:** How we'll tackle each phase
-- **Testing Strategy:** What frameworks (from capabilities.md), what gets tested (unit, integration, E2E, browser), coverage targets (default: 95%+), browser testing plan (if applicable — Claude in Chrome or MCP Inspector)
-- **Parallelization opportunities:** What can run concurrently
-- **Risk areas:** Known challenges, mitigation approaches
+Structure and content per ADF-PLANNING-SPEC.md plan artifact format. For development projects, the plan MUST include:
+
+- Testing Strategy (frameworks from capabilities.md, what gets tested at each tier, coverage targets — default 95%+, browser testing plan if applicable)
+- Parallelization Strategy (independent work streams, agent assignments, coordination points)
+- Capability Assessment summary (from Phase 2, with gap resolution status)
 
 If the testing strategy section is missing or incomplete, Phase 3 is incomplete.
 
@@ -341,6 +343,7 @@ In Develop, tasks.md uses the **full structure** with:
 - Capability column links to capabilities.md entries
 - Progressive disclosure: read Handoff + Active, skip Completed unless investigating
 - Task granularity: one agent, one session, verifiable completion
+- Tasks chunked by skill set per ADF-PLANNING-SPEC.md Step 4d
 
 **Exit signal:** Plan and tasks drafted. Ready for review.
 
@@ -571,6 +574,8 @@ Not a full audit. A structured sanity check: "did we build what we designed?"
 Testing is not optional. It's core to Develop.
 
 ### Planning-Time Decisions (Phase 2-3)
+
+Per ADF-PLANNING-SPEC.md Step 6 (Testing Strategy):
 
 - plan.md MUST specify frameworks, coverage targets, browser testing plan
 - capabilities.md MUST include testing tools in the Testing Capabilities section
@@ -845,11 +850,14 @@ Develop makes heavy use of sub-agents for parallelization.
 | 1.3.0 | 2026-01-31 | Added handoff block in tasks.md, registry summary enforcement |
 | 2.0.0 | 2026-02-01 | Major revision: 8 phases (added Documentation + Closeout), two-tier testing model, progressive disclosure in tasks.md, build-to-design verification, commit cadence, universal + type-specific exit criteria, removed registration from Develop |
 | 2.1.0 | 2026-02-02 | Fixed HARD GATE placement (B61): Moved from after Phase 3 to after Phase 4 (Review Loop). Correct pattern: Plan → Review → HARD GATE → Execution. Phase 4 now "Review Loop & Approval" combining internal/external review + human approval. Matches Deliver spec pattern. Updated start-develop-prompt.md to v2.2.0. |
+| 2.2.0 | 2026-02-09 | Extracted planning methodology to ADF-PLANNING-SPEC.md (cross-cutting spec). Phase 3 now references planning spec for methodology, retains Develop-specific requirements (testing strategy, tasks.md structure). Phase 2 now references planning spec for gap resolution hard gate. Added task chunking by skill set reference. Added reference to planning spec in Testing Strategy section. |
 
 ---
 
 ## References
 
+- AGENTIC-WORK-SYSTEM-ARCHITECTURE.md (System-level architecture — layers, rings, cross-cutting teams)
+- ADF-PLANNING-SPEC.md (Cross-cutting planning methodology — seven-step process, capability assessment, parallelization)
 - ADF-STAGES-SPEC.md (Universal exit criteria, stage boundary handoff)
 - ADF-TASKS-SPEC.md (tasks.md structure, handoff format, progressive disclosure)
 - ADF-REVIEW-SPEC.md (Review mechanism — cycles, severity, stop conditions)

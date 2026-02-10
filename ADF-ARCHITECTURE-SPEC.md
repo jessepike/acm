@@ -1,8 +1,8 @@
 ---
 type: "specification"
 description: "Master framework specification — defines ADF's architecture, stage pipeline, artifact flow, six environment primitives, interface map, and spec index. The single entry point for understanding ADF."
-version: "2.1.0"
-updated: "2026-02-04"
+version: "2.2.0"
+updated: "2026-02-09"
 scope: "adf"
 lifecycle: "reference"
 location: "adf/ADF-ARCHITECTURE-SPEC.md"
@@ -18,13 +18,35 @@ All other ADF specs define narrower slices. This spec defines the whole.
 
 ---
 
+## System Context
+
+ADF operates within the **Agentic Work System Architecture** (see `_shared/AGENTIC-WORK-SYSTEM-ARCHITECTURE.md`), which defines the system-level layers-and-rings model, system boundaries, and cross-cutting agent teams.
+
+**ADF's position in the system:**
+
+- ADF is a **process engine** that operates primarily within the **Operations layer** of the system architecture
+- ADF is a **peer** to Work Management — neither owns the other. They interoperate through connectors.
+- ADF's six environment primitives map to the system's five rings (see mapping in the system architecture doc)
+- Cross-cutting agent teams (Review, Validation, Improvement) are dispatched into ADF stages but are not owned by ADF
+- Krypton provides cross-cutting intelligence across ADF and all other systems
+
+**What ADF owns:** How development projects move through stages (Discover → Design → Develop → Deliver). Stage workflow, phase models, artifact formats, review processes, and the environment primitives that support project work.
+
+**What ADF does NOT own:** Work management (backlogs, cross-project prioritization, task routing), strategic intelligence (Krypton), cross-cutting agent teams (review, validation, improvement), or non-development work processes.
+
+**Shared terminology:** See `_shared/TAXONOMY.md` for system-wide terminology covering ADF, Work Management, Krypton, and cross-cutting concerns.
+
+---
+
 ## How to Read ADF
 
 | Want to understand... | Read |
 |---|---|
-| The whole framework | This spec (ADF-ARCHITECTURE-SPEC.md) |
+| The broader system (layers, rings, boundaries) | `_shared/AGENTIC-WORK-SYSTEM-ARCHITECTURE.md` |
+| The whole ADF framework | This spec (ADF-ARCHITECTURE-SPEC.md) |
 | Stage workflow model | ADF-STAGES-SPEC.md |
 | A specific stage | ADF-DISCOVER-SPEC / DESIGN-SPEC / DEVELOP-SPEC |
+| Planning methodology | ADF-PLANNING-SPEC.md |
 | Project classification | ADF-PROJECT-TYPES-SPEC.md |
 | Artifact formats | ADF-BRIEF-SPEC / INTENT-SPEC / STATUS-SPEC / README-SPEC |
 | Review process | ADF-REVIEW-SPEC.md |
@@ -33,7 +55,7 @@ All other ADF specs define narrower slices. This spec defines the whole.
 | Environment plugin | ADF-ENV-PLUGIN-SPEC.md |
 | Folder conventions | ADF-FOLDER-STRUCTURE-SPEC.md |
 | Backlog management | ADF-BACKLOG-SPEC.md |
-| Terminology | ADF-TAXONOMY.md |
+| Terminology | `_shared/TAXONOMY.md` |
 
 ---
 
@@ -534,7 +556,8 @@ Complete table of all ADF specifications:
 | ADF-RULES-SPEC.md | 1.0.0 | Rules governance | Validation |
 | ADF-BACKLOG-SPEC.md | 1.0.0 | Backlog management | Orchestration |
 | ADF-ENV-PLUGIN-SPEC.md | 1.0.0 | adf-env plugin | Maintenance |
-| ADF-TAXONOMY.md | 1.4.0 | Terminology | All |
+| ADF-PLANNING-SPEC.md | 1.0.0 | Cross-cutting planning methodology | Orchestration |
+| `_shared/TAXONOMY.md` | 2.0.0 | System-wide terminology | All |
 
 ---
 
@@ -642,15 +665,18 @@ The registry doesn't duplicate ADF content — it provides searchable metadata t
 | 2.0.0 | 2026-02-01 | Elevated to master framework spec — added spec map, framework diagram, stages overview, artifact flow, interface map, spec index |
 | 2.0.1 | 2026-02-01 | Review pass — marked memory as planned (B18-B19), clarified artifact flow is consumer-project scoped, corrected spec index primitive assignments (STATUS→Orchestration, README→Orchestration), clarified registry coupling, added self-improvement loop implementation status |
 | 2.1.0 | 2026-02-04 | Added "ADF Components and the Capabilities Registry" section — documents relationship between ADF runtime components (plugins, MCP server, skills) and the capabilities registry. Fixed remaining ACM→ADF terminology. Added design principle: source of truth separation. |
+| 2.2.0 | 2026-02-09 | Added System Context section positioning ADF within Agentic Work System Architecture. Updated "How to Read ADF" table with system architecture and planning spec references. Updated spec index to include ADF-PLANNING-SPEC. Updated taxonomy reference to system-level `_shared/TAXONOMY.md`. |
 
 ---
 
 ## References
 
+- `_shared/AGENTIC-WORK-SYSTEM-ARCHITECTURE.md` (system-level architecture — layers, rings, boundaries)
+- `_shared/TAXONOMY.md` (system-wide terminology)
+- ADF-PLANNING-SPEC.md (cross-cutting planning methodology)
 - ADF-STAGES-SPEC.md (project layer — stage workflow model)
 - ADF-RULES-SPEC.md (enforcement layer — rules governance model)
 - ADF-ENV-PLUGIN-SPEC.md (adf-env plugin — environment management)
-- ADF-TAXONOMY.md (terminology)
 - adf-server/README.md (MCP server — installation, tools, consumer wiring)
 - skills/adf-workflow/SKILL.md (companion skill — workflow instructions)
 - docs/design.md (MCP server design spec — full tool schemas and architecture)
